@@ -3,3 +3,5 @@ markdown: redcarpet
 safe: true
 lsi: false
 pygments: true
+baseurl: /
+auto: true
