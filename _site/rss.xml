@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
-        <title>N3xtchen's Blog</title>
-        <description>N3xtchen's Blog - meo</description>
-        <link>http://n3xtchen.github.io</link>
-        <link>http://n3xtchen.github.io</link>
-        <lastBuildDate>2013-09-20T10:24:41+08:00</lastBuildDate>
-        <pubDate>2013-09-20T10:24:41+08:00</pubDate>
+        <title>N3xtchen Blog</title>
+        <description>N3xtchen Blog - meo</description>
+        <link>http://n3xtchen.github.io/n3xtchen/</link>
+        <link>http://n3xtchen.github.io/n3xtchen/</link>
+        <lastBuildDate>2013-09-20T10:29:45+08:00</lastBuildDate>
+        <pubDate>2013-09-20T10:29:45+08:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -22,8 +22,8 @@
 &lt;span class='c1'&gt;#=&amp;gt; prints &amp;#39;Hi, Tom&amp;#39; to STDOUT.&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Check out the &lt;a href='http://jekyllrb.com'&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href='https://github.com/mojombo/jekyll'&gt;Jekyll&amp;#8217;s GitHub repo&lt;/a&gt;.&lt;/p&gt;</description>
-                <link>http://n3xtchen.github.io/jekyll/update/2013/09/20/welcome-to-jekyll</link>
-                <guid>http://n3xtchen.github.io/jekyll/update/2013/09/20/welcome-to-jekyll</guid>
+                <link>http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll</link>
+                <guid>http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll</guid>
                 <pubDate>2013-09-20T08:45:35+08:00</pubDate>
         </item>
 
@@ -347,8 +347,8 @@ tags : [how-to, jekyll]
 &lt;h2 id='next_steps'&gt;Next Steps&lt;/h2&gt;
 
 &lt;p&gt;Please take a look at &lt;a href='' /&gt; or jump right into &lt;a href=''&gt;Usage&lt;/a&gt; if you&amp;#8217;d like.&lt;/p&gt;</description>
-                <link>http://n3xtchen.github.io/lessons/2011/12/29/jekyll-introduction</link>
-                <guid>http://n3xtchen.github.io/lessons/2011/12/29/jekyll-introduction</guid>
+                <link>http://n3xtchen.github.io/n3xtchen//lessons/2011/12/29/jekyll-introduction</link>
+                <guid>http://n3xtchen.github.io/n3xtchen//lessons/2011/12/29/jekyll-introduction</guid>
                 <pubDate>2011-12-29T00:00:00+08:00</pubDate>
         </item>
 

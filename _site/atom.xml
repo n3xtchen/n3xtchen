@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
  
- <title>N3xtchen's Blog</title>
- <link href="http://n3xtchen.github.io/" rel="self"/>
- <link href="http://n3xtchen.github.io"/>
- <updated>2013-09-20T10:24:41+08:00</updated>
- <id>http://n3xtchen.github.io</id>
+ <title>N3xtchen Blog</title>
+ <link href="http://n3xtchen.github.io/n3xtchen//" rel="self"/>
+ <link href="http://n3xtchen.github.io/n3xtchen/"/>
+ <updated>2013-09-20T10:29:45+08:00</updated>
+ <id>http://n3xtchen.github.io/n3xtchen/</id>
  <author>
    <name>meo</name>
    <email>echenwen@gmail.com</email>
@@ -14,9 +14,9 @@
  
  <entry>
    <title>Welcome to Jekyll!</title>
-   <link href="http://n3xtchen.github.io/jekyll/update/2013/09/20/welcome-to-jekyll"/>
+   <link href="http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll"/>
    <updated>2013-09-20T08:45:35+08:00</updated>
-   <id>http://n3xtchen.github.io/jekyll/update/2013/09/20/welcome-to-jekyll</id>
+   <id>http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll</id>
    <content type="html">&lt;p&gt;You&amp;#8217;ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory - edit this post and re-build (or run with the &lt;code&gt;-w&lt;/code&gt; switch) to see your changes! To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention: YYYY-MM-DD-name-of-post.ext.&lt;/p&gt;
 
 &lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
@@ -31,9 +31,9 @@
  
  <entry>
    <title>Jekyll Introduction</title>
-   <link href="http://n3xtchen.github.io/lessons/2011/12/29/jekyll-introduction"/>
+   <link href="http://n3xtchen.github.io/n3xtchen//lessons/2011/12/29/jekyll-introduction"/>
    <updated>2011-12-29T00:00:00+08:00</updated>
-   <id>http://n3xtchen.github.io/lessons/2011/12/29/jekyll-introduction</id>
+   <id>http://n3xtchen.github.io/n3xtchen//lessons/2011/12/29/jekyll-introduction</id>
    <content type="html">&lt;p&gt;This Jekyll introduction will outline specifically what Jekyll is and why you would want to use it. Directly following the intro we&amp;#8217;ll learn exactly &lt;em&gt;how&lt;/em&gt; Jekyll does what it does.&lt;/p&gt;
 
 &lt;h2 id='overview'&gt;Overview&lt;/h2&gt;
