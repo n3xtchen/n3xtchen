@@ -3,5 +3,5 @@ markdown: redcarpet
 safe: true
 lsi: false
 pygments: true
-baseurl: / 
+baseurl: /n3xtchen/ 
 url: http://n3xtchen.github.io/n3xtchen
