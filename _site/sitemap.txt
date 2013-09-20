@@ -1,8 +1,8 @@
 
+http://n3xtchen.github.io/n3xtchen//about.html
 http://n3xtchen.github.io/n3xtchen//archive.html
 http://n3xtchen.github.io/n3xtchen//atom.xml
 http://n3xtchen.github.io/n3xtchen//categories.html
-http://n3xtchen.github.io/n3xtchen//index.html
 http://n3xtchen.github.io/n3xtchen//index.html
 http://n3xtchen.github.io/n3xtchen//pages.html
 http://n3xtchen.github.io/n3xtchen//rss.xml
@@ -10,4 +10,5 @@ http://n3xtchen.github.io/n3xtchen//sitemap.txt
 http://n3xtchen.github.io/n3xtchen//tags.html
 
 http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll
+http://n3xtchen.github.io/n3xtchen//2013/09/20/hello-g-tech
 http://n3xtchen.github.io/n3xtchen//lessons/2011/12/29/jekyll-introduction

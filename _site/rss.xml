@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
-        <title>N3xtchen Blog</title>
-        <description>N3xtchen Blog - meo</description>
+        <title>N3xtchen G-Tech 博客</title>
+        <description>N3xtchen G-Tech 博客 - meo</description>
         <link>http://n3xtchen.github.io/n3xtchen/</link>
         <link>http://n3xtchen.github.io/n3xtchen/</link>
-        <lastBuildDate>2013-09-20T10:29:45+08:00</lastBuildDate>
-        <pubDate>2013-09-20T10:29:45+08:00</pubDate>
+        <lastBuildDate>2013-09-20T15:48:58+08:00</lastBuildDate>
+        <pubDate>2013-09-20T15:48:58+08:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -25,6 +25,14 @@
                 <link>http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll</link>
                 <guid>http://n3xtchen.github.io/n3xtchen//jekyll/update/2013/09/20/welcome-to-jekyll</guid>
                 <pubDate>2013-09-20T08:45:35+08:00</pubDate>
+        </item>
+
+        <item>
+                <title>Hello, G Tech</title>
+                <description></description>
+                <link>http://n3xtchen.github.io/n3xtchen//2013/09/20/hello-g-tech</link>
+                <guid>http://n3xtchen.github.io/n3xtchen//2013/09/20/hello-g-tech</guid>
+                <pubDate>2013-09-20T00:00:00+08:00</pubDate>
         </item>
 
         <item>
