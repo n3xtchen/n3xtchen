@@ -3,6 +3,7 @@
 permalink: /:categories/:year/:month/:day/:title 
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
+markdown: rdiscount
 pygments: true
 
 # Themes are encouraged to use these universal variables 
@@ -16,6 +17,7 @@ author :
   github : n3xtchen
   twitter : echenwen
   feedburner : feedname
+  weibo : dr3am
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 

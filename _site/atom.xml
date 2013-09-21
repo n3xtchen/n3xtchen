@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>N3xtchen G-Tech 博客</title>
+ <link href="http://n3xtchen.github.io/n3xtchen//" rel="self"/>
+ <link href="http://n3xtchen.github.io/n3xtchen/"/>
+ <updated>2013-09-22T01:00:35+08:00</updated>
+ <id>http://n3xtchen.github.io/n3xtchen/</id>
+ <author>
+   <name>meo</name>
+   <email>echenwen@gmail.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>Python Flask - 初探</title>
+   <link href="http://n3xtchen.github.io/n3xtchen//python/2013/09/21/python-flask---beginning"/>
+   <updated>2013-09-21T00:00:00+08:00</updated>
+   <id>http://n3xtchen.github.io/n3xtchen//python/2013/09/21/python-flask---beginning</id>
+   <content type="html">&lt;h3&gt;什么是 &lt;em&gt;Flask&lt;/em&gt;&lt;/h3&gt;
+
+&lt;blockquote&gt;&lt;p&gt;&lt;a href=&quot;http://zh.wikipedia.org/wiki/Flask&quot;&gt;Flask&lt;/a&gt; 是一個輕量級的 Web應用框架 , 使用 Python 編寫。基於 Werkzeug WSGI 工具箱和 Jinja2 模板引擎。 Flask 使用 BSD 授權。&lt;/p&gt;&lt;/blockquote&gt;
+
+&lt;h3&gt;有趣的 &lt;em&gt;Flask&lt;/em&gt;&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;from flask import Flask
+app = Flask(__name__)
+
+@app.route(&quot;/&quot;)
+def hello():
+    return &quot;Hello World!&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3&gt;简单的安装&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ pip install Flask
+$ python hello.py
+ * Running on http://localhost:5000/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h4&gt;开始享受你的 &lt;em&gt;Flask&lt;/em&gt; 之旅&lt;/h4&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Hello, G Tech</title>
+   <link href="http://n3xtchen.github.io/n3xtchen//2013/09/20/hello-g-tech"/>
+   <updated>2013-09-20T00:00:00+08:00</updated>
+   <id>http://n3xtchen.github.io/n3xtchen//2013/09/20/hello-g-tech</id>
+   <content type="html">
+</content>
+ </entry>
+ 
+ 
+</feed>

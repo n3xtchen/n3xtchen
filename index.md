@@ -19,4 +19,8 @@ Hello, Blogger! 欢迎访问与评论！
 
 ### 当前计划
 
-完善主题，分割板块，添加 Tag 标签
++ Flask 学习
++ Vim 分享
++ Jekyll 学习
++ 完善界面
+
