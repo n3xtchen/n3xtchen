@@ -3,7 +3,7 @@ layout: post
 title: "Python Flask - 初探"
 description: ""
 category: python
-tags: [python, flask, beginner]
+tags: [python, flask, beginner, lesson]
 ---
 {% include JB/setup %}
 
