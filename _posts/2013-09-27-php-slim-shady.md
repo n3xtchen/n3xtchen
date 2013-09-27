@@ -48,3 +48,28 @@ tags: [php, slim, beginner, lesson]
 
 ### Hello, Slim
 
+应用代码如下：
+
+    # app.php 
+    <?php
+        require __DIR__.'/vendor/autoload.php'; // 使用 Composer 安装的方法
+        $app = new \Slim\Slim();
+        $app->get('/hello/:name', function ($name) {
+            echo "Hello, $name";
+        });
+        $app->run();
+    ?>
+
+这里假设您使用的是 **Apache**，并且应用的目录重写模块打开，重写规则如下：（稍后我们将为你详细介绍 **Apache/Nginx** 重写规则）
+
+    # .htaccess
+    RewriteEngine On
+    RewriteBase / # 代码所在 webroot 内的相对路径, 这里是在 webroot 目录内
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{QUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+
+我们访问 [http:127.0.0.1/hello/slim](http:127.0.0.1/hello/slim)，浏览器中将打印 `Hello, Slim`
+
+
