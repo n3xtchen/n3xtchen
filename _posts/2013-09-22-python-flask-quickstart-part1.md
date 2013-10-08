@@ -47,3 +47,14 @@ tags: [python, flask, beginner, lesson]
     app.run(debug=True)
 
 如上这两种方法都可以生效。
+
+### Routing
+
+### Static Files 
+
+### Rendering Templates
+
+### 访问请求的数据
+
+对于网页应用，处理客户端发送给服务器的数据是至关重要的。在 Flask 中，这个信
+息由全局的对象 request 来提供。
