@@ -100,3 +100,13 @@ Principles in Scala）。他是由 Scala 的创始人 Martin Odersky 教授的�
     scala> double(3)
     res9: Int = 6
 
+##### 可变参数(Variable lenth arguments)
+
+    scala> def upperAll(args: String*) = {
+         | args.map{arg=>arg.toUpperCase}
+         | }
+    upperAll: (args: String*)Seq[String]
+
+    scala> upperAll("Hello", "World")
+    res1: Seq[String] = ArrayBuffer(HELLO, WORLD)
+
