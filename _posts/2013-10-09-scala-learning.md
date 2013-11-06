@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Scala - 学习笔记"
+zitle: "Scala - 学习笔记"
 description: ""
 category: scala
-tags: [scala, learning ]
+rags: [scala, learning ]
 ---
 {% include JB/setup %}
 
@@ -110,3 +110,81 @@ Principles in Scala）。他是由 Scala 的创始人 Martin Odersky 教授的�
     scala> upperAll("Hello", "World")
     res1: Seq[String] = ArrayBuffer(HELLO, WORLD)
 
+#### 类(Classes)
+
+    scala> class Calculator {
+        |   val brand: String = "C"
+        |   def add(x: Int, y: Int): Int = x+y
+        | }
+    defined class Calculator
+
+    scala> val calc = new Calculator
+    calc: Calculator = Calculator@22ddcabb
+
+    scala> calc.brand
+    res0: String = C
+
+    scala> calc.add(1,1)
+    res1: Int = 2
+
+##### 构造器(Constructor)
+
+构造器不是一个特殊的方法，他只是定义在类函数外部的代码。(我们可以理解成初始化
+时，把本身作为函数调用，对象内方法只是声明，自然不会被调用)。
+
+    scala> class Calculator(brand: String) {
+         |   val color: String = if (brand == "TI") {
+         |     "blue"
+         |   } else if (brand == "HP") {
+         |     "black"
+         |   } else {
+         |     "white"
+         |   }
+         | 
+         |   def add(x: Int, y: Int): Int = x+y
+         | }
+    defined class Calculator
+    scala> val calc = new Calculator("HP")
+    calc: Calculator = Calculator@1e64cc4d
+
+    scala> calc.color
+    res0: String = black
+
+> #####Aside: 函数和方法
+> 函数和方法大体上是可以相互替换的。由于函数和方法很类似，你可以不记得你调用的
+> 是一个函数还是方法。当你纠结函数和方法的区别的时候，你可能会很迷惑。
+
+>       scala> class C {
+>           |  var acc = 0
+>           |  def method = { acc +=1 }
+>           |  val func = { () => acc +=1 }
+>           | }
+>       defined class C
+>       
+>       scala> val c =new C
+>       c: C = C@82f9028
+>       
+>       scala> c.method
+>       
+>       scala> c.acc
+>       res3: Int = 1
+>       
+>       scala> c.func
+>       res4: () => Unit = <function0>
+>       
+>       scala> c.acc
+>       res5: Int = 1
+>       
+>       scala> c.func()
+>       
+>       scala> c.acc
+>       res7: Int = 2)
+
+> 你可以不使用括号来调用函数，但是调用方法时就必须使用，你可能以为自己知道 Scala
+> 函数是如何工作的，但是我并不怎么认为。但是都使用括号时呢？你也许把它当作函数，但
+> 实际上是一个方法。
+
+> 实际上，既然你对函数和方法的概念很模糊，但是你让人能利用 Scala 做很多很棒的事情。
+> 如果你是新手，你可能应该读一下[他们区别的解释](http://www.google.com.hk/search?q=difference+scala+function+method),
+> 你可能会和他们遇到同样的麻烦。这并不意味你将会很困难使用 Scala。由于它们之间的区
+> 别太微小，不得不去剖析语言的底层来解释它。
