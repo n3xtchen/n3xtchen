@@ -1,6 +1,6 @@
 ---
 layout: post
-zitle: "Scala - 学习笔记"
+zitle: "Learn Scala - 入门"
 description: ""
 category: scala
 rags: [scala, learning ]
@@ -188,3 +188,82 @@ Principles in Scala）。他是由 Scala 的创始人 Martin Odersky 教授的�
 > 如果你是新手，你可能应该读一下[他们区别的解释](http://www.google.com.hk/search?q=difference+scala+function+method),
 > 你可能会和他们遇到同样的麻烦。这并不意味你将会很困难使用 Scala。由于它们之间的区
 > 别太微小，不得不去剖析语言的底层来解释它。
+
+#### 继承(Inheritance)
+
+    scala> class ScientificCalculator(brand: String) extends Calculator(brand) {
+         |   def log(m: Double, base: Double) = math.log(m)/math.log(base)
+         | }
+    defined class ScientificCalculator
+
+> Effective Scala 指出如果子类不完全不同于超类时，类型(Type) 优于 extends。
+
+##### 过载函数(Overloading methods)
+
+    scala> class EvenMoreScientificCalculator(brand: String) extends ScientificCalculator(brand) {
+         |   def log(m: Double) = log(m, math.exp(1))
+         | }
+    defined class EvenMoreScientificCalculator
+
+#### 抽象函数(Abstract Classes)
+
+    scala> abstract class Shape {
+         |   def getArea():Int    // subclass should define this
+         | }
+    defined class Shape
+
+    scala> class Circle(r: Int) extends Shape {
+         |   def getArea():Int = { r * r * 3 }
+         | }
+    defined class Circle
+
+    scala> val s = new Shape
+    <console>:8: error: class Shape is abstract; cannot be instantiated
+         val s = new Shape
+                        ^
+
+    scala> val c = new Circle(2)
+    c: Circle = Circle@65c0035b
+
+#### 特性(Traits)
+
+特性是一些字段和行为的集合，你可以继承或混合它。
+
+    /**
+     * 定义特性
+     */
+    scala> trait Car {
+         |   val brand: String
+         | }
+    defined trait Car
+
+    scala> trait GPS {
+         |   val gpstype: Int
+         | }
+    defined trait GPS
+
+    /**
+     * 继承一个特性
+     */
+    scala> class BMW extends Car {
+         |   val brand = "BMW"
+         | }
+    defined class BMW
+
+    /**
+     * 继承多个特性(使用 with)
+     */
+    scala> class BMW extends Car with GPS {
+         |   val brand = "BMW"
+         |   val gpstype = 1
+         | }
+    defined class BMW
+
+> **什么时候该使用 Trait 代替抽象累?** 如果你想要定义一个类接口类型，发现很难在
+> Trait 和抽象类之间选择。选择准则大体如下:
+
+> + 需要继承多个特性时，使用 Trait；类只能继承一个类。
+
+> + 如果你需要构造函数时，使用抽象类。抽象类的构造函数可以带参数，Trait 不能。
+
+
