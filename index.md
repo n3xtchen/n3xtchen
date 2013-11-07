@@ -16,13 +16,3 @@ Hello, Blogger! 欢迎访问与评论！
     <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
   {% endfor %}
 </ul>
-
-### 当前计划
-
-+ Flask 学习
-+ Senatra 学习
-+ Slim 学习
-+ Vim 分享
-+ Jekyll 学习
-+ 完善界面
-
