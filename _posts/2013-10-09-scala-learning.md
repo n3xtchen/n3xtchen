@@ -1,6 +1,6 @@
 ---
 layout: post
-zitle: "Learn Scala - 入门"
+title: "Learn Scala - 入门"
 description: ""
 category: scala
 rags: [scala, learning ]
