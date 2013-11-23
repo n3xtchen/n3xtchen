@@ -52,7 +52,27 @@ tags: [python, flask, beginner, lesson]
 
 ### Static Files 
 
-### Rendering Templates
+### 模版(Templates)
+
+通过 Python 生成 HTML 不好玩甚至非常鸡肋，因为你为了让你的应用安全，必须手动转义
+HTML。Jinja2 的出现改变了这一些，它是 Flask 下默认的模版引擎。
+
+    from flask import render_template
+
+    @app.route('/hello/<name>')
+    def root(name):
+        return render_template('hello.html', name=name)
+
+Flask 首先会从应用根目录下的 templates 文件夹下寻找。如果你的程序是模块化的，那这
+个文件夹就应该在你的模块目录下，包(Packages)也是一样的：
+
+    # a module
+    /application.py
+    /templates
+        /hello.html
+
+        
+
 
 ### 访问请求的数据
 
