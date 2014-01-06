@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Hadoop - Data Pig"
-description: ""
+title: "Data Pig - Pig 简介"
+description: "Pig Eat Data"
 category: Hadoop
 tags: [Hadoop, Pig]
 ---
