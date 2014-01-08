@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "PHP CodeSniffer - 规范你的PHP代码"
+title: "PHP CodeSniffer - 使用 PSR 规范你的PHP代码"
 description: ""
 category: PHP
 tags: [PHP, Tools]
@@ -111,13 +111,13 @@ tags: [PHP, Tools]
 8. 打开任务窗口（Window => Tasks）来检测代码；
 9. 大部分时间使用任务（只有在编辑文件，或者创建自己的过滤器会现实错误）。
 
-#### Eclipse（未测试）
+#### Eclipse
 
 安装非常简单，遵循通常的操作：
 
 1. Help => Install new Software...
 2. 填入网址： http://www.phpsrc.org/eclipse/pti/
-3. 选择想要的工具
+3. 选中 Tools -> PHP CodeSniffer，安装 
 4. 重启
 
 你现在就能使用通用的标准如 PEAR 和 ZEND 等等来检查代码规范；
@@ -125,6 +125,10 @@ tags: [PHP, Tools]
 使用自己的规范，所做的就是制定他们位置，然后激活它就可以：
 
 1. Window => Preferences
-2. PHP Tools => PHP CodeSniffer
+2. PHP Executables，点击 Add..；添加 PHP 执行路径，保存
+3. PHP Tools =>Library => PEAR，点击 New，添加 PEAR 目录的路径，保存；
+4. PHP Tools => PHP CodeSniffer，PHP Executable 选择第二步添加那个配置；
+PEAR Libary 选择第三步添加的那个库；
+5. 现在就可以选择你安装过的标准包；
 
 Happy Sniffing!
