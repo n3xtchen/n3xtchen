@@ -26,7 +26,7 @@ tags: [PHP, Tools]
     pear install PHP_CodeSniffer
 
 使用 `pear config-get php_dir` 查找 PEAR 的目录，然后创建 
-"/PHP/PHP_CodeSniffer/Standards" 目录（用来存放标准规则的）；
+"/PHP/CodeSniffer/Standards" 目录（用来存放标准规则的）；
 
 也可以使用新潮的安装工具 Composer（不知道，你就 OUT了！） 来安装）：
 
@@ -42,8 +42,10 @@ tags: [PHP, Tools]
 定制代码规范的存放目录：~/.composer/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards
 
 > #### PHP_CodeSniffer 源
-> Pear：http://pear.php.net/package/PHP_CodeSniffer
-> GitHub（非官方）：https://github.com/squizlabs/PHP_CodeSniffer
+
+> Pear：[http://pear.php.net/package/PHP_CodeSniffer](http://pear.php.net/package/PHP_CodeSniffer)
+
+> GitHub（非官方）：[https://github.com/squizlabs/PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 
 ### 开始用 PHP_CodeSniffer
 
@@ -53,17 +55,17 @@ tags: [PHP, Tools]
 
     phpcs --standard=build/phpcs/Joomla path/to/file/or/folder
 
-> 详尽的文档请见：http://pear.php.net/package/PHP_CodeSniffer/docs
+> 详尽的文档请见：[docs](http://pear.php.net/package/PHP_CodeSniffer/docs)
 
 ### 通用的 PHP 代码规范（重点哦）
 
 下面中文版的规范：
 
-+ http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-0/
-+ http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-1/
-+ http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-2/
-+ http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-3/
-+ http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-4/
++ [PSR-0](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-0/)
++ [PSR-1](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-1/)
++ [PSR-2](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-2/)
++ [PSR-3](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-3/)
++ [PSR-4](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-4/)
 
 由于 PHP 权威的项目支持，个人认为及其有可能发展成为 PHP 的业界的规范；
 加入该标准的项目：
@@ -79,11 +81,11 @@ tags: [PHP, Tools]
 + Zend Framework 2
 + 。。。
 
-> 详见：http://www.php-fig.org/
+> 详见：[FIG](http://www.php-fig.org/)
 
 #### 安装 PSR-0，PSR-1，PSR-2 规则
 
-下载地址：https://github.com/squizlabs/PHP_CodeSniffer/tree/master/CodeSniffer/Standards
+下载地址：[Standards](https://github.com/squizlabs/PHP_CodeSniffer/tree/master/CodeSniffer/Standards)
 
 如果，你使用 Xampp，把 PSR-1 的规则解压到 \xampp\php\PEAR\PHP\CodeSniffer\Standards\PSR 
 (其他名称也可以)，IDE 会识别到；
@@ -99,7 +101,7 @@ tags: [PHP, Tools]
 
 1. 打开 NetBeans；
 2. 进入 Tool => Plugins => Download ，然后点击 Plugin；
-3. 选中载入的 nbm 文件，确认安装；
+3. 搜索选中载入的 phpmdnb 文件，确认安装；
 4. 进入 Tool 标签页 => Options => PHP , 名称为 PHPCodeSniffer；
 5. 你需要设置 phpcs.bat 到路径所在：
     + Unix，使用 /usr/bin/phpcs（你可以使用 which 命令查找 phpcs 的路径）;
