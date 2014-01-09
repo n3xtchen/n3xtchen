@@ -3,7 +3,7 @@ layout: post
 title: "PHP CodeSniffer - 使用 PSR 规范你的PHP代码"
 description: ""
 category: PHP
-tags: [PHP, Tools]
+tags: [PHP, PSR, Tools]
 ---
 {% include JB/setup %}
 
@@ -19,18 +19,45 @@ tags: [PHP, Tools]
 
 如果你出现上述问题，那么 PHP_CodeSniffer 就是你的绝佳选择之一，尤其对于 PHP 开发者来说。
 
+### 首先介绍什么是 PSR（重点哦）
+
+下面中文版的规范：
+
++ [PSR-0](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-0/)
++ [PSR-1](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-1/)
++ [PSR-2](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-2/)
++ [PSR-3](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-3/)
++ [PSR-4](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-4/)
+
+由于 PHP 权威的项目支持，个人认为及其有可能发展成为 PHP 的业界的规范；
+
+加入该标准的项目：
+
++ Composer
++ Doctrine
++ Drupal
++ Laravel
++ PEAR
++ Propel
++ Symfony2
++ Yii framework
++ Zend Framework 2
++ 。。。
+
+> 详见：[FIG](http://www.php-fig.org/)
+
 ### 安装你的 PHP_CodeSniffer（注意，PHP 5.1.2 骨灰级的开发者请绕行） 
 
 使用 PERA 是最简单的安装方式，首先请确认你已经安装了 PEAR：
 
-    pear install PHP_CodeSniffer
+    $ pear install PHP_CodeSniffer
 
 使用 `pear config-get php_dir` 查找 PEAR 的目录，然后创建 
 "/PHP/CodeSniffer/Standards" 目录（用来存放标准规则的）；
 
 也可以使用新潮的安装工具 Composer（不知道，你就 OUT了！） 来安装）：
 
-    composer global require 'squizlabs/php_codesniffer=*'
+    $ composer global require 'squizlabs/php_codesniffer=*'
 
 确保 ~/.composer/vendor/bin/ 这个路径在你的全局 PATH 中。
 
@@ -49,39 +76,13 @@ tags: [PHP, Tools]
 
 ### 开始用 PHP_CodeSniffer
 
-    phpcs file/to/sniff
+    $ phpcs file/to/sniff
 
 或者指定你想要支持的标准，可以这么用：
 
-    phpcs --standard=build/phpcs/Joomla path/to/file/or/folder
+    $ phpcs --standard=build/phpcs/Joomla path/to/file/or/folder
 
 > 详尽的文档请见：[docs](http://pear.php.net/package/PHP_CodeSniffer/docs)
-
-### 通用的 PHP 代码规范（重点哦）
-
-下面中文版的规范：
-
-+ [PSR-0](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-0/)
-+ [PSR-1](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-1/)
-+ [PSR-2](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-2/)
-+ [PSR-3](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-3/)
-+ [PSR-4](http://n3xtchen.github.io/n3xtchen/php/2014/01/05/php-fig---psr-4/)
-
-由于 PHP 权威的项目支持，个人认为及其有可能发展成为 PHP 的业界的规范；
-加入该标准的项目：
-
-+ Composer
-+ Doctrine
-+ Drupal
-+ Laravel
-+ PEAR
-+ Propel
-+ Symfony2
-+ Yii framework
-+ Zend Framework 2
-+ 。。。
-
-> 详见：[FIG](http://www.php-fig.org/)
 
 #### 安装 PSR-0，PSR-1，PSR-2 规则
 
@@ -102,6 +103,7 @@ tags: [PHP, Tools]
 1. 打开 NetBeans；
 2. 进入 Tool => Plugins => Download ，然后点击 Plugin；
 3. 搜索选中载入的 phpmdnb 文件，确认安装；
+3. 进入 Available Plugins 搜索 phpmd ，选中 phpCs-MD Plubgin 确认安装；
 4. 进入 Tool 标签页 => Options => PHP , 名称为 PHPCodeSniffer；
 5. 你需要设置 phpcs.bat 到路径所在：
     + Unix，使用 /usr/bin/phpcs（你可以使用 which 命令查找 phpcs 的路径）;
@@ -110,6 +112,7 @@ tags: [PHP, Tools]
 7. 现在，你点击测试 Settings 来检查配置，单击 OK 来完成安装；
 8. 打开任务窗口（Window => Tasks）来检测代码；
 9. 大部分时间使用任务（只有在编辑文件，或者创建自己的过滤器会现实错误）。
+10. 文件右键点击就可以看到 Check Style 菜单（它就是传说中的 CodeSniffer）；
 
 #### Eclipse
 
