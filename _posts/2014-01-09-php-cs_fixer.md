@@ -17,7 +17,7 @@ tags: [PHP, PSR, Tools]
 PHP-CS-Fixer 来拯救你；全名：PHP Coding Standards Fixer，它就是为了解决根据 PSR 规
 范修复你代码大部分不符合规范的的修复工具。
 
-> 如果你还不知道什么 PSR 和 PHP_CodeSniffer, 请看 [post](http://n3xtchen.github.io/n3xtchen/php/2014/01/08/php-code_sniffer/)
+> 如果你还不知道什么 PSR 和 PHP_CodeSniffer, 请看 [PHP CodeSniffer - 使用 PSR 规范你的PHP代码](http://n3xtchen.github.io/n3xtchen/php/2014/01/08/php-code_sniffer/)
 
 ### 安装 PHP-CS-Fixer
 
