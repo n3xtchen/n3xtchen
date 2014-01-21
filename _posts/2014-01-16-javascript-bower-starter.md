@@ -1,6 +1,7 @@
 ---
 layout: post
-title: "Javascript Bower - 包管理工具 For UI/UE - Basic"
+title: "Javascript Bower - 快速入门"
+tagline: "包管理工具 For UI/UE"
 description: ""
 category: javascript
 tags: [javascript, package_manager]
@@ -29,7 +30,7 @@ AMD 这样的模块系统。
 
 #### 查询
 
-    $ bower search backbone # 查询包名与 backbone 相匹配的包
+    $ bower search backbone # 查询包名与 backbone 相匹配的代码库
     Search results:
 
         backbone git://github.com/jashkenas/backbone.git
@@ -94,9 +95,9 @@ package.json 和 gem 的 Gemfile 那样，是非常有用的。
 
 定义的选项如下：
 
-+ name（必须）：包的名称
++ name（必须）：项目或自定义库的名称
 + version：版本号
-+ main［字符或者数组］：包的主要终结点（endpoints）
++ main［字符或者数组］：包的主文件，,下一个教程会详细解释
 + igore［数组］：在你安装包的时候，你想要 bower 忽略安装的文件路径列表
 + dependencies［哈希对象］：产品所依赖的包名
 + devDependencies［哈希对象］：开发时使用的依赖，可能是测试工具包
@@ -105,7 +106,7 @@ package.json 和 gem 的 Gemfile 那样，是非常有用的。
         {
           "name": "my-project",
           "version": "1.0.0",
-          "main": "path/to/main.css",
+          "main": "path/to/main.js",
           "ignore": [
               ".jshintrc",
               "**/*.txt"
@@ -128,7 +129,7 @@ package.json 和 gem 的 Gemfile 那样，是非常有用的。
 
 ### 结语
 
-如果你看过其他的包管理工具，你可能会强加一些东西在 bower身上，尤其是缺乏了很多
+如果你看过其他的包管理工具，你可能会强加一些东西在 bower 身上，尤其是缺乏了很多
 包管理工具的特性。我也有同样的疑惑。当我深入了解了 bower 之后，
 借用 Andrew Burgess 的话：
 
@@ -144,7 +145,3 @@ package.json 和 gem 的 Gemfile 那样，是非常有用的。
 
 + [Andrew Burgess - Meet Bower](http://net.tutsplus.com/tutorials/tools-and-tips/meet-bower-a-package-manager-for-the-web/)
 + [bower 官网](http://bower.io)
-
-
-
-
