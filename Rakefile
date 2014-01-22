@@ -123,7 +123,7 @@ task :publish do
   post_path = File.join(CONFIG['posts'], "#{date}-#{draft_filename}")
 
   mv(draft_path, post_path)
-end
+end # publish
 
 # Usage: rake page name="about.html"
 # You can also specify a sub-directory path.
