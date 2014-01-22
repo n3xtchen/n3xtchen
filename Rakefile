@@ -10,6 +10,8 @@ CONFIG = {
   'layouts' => File.join(SOURCE, "_layouts"),
   'posts' => File.join(SOURCE, "_posts"),
   'post_ext' => "md",
+  'drafts' => File.join(SOURCE, "_drafts"),
+  'draft_ext' => "md",
   'theme_package_version' => "0.1.0"
 }
 
@@ -70,6 +72,58 @@ task :post do
     post.puts "{% include JB/setup %}"
   end
 end # task :post
+
+# Usage: rake draft title="A Title" [date="2012-02-09"] [tags=[tag1, tag2]]
+# @author chenwen
+desc "Begin a new draft in #{CONFIG['drafts']}"
+task :draft do
+  abort("rake aborted: '#{CONFIG['drafts']}' directory not found.") unless FileTest.directory?(CONFIG['drafts'])
+  title = ENV["title"] || "new-post"
+  tags = ENV["tags"] || "[]"
+  slug = title.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+  filename = File.join(CONFIG['drafts'], "#{slug}.#{CONFIG['draft_ext']}")
+  if File.exist?(filename)
+    abort("rake aborted!") if ask("#{filename} already exists. Do you want to overwrite?", ['y', 'n']) == 'n'
+  end
+  
+  puts "Creating new draft: #{filename}"
+  open(filename, 'w') do |post|
+    post.puts "---"
+    post.puts "layout: post"
+    post.puts "title: \"#{title.gsub(/-/,' ')}\""
+    post.puts 'description: ""'
+    post.puts "category: "
+    post.puts "tags: #{tags}"
+    post.puts "---"
+    post.puts "{% include JB/setup %}"
+  end
+end # task :draft
+
+# Usage: rake publish draft="path/to/draft" [date="2012-02-09"]
+# @author chenwen
+desc "Publish a draft in #{CONFIG['drafts']} to #{CONFIG['drafts']}"
+task :publish do
+  draft_path = ENV["draft"] || nil
+  if draft_path == nil
+    abort("Usage: rake publish draft=\"path/to/draft\" [date=\"2012-02-09\"]")
+  end
+
+  draft_filename = File.basename(draft_path)
+  if not(File.exist?(draft_path))
+    abort("Draft #{draft_filename} is not exists.")
+  end
+
+  begin
+    date = (ENV['date'] ? Time.parse(ENV['date']) : Time.now).strftime('%Y-%m-%d')
+  rescue => e
+    puts "Error - date format must be YYYY-MM-DD, please check you typed it correctly!"
+    exit -1
+  end
+
+  post_path = File.join(CONFIG['posts'], "#{date}-#{draft_filename}")
+
+  mv(draft_path, post_path)
+end
 
 # Usage: rake page name="about.html"
 # You can also specify a sub-directory path.
