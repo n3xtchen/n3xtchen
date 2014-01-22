@@ -22,7 +22,7 @@ tags: [linux, software]
 
 + PHP 5.3.10
     + pecl
-    + [Composer]({% post_url 2013-10-08-php-composer%})
+    + [Composer]()
     + php-apc
     + php-curl
     + php-memcahe
