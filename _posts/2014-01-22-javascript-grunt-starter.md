@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Javascript Grunt - 快速入门"
-tagline: "JS的项目构建工具"
+tagline: "JS的项目构建工具之－任务运行器"
 description: ""
 category: javascript
 tags: [javascript, grunt]

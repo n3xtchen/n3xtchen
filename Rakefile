@@ -155,6 +155,11 @@ task :preview do
   system "jekyll serve -w"
 end # task :preview
 
+desc "Launch preview environment"
+task :preview_all do
+  system "jekyll serve --draft -w"
+end # task :preview draft
+
 # Public: Alias - Maintains backwards compatability for theme switching.
 task :switch_theme => "theme:switch"
 
