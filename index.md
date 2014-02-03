@@ -5,7 +5,7 @@ tagline: created by N3xtchen
 ---
 {% include JB/setup %}
 
-    在这里，一同享受技术与编程，为我们带来无限乐趣，以及对未来的憧憬！
+    在这里，一同享受技术为我们带来无限乐趣！
 
 ### 最新 Blog
 

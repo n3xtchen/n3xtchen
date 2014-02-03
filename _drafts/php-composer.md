@@ -50,3 +50,35 @@ Composer 要求 PHP 5.3.2 及以上的版本来运行。一些敏感的 php 配�
 版本控制器）。
 
 Composer 是跨平台的，他们努力使它在 Windows，Linux 和 OSX 上运行同样好。
+
+#### Composer 全局配置
+
+    $ composer config -g -l # -g：查看全局/系统级别，-l：list/查看
+    [repositories.packagist.type] composer
+    [repositories.packagist.url] https?://packagist.org
+    [repositories.packagist.allow_ssl_downgrade] true
+    [process-timeout] 300
+    [use-include-path] false
+    [preferred-install] auto
+    [notify-on-install] true
+    [github-protocols] [git, https]
+    [vendor-dir] vendor
+    [bin-dir] {$vendor-dir}/bin (vendor/bin)
+    [cache-dir] /Users/ichexw/.composer/cache
+    [cache-files-dir] {$cache-dir}/files (/Users/ichexw/.composer/cache/files)
+    [cache-repo-dir] {$cache-dir}/repo (/Users/ichexw/.composer/cache/repo)
+    [cache-vcs-dir] {$cache-dir}/vcs (/Users/ichexw/.composer/cache/vcs)
+    [cache-ttl] 15552000
+    [cache-files-ttl] 15552000
+    [cache-files-maxsize] 300MiB (314572800)
+    [discard-changes] false
+    [autoloader-suffix]
+    [prepend-autoloader] true
+    [github-domains] [github.com]
+    [home] /Users/ichexw/.composer
+
+*Note*: 这里有几个常用的设置：
+
++ [home]：系统依赖包
++ [vendor-dir]
++ [bin-dir]

@@ -1,0 +1,33 @@
+<div class="sidebar-module sidebar-module-inset">
+    <h4>关于我</h4>
+    <ol class="list-unstyled">
+        <li>Hi，我是 {{site.author.name}}！</li>
+        <li>Email: {{site.author.email}}</li>
+        <li>Github: {{site.author.github}}</li>
+    </ol>
+</div>
+
+<div class="sidebar-module">
+    <h4>文章分类</h4>
+    <ol class="list-unstyled">
+      {% assign categories_list = site.categories %}
+      {% for category in categories_list %}
+      <li>
+      <a href="{{ BASE_PATH }}{{ site.JB.categories_path }}#{{ category[0] }}-ref">
+        {{ category[0] | join: "/" | upcase}}
+        <span>({{ category[1].size }})</span>
+      </a>
+      </li>
+      {% endfor %}
+    </ol>
+</div>
+
+<div class="sidebar-module">
+    <h4 id="{{ category[0] }}-ref">标签</h4>
+    <ol class="tag_box inline list-unstyled">
+      {% assign tags_list = site.tags %}  
+      {% include JB/tags_list %}
+    </ol>
+</div>
+
+
