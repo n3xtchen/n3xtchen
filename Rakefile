@@ -186,7 +186,8 @@ namespace :theme do
     abort("rake aborted: '#{theme_path}' directory not found.") unless FileTest.directory?(theme_path)
     abort("rake aborted: '#{CONFIG['layouts']}' directory not found.") unless FileTest.directory?(CONFIG['layouts'])
 
-
+    Dir.glob("#{theme_path}/*") do |filename|
+      next if non_layout_files.include?(File.basename(filename).downcase)
       puts "Generating '#{theme_name}' layout: #{File.basename(filename)}"
 
       open(File.join(CONFIG['layouts'], File.basename(filename)), 'w') do |page|

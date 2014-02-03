@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Welcome To G-Tech!
+title: Welcome To N3xt-Tech!
 tagline: created by N3xtchen
 ---
 {% include JB/setup %}
