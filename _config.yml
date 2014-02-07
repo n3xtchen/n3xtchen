@@ -1,5 +1,6 @@
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
+relative_permalinks: true
 permalink: /:categories/:year/:month/:day/:title 
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
@@ -10,7 +11,8 @@ pygments: true
 # so be sure to set them if your theme uses them.
 #
 title : N3xt-Tech 博客
-tagline: Knowing, Learning & Sharing Funny Tech & Coding
+# tagline: Knowing, Learning & Sharing Funny Tech & Coding
+tagline: Sharing Funny Tech With You
 author :
   name : n3xtchen
   email : echenwen@gmail.com
