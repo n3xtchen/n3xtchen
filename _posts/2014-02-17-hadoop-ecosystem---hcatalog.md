@@ -8,11 +8,11 @@ tags: [hadoop, hive, hcat]
 ---
 {% include JB/setup %}
 
-Apache HCatalog 是 Hadoop 的中数据表和存储管理层，让用户可以使用不同的工具来
-（例如，Pig，MR 和 Hive）读写网格的数据。HCatalog 是以 HDFS 的数据关系视图的
-形式来呈现给用户的，确保用户不需要关系数据的存储形式和方式。HCatalog 可以以
-RCFile，文本文件或者制表符式的序列文件。它也提供 Rest 接口让外部系统访问这些
-表的元数据。
+Apache HCatalog 是基于 Hadoop 之上的数据表和存储管理服务，让用户可以使用不同
+的工具来（例如，Pig，MR 和 Hive）读写网格的数据。HCatalog 是以 HDFS 的数据关
+系视图的形式来呈现给用户的，确保用户不需要关心数据的存储形式和存储方式。
+HCatalog 可以以RCFile，文本文件或者制表符式的序列文件。它也提供 Rest 接口让
+外部系统访问这些表的元数据。
 
 ### HCatalog 的功能
 

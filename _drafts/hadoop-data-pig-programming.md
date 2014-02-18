@@ -404,6 +404,24 @@ ORDER 的语法和 GROUP 类似，
 
 和 GROUP 一样，它也支持多键排序：
 
+    -- order_multi.pig
+    artists = LOAD 'data/RockNRollHallOfFrameMultipleInductees'
+        USING PigStorage('|')
+        AS (name,
+            first_band:chararray, first_year:int,
+            sec_band:chararray, sec_year:int,
+            third_band:chararray, third_year:int
+        );
+
+    -- 根据初次入选和第二次入选倒序排序
+    by_first_year_second = ORDER artists BY first_year DESC, sec_year DESC;
+
+    DUMP by_first_year_second;
+
+排序的方式是基于该字段的数据类型：数值类型以数字排序，字符串（chararray）和
+字节串（bytearray）是以字符排序。对 Map，tuple 和 bag 进行排序
+
+
 
 
 
