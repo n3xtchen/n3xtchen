@@ -419,21 +419,199 @@ ORDER 的语法和 GROUP 类似，
     DUMP by_first_year_second;
 
 排序的方式是基于该字段的数据类型：数值类型以数字排序，字符串（chararray）和
-字节串（bytearray）是以字符排序。对 Map，tuple 和 bag 进行排序
+字节串（bytearray）是以字符排序。注意，不要对 Map，tuple 和 bag 进行排序，
+否则会报错。对于所有数据类型，null 比其他的任何可能值都要小。
 
+### 去重（DISTINCT）
 
+DISTINCT 语句很简单，去除记录中的重复项目。
 
+    --distinct.pig
+    -- find a distinct list of ticker symbols for each exchange
+    -- This load will truncate the records, picking up just the first two fields. daily = load 'NYSE_daily' as (exchange:chararray, symbol:chararray);
+    uniq = distinct daily;
 
+由于它把所有的记录都手机其爱，DISTINCT 将操作强制进入 reduce 阶段。它也可以
+使用 combiner 去除重复，它在 Map 阶段将它删除。
 
+### 联表（JOIN）
 
+联表是数据处理中最耗资源的工作之一。JOIN 从一个输入中选择数据整合另一个输入
+的数据中，通过指定键进行联表。和 GROUP，ORDER 一样，它也可以多键联表。
 
+    --join_basic.pig
+    today = LOAD 'data/stock-2014-02-17.csv'
+        USING PigStorage(',')
+        AS (exchange, symbol, name,
+                open, high, low, close, volumn);
 
+    lastday = LOAD 'data/stock-2014-02-14.csv'
+        USING PigStorage(',')
+        AS (exchange, symbol, name,
+                open, high, low, close, volumn);
 
+    jnd = JOIN today BY (exchange, symbol) ,
+        lastday BY (exchange, symbol);
 
+    DESCRIBE jnd;
 
+输出的结构：
 
+    jnd: {
+        today::exchange: bytearray, today::symbol: bytearray, today::name: 
+        bytearray,today::open: bytearray,today::high: 
+        bytearray,today::low: bytearray,today::close: 
+        bytearray,today::volumn: bytearray,
+        lastday::exchange: bytearray,lastday::symbol: bytearray,
+        lastday::name: bytearray,
+        lastday::open: bytearray,lastday::high: bytearray,lastday::low: 
+        bytearray,lastday::close: bytearray,lastday::volumn: bytearray
+    }
 
+只有当字段名在记录中不再唯一的时候，会使用 :: 前缀。
 
+Pig 同样支持外联（OUTER JOINS）。在外联接中，如果找不到匹配的一方会直接以
+null 值来补字段。外联接包括：LEFT，RIGHT 和 FULL。它们的概念和 SQL 相同，这
+里就不进行详细阐述：
 
+    left_join = JOIN input1 BY (fld11) LEFT OUTER, input2 BY (fld21);
+    right_join = JOIN input1 BY (fld11) RIGHT OUTER, input2 BY (fld21);
+    full_join = JOIN input1 BY (fld11) FULL OUTER, input2 BY (fld21);
 
+注意，这里的 OUTER 是个干挠词，可以被忽略，它并不等同于 FULL OUTER，而且单独
+使用将会被报错。
 
+Pig 只有在了解联表双方的 Schema 的情况下才支持外联接，否则它将不知道如何补
+null 字段。
+
+Pig 和 SQL 一样支持多表联接：
+
+    A = LOAD 'input1' AS (x, y);
+    B = LOAD 'input2' AS (u, v);
+    C = LOAD 'input3' AS (e, f);
+    alpha = JOIN A BY x, B BY u, C BY e;
+
+Pig 自联接（Self Join）的实现是通过加载两次数据：
+
+    --selfjoin.pig
+    -- For each stock, find all dividends that increased between two dates
+    divs1 = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+            date:chararray, dividends);
+    divs2 = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+            date:chararray, dividends);
+    jnd = JOIN divs1 BY symbol, divs2 BY symbol;
+    increased = FILTER jnd BY divs1::date < divs2::date AND divs1::dividends < divs2::dividends;
+
+而下面的实现是错的，而且会执行失败：
+
+    --selfjoin.pig
+    -- For each stock, find all dividends that increased between two dates 
+    divs1 = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+            date:chararray, dividends);
+    jnd = JOIN divs1 BY symbol, divs1 BY symbol;
+    increased = FILTER jnd BY divs1::date < divs2::date AND divs1::dividends < divs2::dividends;
+
+它看起来可以成功，因为 Pig 可以把数据分成两块，分别发送给 JOIN。但是，问题是
+联表之后会出现字段冲突，因此必须 load 两次。而且，对于 Pig 来说，虽然代码上
+载入了两次相同的数据，实际上它只载入的一次。
+
+<!--
+Pig 联表的时候使用 map 来标记输入的每一个记录，然后使用联表的键来 shuffle 处
+理和分发。因此，一次 JOIN 需要进入两次 reduce。一旦数据根据键都手机到一块，
+Pig 就会在两个输入中做交叉。
+-->
+
+### 分页（LIMIT）
+
+有时，你可能只希望看到某个数量的数据：
+
+    --limit.pig
+    divs = LOAD 'NYSE_dividends'; 
+    first10 = LIMIT divs 10;
+
+### 样本（SAMPLE）
+
+SAMPLE 提供了一种从你的数据中获取一份样本。它读取所有的数据，然后返回某一个
+百分比的数据。这个值只能是 0 到 1 之间。
+
+    --sample.pig
+    divs = LOAD 'NYSE_dividends'; 
+    some = SAMPLE divs 0.1; -- 获取10%的数据
+
+目前的样本算法非常简单，可以把它重写成：
+
+    some = FILTER divs BY RANDOM()<=0.1;
+
+### 并行（PARALLEL）
+
+Pig 的核心之一就是提供并行数据处理的语言。Pig 的核心价值观之一就是温驯的动物
+；因此，Pig 更愿意让你告诉它如何并行处理。为此，它提供了 PARALLEL 语句。
+
+PARALLEL 语句可以和 Pig Latin 中任何关系操作一同使用。然而，它控制 reduce
+端的并行，因此它只能识别能强制 reduce 的操作；这些操作包括 GROUP, ORDRE,
+DISTINCT, LIMIT, COGROUP, 以及 CROSS。 PARALLEL 在本地模式的情况下被忽略，
+因为本地模式的数据处理都是序列的。
+
+    --parallel.pig
+    daily = LOAD 'NYSE_daily' AS (exchange, symbol, date, open, high, 
+            low, close, volume, adj_close);
+    bysymbl = GROUP daily BY symbol PARALLEL 10;
+
+这个例子，PARALLEL 将被 PIG 把 MR 工作增加 10 个进程。它只能作用当前语句，
+而不会影响其他语句。但是，它也提供了一个简单的方式，让它在整个代码中奏效：
+
+    --defaultparallel.pig
+    SET DEFAULT_PARALLEL 10;    -- 在这个代码的所有操作都将有 10 个 reduce
+    daily = LOAD 'NYSE_daily' AS (exchange, symbol, date, open, high, 
+            low, close, volume, adj_close); 
+    bysymbl = GROUP daily BY symbol;
+    average = FOREACH bysymbl GENERATE group, AVG(daily.close) AS avg; 
+    sorted = ORDER average BY avg DESC;
+
+如果你不指定 PARALLEL 层级，Pig 0.8 之前的的默认是由你的集群的设置。
+
+### 自定义函数（UDF）
+
+Pig 的强大得益于它允许用用户通过 UDF 来定制他们的操作。0.7 之前，所有的 UDF 
+只允许使用 JAVA 来编写。当前的版本是 0.12，它还支持 JYTHON，JAVASCRIPT，
+RUBY 以及 GROOVY 来编写 UDF，详情请参见[User Defined Functions](http://pig.apache.org/docs/r0.12.0/udf.html)。
+
+还需要特别介绍的就是 Piggybank，用户贡献的 UDF 集，它和 Pig 一同打包和发行
+。但是它不包含在 pig.jar 中；因此，如果你要使用，需要登记它。
+
+当然你也可以编写，或者使用别人开发的 UDF。
+
+#### 登记 UDF
+
+当你的 UDF 不包含在你的 Pig 中的时候，你需要告诉 Pig 从哪里寻找这些函数。
+
+载入 JAVA 编写的 UDF：
+
+    REGISTER 'your_path_to_piggybank/piggybank.jar';
+
+载入 JYTHON 编写的 UDF：
+
+    REGISTER 'xx.py' USING jython as xx;
+
+#### 定义（DEFINE）和 UDF
+
+DEFINE 可以用来给你的 JAVA 包名建立别名来方便调用；它还可以提供流命令的定义
+，但是不是本章要涵盖的内容。下面是例子：
+
+    REGISTER 'your_path_to_piggybank/piggybank.jar';
+    DEFINE reverse org.apache.pig.piggybank.evaluation.string.Reverse();
+    divs = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+            date:chararray, dividends:float); 
+    backwards = FOREACH divs GENERATE reverse(symbol);
+
+求值或者筛选函数可能需要带多个参数。如果你用在 UDF，DEFINE 就是提供这些参数
+的地方。例如：
+
+    --define_constructor_args.pig
+    REGISTER 'acme.jar';
+    DEFINE convert com.acme.financial.CurrencyConverter('dollar', 'euro');
+    divs = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+            date:chararray, dividends:float); 
+    backwards = FOREACH divs GENERATE convert(dividends);
+
+### Enjoy Pig!
