@@ -3,7 +3,7 @@ layout: post
 title: "Data Pig - Pig Latin 基础"
 description: ""
 category: Hadoop
-tags: [Hadoop, Pig]
+tags: [hadoop, pig]
 ---
 {% include JB/setup %}
 
