@@ -87,12 +87,22 @@ tags: [R]
     > library(devtools)
     > install_github("knitr", "yihui")
 
-*Note*：Os X 老是报错 `fatal error: 'libintl.h' file not found`，还为找到
-解决方案。安装和更新包老是有问题。
-
 ### 维护
 
     # 更新包
     > update.packages(ask = FALSE)
     # 删除包
     > remove.packages("packName");
+
+> *Note*：Os X 报错 `fatal error: 'libintl.h' file not found` 的解决方案：
+> 
+>   $ brew intall gettext
+>   $ find ./ -name "libintl.*"
+>   ./0.18.3.2/include/libintl.h
+>   ./0.18.3.2/lib/libintl.8.dylib
+>   ./0.18.3.2/lib/libintl.a
+>   ./0.18.3.2/lib/libintl.dylib
+>   ./0.18.3.2/share/gettext/intl/libintl.rc
+>   $ ln -s /usr/local/Cellar/gettext/0.18.3.2/lib/libintl.* /usr/local/lib/
+>   $ ln -s /usr/local/Cellar/gettext/0.18.3.2/include/libintl.h /usr/local/include/libintl.h
+
