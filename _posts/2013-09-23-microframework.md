@@ -2,8 +2,8 @@
 layout: post
 title: "WEB 微框架"
 description: ""
-category: WEB框架
-tags: [微框架, Flask, Senatra, Slim]
+category: framework
+tags: [microframe, Flask, Senatra, Slim]
 ---
 {% include JB/setup %}
 ### 什么是微框架(MicroFrameWork)

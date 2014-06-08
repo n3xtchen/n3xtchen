@@ -1,11 +1,13 @@
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
+
 relative_permalinks: true
 permalink: /:categories/:year/:month/:day/:title 
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 markdown: rdiscount
-pygments: true
+highlighter: pygments
+# pygments: true
 
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
@@ -31,6 +33,7 @@ author :
 #
 production_url : http://n3xtchen.github.io/n3xtchen/
 
+encoding: utf-8
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
 JB :

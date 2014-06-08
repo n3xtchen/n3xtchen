@@ -27,6 +27,7 @@ tags: [osX, software]
 #### Dmg 包
 
 + Java
++ RStudio
 
 #### App Store
 

@@ -8,7 +8,7 @@ tags: [hadoop, pig]
 {% include JB/setup %}
 
 通过三个章节的铺垫，现在开始深入了解 Pig 专属语言的 Pig Latin；
-再次强调下， *Pig Latin 是一门数据流语言（dataflow languag）*。
+再次强调下， *Pig Latin 是一门数据流语言（dataflow language）*。
 
 ### 关系（relation）和字段（field）的命名
 
