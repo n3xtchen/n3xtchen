@@ -87,7 +87,7 @@ JB :
   # Set 'provider' to false to turn commenting off globally.
   #
   comments :
-    provider : disqus
+    provider : changyan
     disqus :
       short_name : jekyllbootstrap
     livefyre :
@@ -99,6 +99,9 @@ JB :
       num_posts: 5
       width: 580
       colorscheme: light
+    changyan:
+      appid : cyrdBljw3
+      conf: prod_3b961db1736dbd3455fa822ed7583dde
    
   # Settings for analytics helper
   # Set 'provider' to the analytics provider you want to use.
