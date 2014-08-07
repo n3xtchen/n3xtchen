@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "函数式编程 && Python"
+title: "函数式编程 && Python - 第一部分"
 description: ""
 category: Python
 tags: [Python, Funcitonal Programming]
@@ -259,44 +259,61 @@ Sorry，Python 目前不支持这一特性，下面代码演示，Python 对尾�
 
 ### 函数式编程－偏函数应用（Partial Function Application）
 
-> 通过固定函数的一个或多个参数，才生成一个新的更少元数函数。
+> 通过**固定函数的一个或多个参数**，生成一个新的更少元数函数。
 
-<!--
-#### 简单类型λ演算（微积分）
+固定参数是偏函数应用的函数。
 
-	papply : (((a × b) → c) × a) → (b → c) = λ(f, x). λy. f (x, y)
--->
+   def log(level, message):
+   		print level + ": " + message   
 
-	def log(level, message):
-    	print "[{level}]: {msg}".format(level=level, msg=message)					
+   log("Warning", "this is one warning message")
+   log("Error", "this is one error message")
 
-	log("debug", "Start doing something")
-	log("debug", "Continue with something else")
-	log("debug", "Finished. Profit?")
+   def logWarning(message):
+       log("Warning", message)
+    
+   def logError(message):
+       log("Error", message)
+    
+   logWarning("this is one warning message")
+   logError("this is one error message")
 
-	def debug(message):
-    	log("debug", message)
-    	
-简化成：
+上面的函数实现，相信代码都不会陌生把，`logWarning` 和 `logError` 就叫做函数应用。
 
-	def log(level, message):
-    	print "[{level}]: {msg}".format(level=level, msg=message)					
-	from functools import partial
-	debug = partial(log, "debug")
+在 Python 中可以借助 functools 模块来完成偏函数应用，而不用手工编写代码。
 
-	debug("Start doing something")
-	debug("Continue with something else")
-	debug("Finished. Profit?")
+看看 Demo：
+
+	>>> from functools import partial
+	>>> a = lambda x, y, z: x+y+z
+	>>> bind_x = partial(a, 1)
+	>>> bind_x(2, 3)
+	6 
+	
+上述例子我们可以使用简单类型λ演算来表示
+
+	papply : λ(f, x). λy. f (x, y)
+	
 	
 ### 函数式编程－加里化（Currying）
 
 > 是一种将带多个参数的函数转化成每次传入一个参数的函数链调用
 
-<!--
-#### 简单类型λ演算（微积分）
+**Currying**：因为是美国数理逻辑学家哈斯凯尔·加里(Haskell Curry)发明了这种函数使用技巧，所以这样用法就以他的名字命名为Currying，中文翻译为“加里化”。
 
-curry: ((a × b) → c) → (a → (b → c)) = λf. λx. λy. f (x, y)
--->
+先看一个简单的例子：
+
+	def hiCurry(x):
+		return lambda z: lambda y: x + y + z
+		
+	>>> hiCurry(1)(2)(3)
+	6
+	
+上述例子我们可以使用简单类型λ演算来表示
+
+	curry: λx. λy. λz. (x+y+z)
+
+#### 常规的函数
 
 	def simple_sum(a, b):
     	return sum(range(a, b+1))
@@ -310,7 +327,7 @@ curry: ((a × b) → c) → (a → (b → c)) = λf. λx. λy. f (x, y)
 	>>> square_sum(1,10)
 	385
 	
-常规的实现：
+#### 使用 Currying
 
 	def fsum(f):
     	def apply(a, b):
@@ -326,8 +343,22 @@ curry: ((a × b) → c) → (a → (b → c)) = λf. λx. λy. f (x, y)
 	>>> import functools
 	>>> fsum(functools.partial(operator.mul, 2))(1, 10)
 	110
+	
+#### 使用闭包封装一个通用 Currying 的函数(来源 Cookbook)
 
-标准库：
+	def currying(f, *a, **kw):
+    	def curried(*more_a, **more_kw):
+        	return f(*(a+more_a), **dict(kw, **more_kw))
+    	return curried
+    	
+    >>> a = lambda a, b, c: a+b+c
+    >>> fillA = currying(a, 1)
+    >>> fillB = currying(fillA, 2)
+    >>> fillC = currying(fillC, 3)
+    >>> fillC()
+    6
+
+#### 标准库中利用 Currying 技术：
 
 	>>> from operator import itemgetter
 	>>> itemgetter(3)([1,2,3,4,5])
@@ -377,36 +408,15 @@ curry: ((a × b) → c) → (a → (b → c)) = λf. λx. λy. f (x, y)
 	>>> reduce(operator.add, map(len, ss))
 	11
 
+### 结语
+
+系统地总结下自己对函数式编程的理解，没想到，收获颇丰！千万不要被外界评论给吓倒，绝对是一门有意思的学问。
+
+发现通过小小一个篇幅的博客，根本无法把函数式编程的全部概念都讲清楚，只能慢慢来了，越深挖，内容也多，来日方长，只能慢慢来了，就怕大脑不够用！已经被忽悠去学习 λ 演算！
+
+FP 哪里是编程，骨子里就是透着都是数学公式。
+
 ### 未完待续
-
-<!--
-### Python 函数式编程常见的模块
-
-#### Operator 模块
-
-	>>> operator.add(1,2)
-	3
-	>>> operator.mul(3,10)	＃ 乘
-	30
-	>>> operator.pow(2,3)	＃ 幂
-	8
-	>>> operator.itemgetter(1)([1,2,3])
-	2
-
-#### Itertools 模块
-
-	>>> list(itertools.chain([1,2,3], [10,20,30])) ＃ 链
-	[1, 2, 3, 10, 20, 30]
-	>>> list(itertools.chain(*(map(xrange, range(5)))))
-	[0, 0, 1, 0, 1, 2, 0, 1, 2, 3]
-	>>> list(itertools.starmap(lambda k,v: "%s => %s" % (k,v), 
-	...                        {"a": 1, "b": 2}.items()))
-	['a => 1', 'b => 2']
-	>>> list(itertools.imap(pow, (2,3,10), (5,2,3)))
-	[32, 9, 1000]
-	>>> dict(itertools.izip("ABCD", [1,2,3,4]))
-	{'A': 1, 'C': 3, 'B': 2, 'D': 4}
--->
 
 > 参考：
 > 
@@ -416,3 +426,6 @@ curry: ((a × b) → c) → (a → (b → c)) = λf. λx. λy. f (x, y)
 >	* [函数副作用](http://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E5%89%AF%E4%BD%9C%E7%94%A8#.E7.BA.AF.E5.87.BD.E6.95.B0)
 > 	* [Higher-order function and First-class object](http://www.webdevelopmentmachine.com/blog/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0%E4%B8%8E%E7%AC%AC%E4%B8%80%E5%9E%8B_higher-order-function-and-first-class-object/)
 > 	* [函数式编程里的惰性求值](http://www.nowamagic.net/academy/detail/1220550)
+> 	* [函数加里化(Currying)和偏函数应用(Partial Application)的比较](http://www.vaikan.com/currying-partial-application/)
+> 	* [Currying in Python](http://mtomassoli.wordpress.com/2012/03/18/currying-in-python/)
+> 	* [Recipe 16.4. Associating Parameters with a Function (Currying)](http://blog.csdn.net/kingofark/article/details/1144461)
