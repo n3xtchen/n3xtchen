@@ -182,11 +182,15 @@ Cask 页可以用来自动下载和安装字体。因此，你需要添加字体
 
 Mackup 是用户系统和应用配置的开源工具。你可以从[lra/mackup](https://github.com/caskroom/homebrew-cask/tree/master/Casks)查看它所支持的应用。
 
-不幸的是你不可以使用 Homebrew 安装它，但是它的安装还是很简单的：
+现在你可以使用 Homebrew 来安装 mackup：
 
-    pip install mackup
+    $ brew install mackup
 
-如果 pip 不可用，你可能需要使用 brew 来安装 python，它默认集成 pip。
+> 你还可以使用 pip 来安装:
+> 
+>     $ pip install mackup
+> 
+> 如果 pip 不可用，你可能需要使用 brew 来安装 python，它默认集成 pip。
 
 默认情况，mackup 将你的配置文件备份到你的 Dropbox 中，因此你需要实现安装 Dropbox。一旦你的 Dropbox 被安装，备份工作将会是非常简单的：
 
