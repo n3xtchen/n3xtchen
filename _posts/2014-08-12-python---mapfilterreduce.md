@@ -3,7 +3,7 @@ layout: post
 title: "使用 python - 实现 Map，Filter 以及 Reduce"
 description: ""
 category: Python
-tags: [Python]
+tags: [python]
 ---
 {% include JB/setup %}
 

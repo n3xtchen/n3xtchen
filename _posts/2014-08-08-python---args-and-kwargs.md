@@ -3,7 +3,7 @@ layout: post
 title: "Python 优雅的使用参数 - 可变参数（*args & **kwargs)"
 description: ""
 category: Python
-tags: [Python]
+tags: [python]
 ---
 {% include JB/setup %}
 

@@ -3,7 +3,7 @@ layout: post
 title: "函数式编程 && Python - 第一部分"
 description: ""
 category: Python
-tags: [Python, Funcitonal Programming]
+tags: [python, Funcitonal Programming]
 ---
 {% include JB/setup %}
 
