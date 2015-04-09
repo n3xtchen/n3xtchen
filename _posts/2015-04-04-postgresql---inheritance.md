@@ -2,7 +2,7 @@
 layout: post
 title: "PostgreSQL - 继承（inheritance）"
 description: ""
-category: PostreSQL
+category: PostgreSQL
 tags: [database, object-relation]
 ---
 {% include JB/setup %}
