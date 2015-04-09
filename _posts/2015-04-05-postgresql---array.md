@@ -67,8 +67,7 @@ tags: [database, nosql]
 多维数组的插入也是类似，看看例子：
 	
 	pigdb> INSERT INTO favorite_authors VALUES (102,
-		'{{"J.R.R. Tokeien", "The Silmarillion"},
-		{"Charless Dickness", "Great Expectations"}}'
+		'{ {"J.R.R. Tokeien", "The Silmarillion"}, {"Charless Dickness", "Great Expectations"} }'
 	);
 	INSERT 0 1
 	pigdb> SELECT * FROM favorite_authors;
