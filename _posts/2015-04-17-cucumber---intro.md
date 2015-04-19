@@ -39,12 +39,12 @@ tags: [cucumber, atdd]
 	λ MacBook-Pro cucumber → mkdir calculator
 	λ MacBook-Pro cucumber → cd calculator
 	
-我们将通过 **Cucumber** 来指导我们的开发，因此我们先从运行 **cucumber** 命令开始：
+我们将通过 **Cucumber** 来指导我们的开发，因此我们先从运行 `cucumber` 命令开始：
 
 	λ MacBook-Pro calculator → cucumber
 	No such file or directory @ rb_sysopen - features. Please create a features directory to get started. (Errno::ENOENT)
 	
-因为我们没有提供任何参数给 **cucumber** 命令；因此，按惯例，我们使用 `features` 目录来保存我们的测试文件。由于不存在这个目录，就像命令提醒我们那样；那我们就按照它的指示继续：
+因为我们没有提供任何参数给 `cucumber` 命令；因此，按惯例，我们使用 `features` 目录来保存我们的测试文件。由于不存在这个目录，就像命令提醒我们那样；那我们就按照它的指示继续：
 
 	λ MacBook-Pro calculator → mkdir features
 	λ MacBook-Pro calculator → cucumber
@@ -65,7 +65,7 @@ tags: [cucumber, atdd]
 	 
 这个功能文件包含了我们程序的第一个场景。关键字 `Feature`，`Scenario`，`Given`，`When` 和 `Then` 是结构，其他的东西都是文档。我们称这个结构为 **Gherkin**。
 
-保存好你的文件，在运行一次 `cucumber`，我们讲看到比上一次更多的输出：
+保存好你的文件，在运行一次 `cucumber`：
 
 	λ MacBook-Pro calculator → cucumber
 	Feature: Adding
@@ -96,4 +96,51 @@ tags: [cucumber, atdd]
 	If you want snippets in a different programming language,
 	just make sure a file with the appropriate file extension
 	exists where cucumber looks for step definitions.
+
+Wow，突然这么多的输出，吓的一跳吧。首先，我们可以看到 **Cucumber** 找到了我们的 feature，并且尝试运行它；接下来的是给出了三个 **Ruby** 代码片段。那我们就遵照这个指示进行下一步了，把这三个代码片段黏贴到文件中。
+
+### 创建步骤（Step Definitions）
+
+现在，我们开始实现一些步骤，让我们的场景不再 `undefined`。不要在意它的含义，把它拷贝到文件中就是了；**Cucumber** 的惯例是把步骤定义存放在 `features/step_definitions` 下，现在我们要创建它：
+
+	λ MacBook-Pro calculator → mkdir features/step_definitions
+	
+现在我们在这个目录下面创建一个 **Ruby** 文件，命名为 `calculator_step.rb`。**Cucumber** 不在乎步骤文件的命名，只要他是一个 **Ruby** 文件，但是好的名称还是很有必要的。现在我们打开它，代码片段复制进去： 
+
+	# features/step_definitions/calculator_step.rb
+	Given(/^the input "(.*?)"$/) do |arg1|
+	    pending # express the regexp above with the code you wish you had
+	end
+	
+	When(/^the calculator is run$/) do
+	    pending # express the regexp above with the code you wish you had
+	end
+	
+	Then(/^the output should be "(.*?)"$/) do |arg1|
+	    pending # express the regexp above with the code you wish you had
+	end
+	
+保存完文件，我们执行下 `cucumber`：
+
+	λ MacBook-Pro calculator → cucumber
+	Feature: Adding
+	
+	  Scenario: Add two numbers       # features/adding.feature:2
+	    Given the input "2+2"         # features/step_definitions/calculator_step.rb:1
+	      TODO (Cucumber::Pending)
+	      ./features/step_definitions/calculator_step.rb:2:in `/^the input "(.*?)"$/'
+	      features/adding.feature:3:in `Given the input "2+2"'
+	    When the calculator is run    # features/step_definitions/calculator_step.rb:5
+	    Then the output should be "4" # features/step_definitions/calculator_step.rb:9
+	
+	1 scenario (1 pending)
+	3 steps (2 skipped, 1 pending)
+	0m0.057s
+
+我们顺利让场景从 `undefined` 晋级到 `pending`。这是个好消息，说明 **Cucumber** 在执行第一个步骤，但是碰到了 `pending` 标记。我们现在需要使用真正的实现来替换 `pending` 标记。
+
+> 注意
+> **Cucumber** 报道另外两个步骤被跳过；是因为当它遇到一个失败或者 `pending` 步骤的时候，**Cucumber** 将会停止执行这个场景，跳过剩下的步骤。
+
+
 
