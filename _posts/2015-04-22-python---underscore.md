@@ -50,3 +50,4 @@ tags: [Python]
 	
 
 		    
+> 参考: (Underscores in Python)[http://shahriar.svbtle.com/underscores-in-python]

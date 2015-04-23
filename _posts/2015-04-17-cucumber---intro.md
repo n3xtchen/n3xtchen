@@ -142,5 +142,150 @@ Wow，突然这么多的输出，吓的一跳吧。首先，我们可以看到 *
 > 注意
 > **Cucumber** 报道另外两个步骤被跳过；是因为当它遇到一个失败或者 `pending` 步骤的时候，**Cucumber** 将会停止执行这个场景，跳过剩下的步骤。
 
+### 实现我们第一个步骤（Step Definitions）
+
+我们已经决定我们的第一版本是一个计算器，接受命令行的参数作为输入，因此我们的第一步就是获取一个参数；我们现在开始定义：
+
+	# features/step_definitions/calculator_step.rb
+	Given(/^the input "(.*?)"$/) do |input|
+	    @input = input
+	end
+
+然后，
+	
+	λ MacBook-Pro calculator → cucumber
+	Feature: Adding
+	
+	  Scenario: Add two numbers       # features/adding.feature:2
+	    Given the input "2+2"         # features/step_definitions/calculator_step.rb:1
+	    When the calculator is run    # features/step_definitions/calculator_step.rb:5
+	      TODO (Cucumber::Pending)
+	      ./features/step_definitions/calculator_step.rb:6:in `/^the calculator is run$/'
+	      features/adding.feature:5:in `When the calculator is run'
+	    Then the output should be "4" # features/step_definitions/calculator_step.rb:9
+	
+	1 scenario (1 pending)
+	3 steps (1 skipped, 1 pending, 1 passed)
+	0m0.031s
+
+我们的第一步通过了！但是场景还是被标记为 pending，当然，是因为我们实现了一步，剩下的两个步骤还没有实现。不过我们取得了进展，不是吗？
+
+### 运行我们的程序
+
+现在开始实现我们的第二步：
+
+	When(/^the calculator is run$/) do
+	    @output = `ruby cacl.rb #{@input}`
+	    raise('Command failed') unless $?.success?
+	end
+
+然后,
+	
+	λ MacBook-Pro calculator → cucumber
+	Feature: Adding
+	
+	  Scenario: Add two numbers       # features/adding.feature:2
+	    Given the input "2+2"         # features/step_definitions/calculator_step.rb:1
+	ruby: No such file or directory -- cacl.rb (LoadError)
+	    When the calculator is run    # features/step_definitions/calculator_step.rb:5
+	      Command failed (RuntimeError)
+	      ./features/step_definitions/calculator_step.rb:7:in `/^the calculator is run$/'
+	      features/adding.feature:5:in `When the calculator is run'
+	    Then the output should be "4" # features/step_definitions/calculator_step.rb:10
+	
+	Failing Scenarios:
+	cucumber features/adding.feature:2 # Scenario: Add two numbers
+	
+	1 scenario (1 failed)
+	3 steps (1 failed, 1 skipped, 1 passed)
+	0m0.103s
+	
+这个步骤失败了，是因为没有 `calc.rb` 这个程序可以运行。
+
+### 添加断言
+
+按照 **cucumber** 的指示，我们需要为我们的程序，创建一个 **Ruby** 文件。
+
+针对 Mac/Linux 用户在命令行中输入如下代码来创建这个文件：
+
+	λ MacBook-Pro calculator → touch cacl.rb
+	
+如果是 Windows 用户，你的命令是：
+
+	​C:\> echo.>calc.rb​
+	
+然后我们再次执行 `cucumber`
+
+	λ MacBook-Pro calculator → cucumber
+	Feature: Adding
+	
+	  Scenario: Add two numbers       # features/adding.feature:2
+	    Given the input "2+2"         # features/step_definitions/calculator_step.rb:1
+	    When the calculator is run    # features/step_definitions/calculator_step.rb:5
+	    Then the output should be "4" # features/step_definitions/calculator_step.rb:10
+	      TODO (Cucumber::Pending)
+	      ./features/step_definitions/calculator_step.rb:11:in `/^the output should be "(.*?)"$/'
+	      features/adding.feature:6:in `Then the output should be "4"'
+	
+	1 scenario (1 pending)
+	3 steps (1 pending, 2 passed)
+	0m0.102s
+	
+现在我们给我们的最后一步添加断言：
+
+	Then(/^the output should be "(.*?)"$/) do |arg1|
+	    expect(@output).to eq 4
+	end
+	
+我们使用 **RSpec** 断言来检查 feature 中指定的期待值是否与程序的实际输出一致:
+
+	λ MacBook-Pro calculator → cucumber
+	Feature: Adding
+	
+	  Scenario: Add two numbers       # features/adding.feature:2
+	    Given the input "2+2"         # features/step_definitions/calculator_step.rb:2
+	    When the calculator is run    # features/step_definitions/calculator_step.rb:6
+	    Then the output should be "4" # features/step_definitions/calculator_step.rb:11
+	
+	      expected: 4
+	           got: ""
+	
+	      (compared using ==)
+	       (RSpec::Expectations::ExpectationNotMetError)
+	      ./features/step_definitions/calculator_step.rb:12:in `/^the output should be "(.*?)"$/'
+	      features/adding.feature:6:in `Then the output should be "4"'
+	
+	Failing Scenarios:
+	cucumber features/adding.feature:2 # Scenario: Add two numbers
+	
+	1 scenario (1 failed)
+	3 steps (1 failed, 2 passed)
+	0m0.080s
+	
+好极了。现在我们的测试终于能够由于合理的理由失败了：它运行我们的程序，检查输出，告诉我们应该如何正确输出。我们已经为这个版本做了很多工走：当我们回到这个代码的时候，**cucumber** 将告诉我们该做做什么来让我们的程序生效。如果我们所有的需求都可以利用失败的测试来验证，创建软件将会容易很多。
+
+### 通过测试
+
+现在我们有了一个失败的 **Cucumber** 场景，是时候让我们的场景驱动我们解决问题。
+
+试试下面的代码：
+
+	# cacl.rb
+	print "4"
+
+终于成功了
+	
+	λ MacBook-Pro calculator → cucumber
+	Feature: Adding
+	
+	  Scenario: Add two numbers       # features/adding.feature:2
+	    Given the input "2+2"         # features/step_definitions/calculator_step.rb:2
+	    When the calculator is run    # features/step_definitions/calculator_step.rb:6
+	    Then the output should be "4" # features/step_definitions/calculator_step.rb:11
+	
+	1 scenario (1 passed)
+	3 steps (3 passed)
+	0m0.095s
+
 
 
