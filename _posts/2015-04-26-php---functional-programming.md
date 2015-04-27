@@ -56,11 +56,18 @@ tags: []
 >上一点已经提到，函数式编程只是返回新的值，不修改系统变量。因此，不修改变量，也是它的一个重要特点。
 在其他类型的语言中，变量往往用来保存"状态"（state）。不修改变量，意味着状态不能保存在变量中。函数式编程使用参数保存状态，最好的例子就是递归。下面的代码是一个将字符串逆序排列的函数，它演示了不同的参数如何决定了运算所处的"状态"。
 
+看到第二个例子中的 `array_map` 的第一个参数，他就是传说中的匿名函数，顾名思义，就是声明一个没有名称的函数，可能一些同学会比较陌生。我们稍微介绍下：
+
 ### 匿名函数
 
-我们看看 第二个例子中的 `array_map` 的第一个参数，他就是传说中的匿名函数，顾名思义，就是声明一个没有名称的函数，
+在计算机编程中，匿名函数（英语：anonymous function）是指一类无需定义标识符（函数名）的函数或子程序，普遍存在于多种编程语言中。（来源 wikipedia）
 
-
+> ### PHP.NET 中匿名函数定义
+> 中文：匿名函数（Anonymous functions），也叫闭包函数（closures），允许 临时创建一个没有指定名称的函数。最经常用作回调函数（callback）参数的值。当然，也有其它应用的情况。
+> 
+> 英文：Anonymous functions, also known as closures, allow the creation of functions which have no specified name. They are most useful as the value of callback parameters, but they have many other uses.
+> 
+> 之所以引用维基，是因为本人认为 **PHP** 官方的描述有误，匿名函数和闭包属于不同概念，而维基说的描述更为准确，**闭包是由函数和与其相关的引用环境组合而成的实体**。
 
 来看个简单的例子：
 
@@ -71,7 +78,7 @@ tags: []
 	
 	echo add(1, 2);
 	
-匿名函数形式：
+匿名函数的等价实现：
 
 	$add = function($a, $b) {
 		return $a + $b;
@@ -79,7 +86,19 @@ tags: []
 	
 	echo $add(1, 2);
 
+为什么要聊匿名函数？现在先看一下，FP 的一个特性
+
+> ### 函数式编程特点－函数是"第一等公民"
+> 
+> 所谓"第一等公民"（first class），指的是函数与其他数据类型一样，处于平等地位，可以赋值给其他变量，也可以作为参数，传入另一个函数，或者作为别的函数的返回值。
+
+由于匿名函数的实现，使得 **PHP** 更加容易将函数作为一样来传递。
+
+谈到匿名函数，就不得不谈一谈闭包了。
+
 ### 闭包和延迟加载
+
+在计算机科学中，闭包（Closure）是词法闭包（Lexical Closure）的简称，是引用了自由变量的函数。这个被引用的自由变量将和这个函数一同存在，即使已经离开了创造它的环境也不例外。所以，有另一种说法认为闭包是由函数和与其相关的引用环境组合而成的实体。闭包在运行时可以有多个实例，不同的引用环境和相同的函数组合可以产生不同的实例。
 
 	$closure = function($a, $b) {
 		return function() use ($a, $b) {
@@ -98,7 +117,7 @@ tags: []
 
 ### 递归和尾递归
 
-### Map, Reduce && Filter
+### Map, Reduce && Filter 的简单用法
 
 Mapper:
 
@@ -133,4 +152,10 @@ Filter:
 		return $row[0] > 0;
 	});
 	
+	
+> 参考： 
+> 
+> 	* [阮一峰的网络日志-函数式编程初探](http://www.ruanyifeng.com/blog/2012/04/functional_programming.html)
+> 	* [Functional Progamming With Python](http://kachayev.github.io/talks/uapycon2012/#/14)
+> 	* [DrupalCon Review: Functional Programming](http://drupal.cocomore.com/blog/drupalcon-review-functional-programming)
 	
