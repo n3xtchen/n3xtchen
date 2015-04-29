@@ -174,9 +174,48 @@ tags: []
 
 ### 偏函数应用和函数加里化
 
-    $add5 = function(b) use ($add) {
-        return $add(5, b);
-    };
+偏函数应用指的是固化函数的一个或一些参数，从而产生一个新的函数。
+
+    function log(level, message)
+    {
+        print level + ": " + message
+    }
+
+    log("Warning", "this is one warning message")
+    log("Error", "this is one error message")
+
+使用偏函数应用：
+
+    function logWarning(message)
+    {
+        log("Warning", message)
+    }
+
+    function logError(message)
+    {
+        log("Error", message)
+    }
+
+    logWarning("this is one warning message")
+    logError("this is one error message")
+    
+Currying指的是将一个具有多个参数的函数，转换成能够通过一系列的函数链式调用，其中每一个函数都只有一个参数。
+
+    function log(level)
+    {
+        $logMessage = function(message) {
+            echo level + ": " + message
+        }
+        return $logMessage;
+    }
+  
+    log("Warning")("this is one warning message")
+   
+    logError = log("Error")
+    logError("this is one error message")
+  
+偏函数和Currying有什么用？主要就是从能一个通用函数得到更特定的函数。有一些编程经验的，一定都手工写过偏函数应用吧。
+Currying提供了另外一种实现方式。这种方式在函数式编程中更常见。函数式编程思想，不仅在Lisp这样的函数式编程语言中，在更多的语言中也得到了实现和发展，像Python，Javascript乃至C#这样的命令式语言(imperative language)。所以有机会不妨考虑下使用Currying，能否更好地解决问题。
 
 ### 递归和尾递归
 
