@@ -172,7 +172,7 @@ tags: []
 	$time = "afternoon!\n";
 	$func();
 
-### 偏函数应用和函数加里化
+### 偏函数应用
 
 偏函数应用指的是固化函数的一个或一些参数，从而产生一个新的函数。
 
@@ -199,25 +199,94 @@ tags: []
     logWarning("this is one warning message")
     logError("this is one error message")
     
+### 函数加里化
+
 Currying指的是将一个具有多个参数的函数，转换成能够通过一系列的函数链式调用，其中每一个函数都只有一个参数。
 
-    function log(level)
+    function sum3($x, $y, $z)
     {
-        $logMessage = function(message) {
-            echo level + ": " + message
-        }
-        return $logMessage;
+        return $x + $y + $z;
     }
-  
-    log("Warning")("this is one warning message")
-   
-    logError = log("Error")
-    logError("this is one error message")
+    
+    function curried_sum3($x)
+    {
+        return function ($y) use ($x) {
+            return function ($z) use ($x, $y) {
+                return sum3 ($x, $y, $z);
+            };
+        };
+    }
+    
+    $f1 =  curried_sum3(1);
+    $f2 = $f1(2);
+    $result = $f2(3);
   
 偏函数和Currying有什么用？主要就是从能一个通用函数得到更特定的函数。有一些编程经验的，一定都手工写过偏函数应用吧。
 Currying提供了另外一种实现方式。这种方式在函数式编程中更常见。函数式编程思想，不仅在Lisp这样的函数式编程语言中，在更多的语言中也得到了实现和发展，像Python，Javascript乃至C#这样的命令式语言(imperative language)。所以有机会不妨考虑下使用Currying，能否更好地解决问题。
 
 ### 递归和尾递归
+
+在计算机科学里，尾调用是指一个函数里的最后一个动作是一个函数调用的情形：即这个调用的返回值直接被当前函数返回的情形。这种情形下称该调用位置为尾位置。若这个函数在尾位置调用本身（或是一个尾调用本身的其他函数等等），则称这种情况为尾递归，是递归的一种特殊情形。尾调用不一定是递归调用，但是尾递归特别有用，也比较容易实现。
+
+	function factorial($n)
+	{
+		if($n == 0) {
+	        return 1;
+	    }   
+	    return factorial($n-1) * $n; 
+	}
+	 
+	var_dump(factorial(100));
+
+即便代码能正常运行，只要我们不断增大参数，程序迟早会报错：
+
+	Fatal error:  Allowed memory size of … bytes exhausted
+
+为什么呢？简单点说就是递归造成了栈溢出。按照之前的思路，我们可以试下用尾递归来消除递归对栈的影响，提高程序的效率。
+
+	function factorial($n, $acc)
+	{
+	    if($n == 0) {
+	        return $acc;
+	    }
+	    return factorial($n-1, $acc * $n);
+	}
+	
+	var_dump(factorial(100, 1));
+
+XDebug同样报错，并且程序的执行时间并没有明显变化。
+
+	Fatal error: Maximum function nesting level of '100' reached, aborting!
+
+PHP如何消除递归
+
+	function factorial($n, $accumulator = 1) {
+	    if ($n == 0) {
+	        return $accumulator;
+	    }
+	
+	    return function() use($n, $accumulator) {
+	        return factorial($n - 1, $accumulator * $n);
+	    };
+	}
+	
+	function trampoline($callback, $params) {
+	    $result = call_user_func_array($callback, $params);
+	
+	    while (is_callable($result)) {
+	        $result = $result();
+	    }
+	
+	    return $result;
+	}
+	
+	var_dump(trampoline('factorial', array(100)));
+
+现在XDebug不再警报效率问题了。
+
+注意到trampoline()函数没？简单点说就是利用高阶函数消除递归。
+
+还有很多别的方法可以用来规避递归引起的栈溢出问题，比如说Python中可以通过装饰器和异常来消灭尾调用，让人有一种别有洞天的感觉。
 
 ### Map, Reduce && Filter 的简单用法
 
@@ -255,14 +324,25 @@ Filter:
     });
         
 > 参考： 
->  
-> * [深入理解PHP之匿名函数](http://www.laruence.com/2010/06/20/1602.html)
-> * [PHP闭包（Closure）初探](http://www.cnblogs.com/melonblog/archive/2013/05/01/3052611.html)
+
 > * [PHP中的函数式编程](http://ashitaka.me/2014/03/12/functional-programming-in-php/)
-> * [谈PHP 闭包特性在实际应用中的问题](http://www.phpv.net/html/1703.html)
 > * [DrupalCon Review: Functional Programming](http://drupal.cocomore.com/blog/drupalcon-review-functional-programming)
 > * [阮一峰的网络日志-函数式编程初](http://www.ruanyifeng.com/blog/2012/04/functional_programming.html)
 > * [Functional Progamming With Python](http://kachayev.github.io/talks/uapycon2012/)
 > * [CoolShell-函数式编程](http://coolshell.cn/articles/10822.html)
+> * 匿名函数和闭包
+> 	* [深入理解PHP之匿名函数](http://www.laruence.com/2010/06/20/1602.html)
+> 	* [PHP闭包（Closure）初探](http://www.cnblogs.com/melonblog/archive/2013/05/01/3052611.html)
+> 	* [谈PHP 闭包特性在实际应用中的问题](http://www.phpv.net/html/1703.html)(GOOD)
+> * 偏函数应用和函数加里化
+> 	* [Currying vs. Partial Application](http://allthingsphp.blogspot.com/2012/02/currying-vs-partial-application.html)(GOOD)
+> 	* [Currying in PHP](http://kingfisher.nfshost.com/sw/curry2/)(GOOD)
+> 	* [Request for Comments: Currying](https://wiki.php.net/rfc/currying)
+> 	* [matteosister/php-curry](https://github.com/matteosister/php-curry/blob/master/tests/Cypress/Curry/functions_test.php)
+> 	* [偏函数应用(Partial Application）和函数柯里化(Currying)](http://www.cnblogs.com/cypine/p/3258552.html)
+> * [漫谈递归：PHP里的尾递归及其优化](http://www.nowamagic.net/librarys/veda/detail/2334)
+> * [尾调用](http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8)
+
+
 
     
