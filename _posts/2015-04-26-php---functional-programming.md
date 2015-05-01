@@ -288,6 +288,15 @@ PHP如何消除递归
 
 还有很多别的方法可以用来规避递归引起的栈溢出问题，比如说Python中可以通过装饰器和异常来消灭尾调用，让人有一种别有洞天的感觉。
 
+### 纯函数
+
+### 惰性求值
+
+### 模式匹配
+
+### 迭代器
+
+
 ### Map, Reduce && Filter 的简单用法
 
 Mapper:
@@ -340,8 +349,10 @@ Filter:
 > 	* [Request for Comments: Currying](https://wiki.php.net/rfc/currying)
 > 	* [matteosister/php-curry](https://github.com/matteosister/php-curry/blob/master/tests/Cypress/Curry/functions_test.php)
 > 	* [偏函数应用(Partial Application）和函数柯里化(Currying)](http://www.cnblogs.com/cypine/p/3258552.html)
-> * [漫谈递归：PHP里的尾递归及其优化](http://www.nowamagic.net/librarys/veda/detail/2334)
-> * [尾调用](http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8)
+> * 递归和尾递归
+> 	* [漫谈递归：PHP里的尾递归及其优化](http://www.nowamagic.net/librarys/veda/detail/2334)(GOOD)
+> 	* [尾调用](http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8)
+> 	* [说说尾递归](http://www.cnblogs.com/catch/p/3495450.html)
 
 
 
