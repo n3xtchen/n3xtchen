@@ -152,7 +152,78 @@ tags: [java, sping]
 
 `@RequestParam` 绑定请求参数 `name` 的值到 `greeting()` 的 `name` 方法参数上。这个查询字符串不是必须的；如果请求中未传递，将使用默认值(`defaultValue`, 这里的值是 `World`)。
 
-方法中创建返回一个新的 `Greeting` 对象
+方法中创建返回一个新的 `Greeting` 对象，其中 `id` 的值基于 `counter` 的递增值，`name` 根据给予 `name` 参数和 `greeting` 模版
+格式化的结果。
+
+传统的 **MVC** 控制器和 **Restful** 服务控制器最大的不同就是 **HTTP** 请求体的不同。不依赖于利用模版技术(View Technology) 来渲染 `Greeting` 对象成 **HTML**。对象数据将直接以 **JSON** 形式输出。
+
+这个代码使用了 **Spring 4** 的新注释 `@RestController`，它标记这个类作为一个控制器，其中每一个方法返回的是一个领域对象而不是视图(View)。简要的说就是把 `@Controller` 和 `@ResponseBody` 融合在一起。
+
+`Greeting` 对象必须转化成 **JSON**。对亏了 **Spring** 的 **HTTP** 信息转化器的支持，你不需要手动做这个转化。因为 `Jackson 2` 在 *classpath* 中，**Spring** 的`MappingJackson2HttpMessageConverter` 将自动被选择用来转化 `Greeting` 实例成 **JSON**。
+
+### 使应用可执行
+
+虽然可以把这个服务打包成传统的 `WAR` 文件，直接部署到外部的应用服务，下面将演示如何创建一个独立应用。你把所有的东西打包到一个可执行的 `JAR` 文件，在古老的 `main()` 方法中。接着，你使用 **Spring** 内置支持的 **Tomcat** 服务容器来代替部署成外部实例。
+
+	// src/main/java/hello/Application.java
+	package hello;
+	
+	import org.springframework.boot.SpringApplication;
+	import org.springframework.boot.autoconfigure.SpringBootApplication;
+	
+	@SpringBootApplication
+	public class Application {
+	
+	    public static void main(String[] args) {
+	        SpringApplication.run(Application.class, args);
+	    }
+	}
+
+`@SpringBootApplication` 是一个很便捷的注释语法，可以添加如下配置：
+
+* `@Configuration` 标记类作为一个 **bean** 源，来定义应用的上下文。
+* `@EnableAutoConfiguration` 告诉 **Sprint Boot** 基于 
+* *classplath* 配置的 **Bean**，其他的 **Bean** 以及各种属性配置
+* 正常情况你要加入一个 `@EnableWebMvc` 注释，但是当 **spring-webmvc** 存在于 *classpath* 中的时候，**Spring Boot** 会自动添加它。这个标记应用作为一个 **Web** 服务，激活关键的行为，例如 `DisoatcherServlet`。
+* `@ComponentScan` 告诉 **Spring** 查找在 `hello` 中的其他的组件，配置以及服务，允许它查找 `GreetingController`。
+
+这个 `main()` 方法使用 **Spring Boot** 的 `SpringApplication.run()` 方法来启动应用。你注意到了吗？没有写一行的 XML？也没有 **web.xml** 文件。这个 **Web** 应用 100％ 的 **JAVA**，你不必关心任何的基础配置。
+
+#### 构建一个可执行 JAR
+
+如果你使用 **Gradle**，你可以使用 `./gradlew bootRun` 运行应用。
+
+你可以构建一个简单的可执行 **JAR**，包含所有的依赖，类以及资源。这样整个开发周期中有利于传递，版本控制以及部署，跨平台等等。
+
+	./gradlew build
+	
+然后你运行你的 **JAR** 文件：
+
+	java -jar build/libs/n3xt-rest-service-0.1.0.jar
+	
+如果你使用 **Maven**，你可以使用 `mvn spring-boot:run` 运行应用。或者你可以使用 `mvn clean package` 编译 **JAR** 文件和运行他：
+
+	java -jar target/n3xt-rest-service-0.1.0.jar
+	
+> **注意**：整个过程将会创建一个可执行 **JAR** 文件。你也可以选择编译成 **WAR** 文件。
+
+输出日志将会显示。服务将在几秒后启动和运行。
 
 
+### 测试你的服务
 
+现在服务已经启动，访问 [http://localhost:8080/greeting](http://localhost:8080/greeting)，你将看到：
+
+	{"id":1,"content":"Hello, World!"}
+
+ 传递了一个 `name` 参数，像这样 [http://localhost:8080/greeting?name=User]( http://localhost:8080/greeting?name=User)。你可能已经注意到 `content` 值的变化了：
+ 
+ 	{"id":2,"content":"Hello, User!"}
+ 	
+ 这个变化意味了 `@RequestParam` 在 `GreetingController` 按照预期生效了。`name` 参数已经设置了，但是可以使用查询参数来明确覆盖。
+ 
+同时也注意到 `id` 从 `1` 变成 `2`。这证明你对同一个对象进行多次请求，`counter` 每次请求都会按照预期递增。
+
+### 总结
+
+恭喜你学会使用 **Spring** 开发 **Restful** 应用了。
