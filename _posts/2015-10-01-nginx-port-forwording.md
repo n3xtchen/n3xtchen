@@ -45,5 +45,25 @@ tags: [nginx]
 
 在上面代码片段中，`proxy_pass` 定义中的服务器没有提供 **URI**。这个模式的定义，请求的 **URI** 会原封不动地直接传递给 **upstream** 服务器。
 
-例如，当一个匹配 `/match/here/please` 的请求被它处理，这个请求将会
+例如，当一个匹配 `/match/here/please` 的请求被这个 **block** 处理，这个请求将会以 *http://example.com/match/here/please* 的形式把 URI 发送给 `example.com` 服务器。
+
+让我们一起看看另外一个场景：
+
+	# server context
+
+	location /match/here {
+	    proxy_pass http://example.com/new/prefix;
+	}
+	
+	. . .
+
+上述例子中，代理服务器在尾部定义了 **URI** 部分。当 **URI** 放到 `proxy_pass` 定义中，请求中匹配这个 `Location` 的定义的部分在传递的过程中将会被这个 **URI** 替换掉。
+
+例如，一个匹配 `/match/here/please` 的请求将会以 *http://example.com/new/prefix/please* 的形式发送给 **upsream** 服务器。`/match/here` 将会替换成 `/new/prefix`。这一点很重要，必须记住。
+
+有时，这样的替换是不可完成的。这时，定义在 `proxy_pass` 的尾部的**URI** 会被忽略，**Nginx** 直接把来自客户端或被其他 **Nginx** 的指令修改的 **URI** 传递给 **upstream** 服务器。
+
+例如，使用正则表达式匹配 **Location** 时，**Nginx** 不能决定 **URI** 的哪一个部分匹配这个表达式，于是它直接发送客户端请求的原始 **URI**。还有另一个例子，当一个 **rewrite** 指令在同一个地址中使用，会导致客户端的 **URI** 被重写，但是仍然在同一个 **block** 下处理，这时，重写的 **URI** 会被传递。
+
+
 
