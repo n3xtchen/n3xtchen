@@ -89,6 +89,41 @@ tags: [nginx]
 * `$host`：这个是偏好是指：可以是来自请求的主机名，请求中的 **Host** 头信息或者匹配请求的服务器名。
 
 在大部分情况，你将会把 **Host** 头信息设置成 `$host` 变量。它是最灵活的，经常为被代理的服务器提供尽可能精确的 **Host** 头信息。
-。
 
+## 设置或者重置 Header
 
+为了适配代理连接，我们使用 `proxy_set_header` 指令。例如，为了改变我们之前讨论的 **Host** 头信息，并增加一些其它的和代理请求一样的 **Header**，我们可以这么做：
+
+	# server context
+	
+	location /match/here {
+	    proxy_set_header HOST $host;
+	    proxy_set_header X-Forwarded-Proto $scheme;
+	    proxy_set_header X-Real-IP $remote_addr;
+	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	
+	    proxy_pass http://example.com/new/prefix;
+	}
+	
+	. . .
+
+上述请求把 **Host** 头设置成 `$host` 变量，它讲包含请求的原始 `host`。`X-Forwarded-Proto` 头信息提供了关于院士客户端请求模式的被代理服务器信息（决定 **http** 还是 **https** 请求）。
+
+`X-Real-IP` 被设置成客户端的 IP 地址，以便代理服务器做判定或者记录基于该信息的日志。`X-Forwarded-For` 头信息是一个包含整个代理过程经过的所有服务器 IP 地址的列表。在上述例子中，我们把它设置成 `$proxy_add_x_forwarded_for` 变量。这个变量包含了从客户端获取的 `X-Forwarded-For` 头信息并把 **Nginx** 服务器的 IP 添加到最后。
+
+当然，我们会把 `proxy_set_header` 指令移到服务器或者 **http** 上下文的外部，允许它同时在多个 `Location` 生效：
+
+	# server context
+	
+	proxy_set_header HOST $host;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	proxy_set_Header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	
+	location /match/here {
+	    proxy_pass http://example.com/new/prefix;
+	}
+	
+	location /different/match {
+	    proxy_pass http://example.com;
+	}
