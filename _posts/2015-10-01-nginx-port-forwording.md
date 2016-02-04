@@ -127,3 +127,32 @@ tags: [nginx]
 	location /different/match {
 	    proxy_pass http://example.com;
 	}
+
+## 为负载均衡代理服务器定义 Upstream 上下文
+
+在上一个例子中，我们演示了如何实现为了一个单一后端服务器做简单的 **Http** 代理。**Nginx** 帮助我们很容易通过指定一个后端服务器集群池子来扩展这个配置。
+
+我们使用 `upstream` 指令来定义服务器群的池子（pool）。这个配置假设这个服务器列表中的每台机子都可以处理来自客户端的请求。它允许我们轻轻松松横向扩展我们的基础设施。`upstream` 指令必须在 **Nginx** 的 `http` 上下文中设置。
+
+让我们一起看个简单的例子：
+
+	# http context
+	
+	upstream backend_hosts {
+	    server host1.example.com;
+	    server host2.example.com;
+	    server host3.example.com;
+	}
+	
+	server {
+	    listen 80;
+	    server_name example.com;
+	
+	    location /proxy-me {
+	        proxy_pass http://backend_hosts;
+	    }
+	}
+	
+上述例子，我们设置一个叫做 `backend_hosts` 的 **upstream** 上下文。一旦定义了，这个名称可以直接在 `proxy_pass` 中使用，就和常规的域名一样。如你所见，在我们的服务器块内，所有指向 *example.com/proxy-me/...* 的请求都会被传递到我们定义的池子中。在那个池子内，会根据配置算法选取一个服务器。默认，它只是一个简单的循环选择处理（每一个亲贵都会按顺序传递给不同的服务器）。
+
+### 改变 Upstream 均衡算法
