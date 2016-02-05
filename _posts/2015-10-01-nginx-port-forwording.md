@@ -153,6 +153,47 @@ tags: [nginx]
 	    }
 	}
 	
-上述例子，我们设置一个叫做 `backend_hosts` 的 **upstream** 上下文。一旦定义了，这个名称可以直接在 `proxy_pass` 中使用，就和常规的域名一样。如你所见，在我们的服务器块内，所有指向 *example.com/proxy-me/...* 的请求都会被传递到我们定义的池子中。在那个池子内，会根据配置算法选取一个服务器。默认，它只是一个简单的循环选择处理（每一个亲贵都会按顺序传递给不同的服务器）。
+上述例子，我们设置一个叫做 `backend_hosts` 的 **upstream** 上下文。一旦定义了，这个名称可以直接在 `proxy_pass` 中使用，就和常规的域名一样。如你所见，在我们的服务器块内，所有指向 *example.com/proxy-me/...* 的请求都会被传递到我们定义的池子中。在那个池子内，会根据配置算法选取一个服务器。默认，它只是一个简单的循环选择处理（每一个请求都会按顺序传递给不同的服务器）。
 
 ### 改变 Upstream 均衡算法
+
+你可以通过指令或者标志修改 **upstream** 池子的均衡算法：
+
+* **（轮询 Round Robin）**：默认的负载均衡算法，如果没有其它算法被指定的话，它会被使用。**upstream** 上下文定义的每一个服务器都会按顺序接受请求。
+* **最少连接 least_conn**: 指定新的连接永远应该传递给拥有最少连接的后端服务器。这个算法在后端连接有时候需要持久化的情况下将很有效。
+* **ip 哈希 ip_hash**：这种均衡算法基于客户端的 IP 分发到不同的服务器。把客户端 IP的前三位八进制数作为键值来决定服务器处理哪个请求。这样结果是，客户端每次由同一个台服务器服务，它能保证回话的一致性。
+* **哈希 hash**：这类均衡算法主要运用于缓存代理。服务器是给予提供的哈希值来分隔的。它可以是文本，变量或者文本变量组合。
+
+修改均衡算法，应该像下面那样：
+
+	# http context
+	
+	upstream backend_hosts {
+	
+	    least_conn;
+	
+	    server host1.example.com;
+	    server host2.example.com;
+	    server host3.example.com;
+	}
+	
+	. . .
+	
+上述例子中，最少连接数的服务器将会优先选择。`ip_hash` 指令也可以用同样的方式设置，来获取同样数量的会话粘性。
+
+至于 `hash` 方法，你应该提供要哈希的键。可以是任何你想要的：
+
+	# http context
+	
+	upstream backend_hosts {
+	
+	    hash $remote_addr$remote_port consistent;
+	
+	    server host1.example.com;
+	    server host2.example.com;
+	    server host3.example.com;
+	}
+	
+	. . .
+	
+上述的例子，请求分发是基于客户端的 ip 和端口。我们也可以添加另外的参数 `consistent`，它实现了 Ketama 一致性 Hash 算法。基本上，它意味着如果你的 **upstream** 服务器改变了， 保证对 cache 的最小冲击。
