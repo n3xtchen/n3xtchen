@@ -196,4 +196,21 @@ tags: [nginx]
 	
 	. . .
 	
-上述的例子，请求分发是基于客户端的 ip 和端口。我们也可以添加另外的参数 `consistent`，它实现了 Ketama 一致性 Hash 算法。基本上，它意味着如果你的 **upstream** 服务器改变了， 保证对 cache 的最小冲击。
+上述的例子，请求分发是基于客户端的 ip 和端口。我们也可以添加另外的参数 `consistent`，它实现了 Ketama 一致性 Hash 算法。基本上，它意味着如果你的 **upstream** 服务器改变了， 保证对 cache 的最小印象。
+
+### 设置服务器权重
+
+在后端服务器声明中，每一台的服务器默认是权重平分的。它假定每一台服务器都能也都应该处理同一量级的负载（考虑到负载均衡算法的影响）。然而，你也可以为服务器设置其它的权重。
+
+	# http context
+	
+	upstream backend_hosts {
+	    server host1.example.com weight=3;
+	    server host2.example.com;
+	    server host3.example.com;
+	}
+	
+	. . .
+
+上述例子中，`host1.example.com` 可以比其它服务器多接受 2 倍的流量。默认，每一台服务器的权重都是 1。
+
