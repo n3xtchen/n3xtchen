@@ -272,7 +272,7 @@ tags: [nginx]
 
 这是基本高可用架构图：
 
-![高可用架构图](超过一个负载均衡器)	
+![高可用架构图](https://assets.digitalocean.com/articles/high_availability/ha-diagram-animated.gif)	
 
 这个例子中，在静态 IP （它可以映射到一台或多台服务器）后面拥有多个负载均衡（一个激活的，其它的一个或多个是被动激活的）。客户端请求从静态 IP 路由到激活的负载均衡器，然后到后端服务器。想了解更多，请阅读 [this section of How To Use Floating IPs](https://www.digitalocean.com/community/tutorials/how-to-use-floating-ips-on-digitalocean#how-to-implement-an-ha-setup)。
 

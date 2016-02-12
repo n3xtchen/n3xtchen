@@ -1,12 +1,14 @@
 # This is the default format. 
 # For more see: http://jekyllrb.com/docs/permalinks/
 
-relative_permalinks: true
+# relative_permalinks: true
 permalink: /:categories/:year/:month/:day/:title 
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
-markdown: rdiscount
-highlighter: pygments
+# markdown: rdiscount
+markdown: kramdown
+# highlighter: pygments
+highlighter: rouge
 # pygments: true
 
 # Themes are encouraged to use these universal variables 
@@ -72,6 +74,8 @@ JB :
   #   /assets
   #
   ASSET_PATH : false
+  THEME :
+      name : twitter
 
   # These paths are to the main pages Jekyll-Bootstrap ships with.
   # Some JB helpers refer to these paths; change them here if needed.
@@ -87,7 +91,7 @@ JB :
   # Set 'provider' to false to turn commenting off globally.
   #
   comments :
-    provider : changyan
+  # provider : changyan
     disqus :
       short_name : jekyllbootstrap
     livefyre :
