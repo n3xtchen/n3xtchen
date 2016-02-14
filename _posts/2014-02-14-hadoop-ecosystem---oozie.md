@@ -3,7 +3,7 @@ layout: post
 title: "Hadoop 生态系统 - Oozie"
 tagline: "调度你的 Hadoop 集群工作（job）"
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop, workflow]
 ---
 {% include JB/setup %}

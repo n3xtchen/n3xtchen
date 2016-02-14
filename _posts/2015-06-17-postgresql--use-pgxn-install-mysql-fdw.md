@@ -2,7 +2,7 @@
 layout: post
 title: "PostgreSQL - 使用 PGXN 安装 Mysql-fdw"
 description: ""
-category: postgresql
+category: PostgreSQL
 tags: [database, extension]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Python Trick"
 description: ""
-category: python
+category: Python
 tags: [python, trick, re]
 ---
 {% include JB/setup %}

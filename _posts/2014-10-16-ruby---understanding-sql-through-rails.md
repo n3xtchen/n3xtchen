@@ -2,7 +2,7 @@
 layout: post
 title: "Ruby - 通过 Rail 来学习 SQL"
 description: ""
-category: ruby
+category: Ruby
 tags: [ruby, rail, sql]
 ---
 {% include JB/setup %}

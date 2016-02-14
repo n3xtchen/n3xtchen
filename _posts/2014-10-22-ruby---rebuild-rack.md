@@ -2,7 +2,7 @@
 layout: post
 title: "Ruby - 重构 Rack"
 description: ""
-category: ruby
+category: Ruby
 tags: [ruby]
 ---
 {% include JB/setup %}

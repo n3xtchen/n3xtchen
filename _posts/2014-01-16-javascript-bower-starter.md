@@ -3,7 +3,7 @@ layout: post
 title: "Javascript Bower - 快速入门"
 tagline: "包管理工具 For UI/UE"
 description: ""
-category: javascript
+category: Javascript
 tags: [javascript, package_manager]
 ---
 {% include JB/setup %}

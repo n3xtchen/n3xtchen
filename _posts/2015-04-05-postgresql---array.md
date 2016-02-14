@@ -2,7 +2,7 @@
 layout: post
 title: "PostgreSQL - 数组(Array)"
 description: ""
-category: postgresql
+category: PostgreSQL
 tags: [database, nosql]
 ---
 {% include JB/setup %}

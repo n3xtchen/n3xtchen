@@ -2,7 +2,7 @@
 layout: post
 title: "Postgresql - ROW_NUM(), RANK() 和 DENSE_RANK() 的区别"
 description: ""
-category: postgresql
+category: PostgreSQL
 tags: [database]
 ---
 {% include JB/setup %}

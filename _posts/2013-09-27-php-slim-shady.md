@@ -2,7 +2,7 @@
 layout: post
 title: "PHP 苗条(Slim)的框架 - 第一部分"
 description: ""
-category: php 
+category: PHP
 tags: [php, slim, beginner, lesson]
 ---
 {% include JB/setup %}

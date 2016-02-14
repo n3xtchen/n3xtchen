@@ -2,7 +2,7 @@
 layout: post
 title: "简化：将代码移到数据库函数中"
 description: ""
-category: postgresql 
+category: PostgreSQL 
 tags: [database, json, api]
 ---
 {% include JB/setup %}

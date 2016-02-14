@@ -2,7 +2,7 @@
 layout: post
 title: "Python - 简单的交互式数据分析"
 description: ""
-category: python
+category: Python
 tags: [python]
 ---
 {% include JB/setup %}

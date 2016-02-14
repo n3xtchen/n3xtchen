@@ -3,7 +3,7 @@ layout: post
 title: "Hadoop 生态系统 - falcon"
 tagline: "Hadoop 集群的数据处理管理框架"
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop, data]
 ---
 {% include JB/setup %}

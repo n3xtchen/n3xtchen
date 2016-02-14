@@ -2,7 +2,7 @@
 layout: post
 title: "探索 Yii2: 数据库迁移（Database Migration）"
 description: ""
-category: php
+category: PHP
 tags: [yii]
 ---
 {% include JB/setup %}
