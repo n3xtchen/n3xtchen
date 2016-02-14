@@ -2,7 +2,7 @@
 layout: post
 title: "Vim Tip - 树形目录(NERTree)"
 description: ""
-category: vim 
+category: Vim 
 tags: [vim, NERTree]
 ---
 {% include JB/setup %}

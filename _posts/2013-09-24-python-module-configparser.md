@@ -2,7 +2,7 @@
 layout: post
 title: "Python 常用模块 - 通用配置configParser"
 description: ""
-category: python
+category: Python
 tags: [python, module]
 ---
 {% include JB/setup %}

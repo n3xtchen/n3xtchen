@@ -2,7 +2,7 @@
 layout: post
 title: "Ubuntu 12.04 - 安装 Gnome 卸载 Unity"
 description: ""
-category: linux
+category: Linux
 tags: [ubuntu, gnome, unity]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Python Django - simple guide"
 description: ""
-category: python
+category: Python
 tags: [python, django]
 ---
 {% include JB/setup %}

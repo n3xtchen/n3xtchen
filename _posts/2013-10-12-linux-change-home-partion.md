@@ -2,7 +2,7 @@
 layout: post
 title: "Linux - 调整 /home 分区"
 description: ""
-category: linux
+category: Linux
 tags: [linux, disk-partion]
 ---
 {% include JB/setup %}

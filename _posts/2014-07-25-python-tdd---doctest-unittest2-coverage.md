@@ -2,7 +2,7 @@
 layout: post
 title: "Python 测试驱动开发 - TDD初阶"
 description: ""
-category: python
+category: Python
 tags: [python, doctest, unittest2, nose, coverage]
 ---
 {% include JB/setup %}

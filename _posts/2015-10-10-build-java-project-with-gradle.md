@@ -2,7 +2,7 @@
 layout: post
 title: "使用 Gradle 创建 Java 项目"
 description: ""
-category: java
+category: Java
 tags: [java, gradle]
 ---
 {% include JB/setup %}

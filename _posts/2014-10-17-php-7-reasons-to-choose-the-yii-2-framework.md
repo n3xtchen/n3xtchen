@@ -2,7 +2,7 @@
 layout: post
 title: "PHP - 选择 Yii2 框架的7大原因"
 description: ""
-category: php
+category: PHP
 tags: [php, yii]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Cucumber - 入门"
 description: ""
-category: cucumber
+category: Cucumber
 tags: [cucumber, atdd]
 ---
 {% include JB/setup %}

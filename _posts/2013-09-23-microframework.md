@@ -2,7 +2,7 @@
 layout: post
 title: "WEB 微框架"
 description: ""
-category: framework
+category: PHP
 tags: [microframe, Flask, Senatra, Slim]
 ---
 {% include JB/setup %}

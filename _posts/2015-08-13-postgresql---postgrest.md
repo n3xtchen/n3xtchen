@@ -2,7 +2,7 @@
 layout: post
 title: "PostgreSQL - PostGrest 简介"
 description: ""
-category: postgresql
+category: PostgreSQL
 tags: [database, restful]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Python Mongo 模块 - Pymongo"
 description: ""
-category: python
+category: Python
 tags: [python, mongo, module, 模块]
 ---
 {% include JB/setup %}

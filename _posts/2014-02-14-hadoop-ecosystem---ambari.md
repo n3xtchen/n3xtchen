@@ -3,7 +3,7 @@ layout: post
 title: "Hadoop 生态系统 - Ambari"
 tagline: "提供 Hadoop 集群配置，管理和监控的框架"
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop, installation]
 ---
 {% include JB/setup %}

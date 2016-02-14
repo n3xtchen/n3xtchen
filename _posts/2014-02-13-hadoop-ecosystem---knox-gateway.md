@@ -3,7 +3,7 @@ layout: post
 title: "Hadoop 生态系统 - Knox Gateway"
 tagline: "Hadoop 集群的单点安全访问级别"
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop, secure, auth]
 ---
 {% include JB/setup %}

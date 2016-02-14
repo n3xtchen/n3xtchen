@@ -2,7 +2,7 @@
 layout: post
 title: "Linux - 软件列表（自用）"
 description: ""
-category: linux
+category: Linux
 tags: [linux, software]
 ---
 {% include JB/setup %}

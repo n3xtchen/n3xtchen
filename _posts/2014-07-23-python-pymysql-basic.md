@@ -2,7 +2,7 @@
 layout: post
 title: "Python - PyMySQL 初探"
 description: ""
-category: python
+category: Python
 tags: [python, mysql]
 ---
 {% include JB/setup %}

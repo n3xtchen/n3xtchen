@@ -3,7 +3,7 @@ layout: post
 title: "Javascript Yeoman - 快速入门"
 tagline: "JS 项目自动化工作流工具"
 description: ""
-category: javascript
+category: Javascript
 tags: [javascript, grunt, bower, yo]
 ---
 {% include JB/setup %}

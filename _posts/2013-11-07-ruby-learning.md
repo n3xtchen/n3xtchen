@@ -2,7 +2,7 @@
 layout: post
 title: "Coding in Ruby - Starter"
 description: ""
-category: ruby
+category: Ruby
 tags: [ruby, learning]
 ---
 {% include JB/setup %}

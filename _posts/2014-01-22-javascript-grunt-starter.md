@@ -3,7 +3,7 @@ layout: post
 title: "Javascript Grunt - 快速入门"
 tagline: "JS的项目构建工具之－任务运行器"
 description: ""
-category: javascript
+category: Javascript
 tags: [javascript, grunt]
 ---
 {% include JB/setup %}

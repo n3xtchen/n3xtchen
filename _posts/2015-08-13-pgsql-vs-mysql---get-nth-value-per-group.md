@@ -2,7 +2,7 @@
 layout: post
 title: "PostgreSQL vs MySQL：取分组数据的前N条纪录"
 description: ""
-category: postgresql
+category: PostgreSQL
 tags: [database, mysql]
 ---
 {% include JB/setup %}

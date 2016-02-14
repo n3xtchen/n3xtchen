@@ -2,7 +2,7 @@
 layout: post
 title: "做一个快乐的 PHP Composer"
 description: ""
-category: php
+category: PHP
 tags: [php, composer]
 ---
 {% include JB/setup %}

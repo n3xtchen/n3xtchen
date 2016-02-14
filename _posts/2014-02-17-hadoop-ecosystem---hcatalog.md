@@ -3,7 +3,7 @@ layout: post
 title: "Hadoop 生态系统 - HCatalog"
 tagline: "将 Hive 的元数据共享给其他应用的数据表和存储管理服务"
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop, hive, hcat]
 ---
 {% include JB/setup %}

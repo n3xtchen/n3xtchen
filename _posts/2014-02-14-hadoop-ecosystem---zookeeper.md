@@ -3,7 +3,7 @@ layout: post
 title: "Hadoop 生态系统 - ZooKeeper"
 tagline: "可靠的协调分布式进程的开源服务器"
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop]
 ---
 {% include JB/setup %}

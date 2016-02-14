@@ -2,7 +2,7 @@
 layout: post
 title: "Python - 偏函数应用让你的代码看起来更简洁"
 description: ""
-category: python
+category: Python
 tags: [Python, functional]
 ---
 {% include JB/setup %}

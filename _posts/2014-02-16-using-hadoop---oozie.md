@@ -3,7 +3,7 @@ layout: post
 title: "Using Hadoop - 创建简单的 Oozie 工作流"
 tagline: ""
 description: ""
-category: hadoop
+category: Hadoop
 tags: [hadoop, oozie]
 ---
 {% include JB/setup %}
