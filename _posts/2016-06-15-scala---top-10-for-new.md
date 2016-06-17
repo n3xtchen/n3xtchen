@@ -138,3 +138,17 @@ tags: [jvm]
 	println(jsonobj)
 	
 哈哈，有意思吧！
+
+## 带多个参数表的函数
+
+## 异常捕捉
+
+## 传名函数(Call By Name)
+
+## 参数化类型
+
+## !
+
+## 幽灵类型(Phantom Type)
+
+## 有趣的访问控制
