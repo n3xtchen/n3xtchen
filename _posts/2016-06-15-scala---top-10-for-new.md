@@ -71,7 +71,7 @@ tags: [jvm]
 	scala> case class Cylinder(c: Circle, h: Int) extends Drawing
 	defined class Cylinder
 
-如果你如之前，少寫了其中一個案例：
+如果你如之前，少写了其中一個案例：
 
 	scala> def what(d: Drawing) = d match {
 	     |     case Point(_, _)    => "點"
