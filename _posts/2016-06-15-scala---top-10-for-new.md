@@ -141,6 +141,28 @@ tags: [jvm]
 
 ## 带多个参数表的函数
 
+	abstract class Shape() {
+	  /**
+	   * Draw takes TWO argument LISTS, one list with an offset for drawing,
+	   * and the other list that is the function argument we used previously.
+	   */
+	  def draw(offset: Point = Point(0.0, 0.0))(f: String => Unit): Unit =
+	    f(s"draw(offset = $offset), ${this.toString}")
+	}
+
+	case class Circle(center: Point, radius: Double) extends Shape
+	
+	case class Rectangle(lowerLeft: Point, height: Double, width: Double)
+	  extends Shape
+
+实际是这样调：
+
+	s.draw(Point(1.0, 2.0))(str => println(s"ShapesDrawingActor: $str"))  
+
+但是，可以写成这样： 
+
+	s.draw(Point(1.0, 2.0)){str => println(s"ShapesDrawingActor: $str")}
+
 ## 异常捕捉
 
 ## 传名函数(Call By Name)
