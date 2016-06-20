@@ -139,29 +139,24 @@ tags: [jvm]
 	
 哈哈，有意思吧！
 
-## 带多个参数表的函数
+## 使用 `{...}` 替代 `(...)` 的语法糖
 
-	abstract class Shape() {
-	  /**
-	   * Draw takes TWO argument LISTS, one list with an offset for drawing,
-	   * and the other list that is the function argument we used previously.
-	   */
-	  def draw(offset: Point = Point(0.0, 0.0))(f: String => Unit): Unit =
-	    f(s"draw(offset = $offset), ${this.toString}")
-	}
+声明一个多参数表函数，如下
 
-	case class Circle(center: Point, radius: Double) extends Shape
-	
-	case class Rectangle(lowerLeft: Point, height: Double, width: Double)
-	  extends Shape
+	scala> def m[A](s: A)(f: A=> String) = f(s)
+	m: [A](s: A)(f: A => String)String
 
-实际是这样调：
+你可以这样调用它：
 
-	s.draw(Point(1.0, 2.0))(str => println(s"ShapesDrawingActor: $str"))  
+	scala> m(100)(i => s"$i + $i")
+	res2: String = 100 + 100
 
-但是，可以写成这样： 
+你可以使用 `{...}` 替代 `(...)` 的语法糖，就可以把上面改写成下面的模式
 
-	s.draw(Point(1.0, 2.0)){str => println(s"ShapesDrawingActor: $str")}
+	scala> m(100){ i => s"$i + $i" }
+	res3: String = 100 + 100
+
+竟然可以如此优雅优雅地调用函数，看起来就像标准的块代码（像 `if` 和 `for` 表达式）
 
 ## 异常捕捉
 
