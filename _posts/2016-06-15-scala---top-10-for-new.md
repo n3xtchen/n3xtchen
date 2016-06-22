@@ -9,6 +9,98 @@ tags: [jvm]
 
 作为一个初学者，经过一个月系统的系统学习，用惯了动态语言的我来说，**Scala** 编译器型语言的编程体验真的是太棒了。作为阶段性的总结，我将给出我对 **Scala** 最佳初体验的 Top 10：
 
+## 漂亮的操作系统调用 DSL
+
+**Scala** 2.9里也提供类似功能：新增加了package: `scala.sys` 及`scala.sys.process`, 这些代码最初由**SBT**(a simple build tool for Scala)项目贡献，主要用于简化与操作系统进程的交互与调用。现在看看用法：
+
+	scala> import scala.language.postfixOps
+	import scala.language.postfixOps
+	
+	scala> import scala.sys.process._
+	import scala.sys.process._
+	
+	scala> "java -version" !
+	java version "1.7.0_80"
+	Java(TM) SE Runtime Environment (build 1.7.0_80-b15)
+	Java HotSpot(TM) 64-Bit Server VM (build 24.80-b11, mixed mode)
+	res2: Int = 0
+
+当你引入 `scala.sys.process` 后，**scala** 会为你给字符串或数组动态注入 `!` 方法，来调用系统命令
+	
+这是我见过调用 shell 最爽最优雅的一个，不是吗？现在看个复杂点的例子，爬取一个页面：
+	
+	scala> import java.io.File
+	import java.io.File
+	
+	scala> import java.net.URL
+	import java.net.URL
+	
+	scala> new URL("http://www.scala-lang.org/") #> new File("scala-lang.html") !
+	res4: Int = 0
+	
+这里我们又学到一个新的操作符 `#>`，结果重定向。这条命令等价于如下 **Bash**
+
+	$ curl "http://www.scala-lang.org/ > scala-lang.html
+	
+看看结果:
+	
+	scala> "ls" !
+	...
+	scala-lang.html
+	...
+	res6: Int = 0
+
+> 参考: http://www.scala-lang.org/api/rc2/scala/sys/process/package.html
+
+## 幽灵类型(Phantom Type)和管道
+
+## 使用 `{...}` 替代 `(...)` 的语法糖
+
+声明一个多参数表函数，如下
+
+	scala> def m[A](s: A)(f: A=> String) = f(s)
+	m: [A](s: A)(f: A => String)String
+
+你可以这样调用它：
+
+	scala> m(100)(i => s"$i + $i")
+	res2: String = 100 + 100
+
+你可以使用 `{...}` 替代 `(...)` 的语法糖，就可以把上面改写成下面的模式
+
+	scala> m(100){ i => s"$i + $i" }
+	res3: String = 100 + 100
+
+竟然可以如此优雅优雅地调用函数，看起来就像标准的块代码（像 `if` 和 `for` 表达式）
+
+## 创建自己的字符解释器
+
+	import scala.util.parsing.json._
+	
+	object Interpolators {
+	  implicit class jsonForStringContext(val sc: StringContext) {
+	    def json(values: Any*): JSONObject = {
+			val keyRE = """^[\s{,]*(\S+):\s*""".r
+			val keys = sc.parts map {
+				case keyRE(key) => key
+				case str => str
+			}
+			val kvs = keys zip values
+			JSONObject(kvs.toMap)
+		}
+	  }
+	}
+	
+	import Interpolators._
+	
+	val name = "Dean Wampler"
+	val book = "Programming Scala, Second Edition"
+	
+	val jsonobj = json"{name: $name, book: $book}" 
+	println(jsonobj)
+	
+哈哈，有意思吧！
+
 ## 在大部分情况下，中缀(Infix)标记和后缀(Postfix)标记可省略
 
 	1 + 2
@@ -44,7 +136,7 @@ tags: [jvm]
 	2. List(1, 2, 3, 4).filter(i => isEven(i)).foreach(i => println(i))
 	3. List(1, 2, 3, 4).filter(isEven).foreach(println)
 	4.List(1, 2, 3, 4) filter isEven foreach println
-	
+
 ## 密封类型（Sealed）强制其子类只能定义在同一个文件中
 
 `seals` 关键字可以用在 `class` 和 `trait` 上。
@@ -109,63 +201,12 @@ tags: [jvm]
 	     | }
 	what: (d: Drawing)String
 	
-> 引用自：http://openhome.cc/Gossip/Scala/SealedClass.html
+> 参考：http://openhome.cc/Gossip/Scala/SealedClass.html
 
-## 创建自己的字符解释器
-
-	import scala.util.parsing.json._
-	
-	object Interpolators {
-	  implicit class jsonForStringContext(val sc: StringContext) {
-	    def json(values: Any*): JSONObject = {
-			val keyRE = """^[\s{,]*(\S+):\s*""".r
-			val keys = sc.parts map {
-				case keyRE(key) => key
-				case str => str
-			}
-			val kvs = keys zip values
-			JSONObject(kvs.toMap)
-		}
-	  }
-	}
-	
-	import Interpolators._
-	
-	val name = "Dean Wampler"
-	val book = "Programming Scala, Second Edition"
-	
-	val jsonobj = json"{name: $name, book: $book}" 
-	println(jsonobj)
-	
-哈哈，有意思吧！
-
-## 使用 `{...}` 替代 `(...)` 的语法糖
-
-声明一个多参数表函数，如下
-
-	scala> def m[A](s: A)(f: A=> String) = f(s)
-	m: [A](s: A)(f: A => String)String
-
-你可以这样调用它：
-
-	scala> m(100)(i => s"$i + $i")
-	res2: String = 100 + 100
-
-你可以使用 `{...}` 替代 `(...)` 的语法糖，就可以把上面改写成下面的模式
-
-	scala> m(100){ i => s"$i + $i" }
-	res3: String = 100 + 100
-
-竟然可以如此优雅优雅地调用函数，看起来就像标准的块代码（像 `if` 和 `for` 表达式）
-
-## 异常捕捉
+## 有趣的访问控制
 
 ## 传名函数(Call By Name)
 
 ## 参数化类型
 
-## !
-
-## 幽灵类型(Phantom Type)
-
-## 有趣的访问控制
+## 异常捕捉
