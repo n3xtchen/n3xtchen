@@ -7,6 +7,8 @@ tags: [jvm]
 ---
 {% include JB/setup %}
 
+TL;DR
+
 作为一个初学者，经过一个月系统的系统学习，用惯了动态语言的我来说，**Scala** 编译器型语言的编程体验真的是太棒了。作为阶段性的总结，我将给出我对 **Scala** 最佳初体验的 Top 10：
 
 ## 漂亮的操作系统调用 DSL
@@ -52,7 +54,27 @@ tags: [jvm]
 
 > 参考: http://www.scala-lang.org/api/rc2/scala/sys/process/package.html
 
-## 幽灵类型(Phantom Type)和管道
+## 管道（Pipeline）
+
+	scala> import scala.language.implicitConversions
+	import scala.language.implicitConversions
+	
+	scala> object Pipeline {
+	     |   implicit class toPiped[V](value:V) {
+	     |     def |>[R] (f : V => R) = f(value)
+	     |   }
+	     | }
+	defined module Pipeline
+	
+	scala> import Pipeline._
+	import Pipeline._
+	
+	scala> 1 |> ((i:Int)=> i*10)
+	res3: Int = 10
+	
+这样就可以将，函数 A 返回的值作为后面函数参数，一条链式调用看起来是那么的优雅（你觉得呢？）。
+	
+短短几行的代码，足以让你领教到 **隐式转化**（implicit）的威力吧！因为这个话题比较大，就不在这里阐述了。
 
 ## 使用 `{...}` 替代 `(...)` 的语法糖
 
@@ -207,6 +229,6 @@ tags: [jvm]
 
 ## 传名函数(Call By Name)
 
-## 参数化类型
-
 ## 异常捕捉
+
+##
