@@ -225,7 +225,7 @@ TL;DR
 	
 > 参考：http://openhome.cc/Gossip/Scala/SealedClass.html
 
-## 有趣的权限控制 `private[this]`
+## 有趣的权限控制 `private[]`
 
 `protected` 或 `private` 這表示权限限制到 `x` 的范围。
 	
@@ -240,6 +240,45 @@ TL;DR
 	    private[this] val x = 10
 	    def doSome(s: Some) = s.x + x  // 编译错误
 	}
+	
+作为入门，就知道这里就可以了，可以跳到下一个话题了！
+
+如果你看过 **Spark**（一个分布式计算框架）的源码，会发现这样的权限控制符，所以这个还是有必要搞清楚的。
+	
+如果能看懂下面这段代码，那你对 `Scala` 的访问控制算是了解了：
+
+	package scopeA {
+	  class Class1 {
+	    private[scopeA]   val scopeA_privateField = 1
+	    protected[scopeA] val scopeA_protectedField = 2
+	    private[Class1]   val class1_privateField = 3
+	    protected[Class1] val class1_protectedField = 4
+	    private[this]     val this_privateField = 5
+	    protected[this]   val this_protectedField = 6
+	  }
+	
+	  class Class2 extends Class1 {
+	    val field1 = scopeA_privateField
+	    val field2 = scopeA_protectedField
+	    val field3 = class1_privateField     // ERROR
+	    val field4 = class1_protectedField
+	    val field5 = this_privateField       // ERROR
+	    val field6 = this_protectedField
+	  }
+	}
+	
+	package scopeB {
+	  class Class2B extends scopeA.Class1 {
+	    val field1 = scopeA_privateField     // ERROR
+	    val field2 = scopeA_protectedField
+	    val field3 = class1_privateField     // ERROR
+	    val field4 = class1_protectedField
+	    val field5 = this_privateField       // ERROR
+	    val field6 = this_protectedField
+	  }
+	}
+
+不懂也没关系，后面会花一个大篇幅来讲这块内容。
 
 ## 传名函数(Call By Name)
 
