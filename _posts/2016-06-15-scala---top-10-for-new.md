@@ -225,7 +225,21 @@ TL;DR
 	
 > 参考：http://openhome.cc/Gossip/Scala/SealedClass.html
 
-## 有趣的访问控制
+## 有趣的权限控制 `private[this]`
+
+`protected` 或 `private` 這表示权限限制到 `x` 的范围。
+	
+	class Some {
+	    private val x = 10
+	    def doSome(s: Some) = s.x + x
+	}
+
+对于大多数语言，访问控制就严格无非就这两种。在 **Scala** 中，可以更加严格，让 `x` 完全无法透过实例存取，则可以使用 `private[this]`，這表示私有化至 `this` 实例本身才可以存取，也就是所謂物件私有（Object-private），例如以下就通不過编译了：
+	
+	class Some {
+	    private[this] val x = 10
+	    def doSome(s: Some) = s.x + x  // 编译错误
+	}
 
 ## 传名函数(Call By Name)
 
