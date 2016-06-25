@@ -159,6 +159,41 @@ TL;DR
 	3. List(1, 2, 3, 4).filter(isEven).foreach(println)
 	4.List(1, 2, 3, 4) filter isEven foreach println
 
+## 简便的类生命：
+
+**Java** 党可以看过来，不论是 IDE 和文本编辑器党，代码中到处充斥着大量的 `setter` 和 `getter`：
+
+	// src/main/java/progscala2/basicoop/JPerson.java
+	package progscala2.basicoop;
+	
+	public class JPerson {
+	  private String name;
+	  private int    age;
+	
+	  public JPerson(String name, int age) {
+	    this.name = name;
+	    this.age  = age;
+	  }
+	
+	  public void   setName(String name) { this.name = name; }
+	  public String getName()            { return this.name; }
+	
+	  public void setAge(int age) { this.age = age;  }
+	  public int  getAge()        { return this.age; }
+	}
+	
+看看，**Scala** 可以这么写：
+
+	class Person(var name: String, var age: Int)
+	
+有没有像流泪的感觉，哈哈，That is it！如果想要覆盖某些 `setter` 和 `getter`，只要类声明中，覆盖相应方法即可。
+
+有 `var`，自然有 `val`，如果你的对象属性都是不可变，那还可以使用如下声明：
+
+	case class Person(name: String, age: Int)
+	 
+会不会很心动啊？^_^
+
 ## 密封类型（Sealed）强制其子类只能定义在同一个文件中
 
 `seals` 关键字可以用在 `class` 和 `trait` 上。
@@ -280,9 +315,9 @@ TL;DR
 
 不懂也没关系，后面会花一个大篇幅来讲这块内容。
 
-## 传名函数(Call By Name)
+## 异常捕捉与 `Scalaz`
 
-## 异常捕捉
+
 
 ## 对象即函数
 
