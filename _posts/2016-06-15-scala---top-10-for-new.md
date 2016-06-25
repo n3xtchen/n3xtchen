@@ -11,7 +11,7 @@ TL;DR
 
 作为一个初学者，经过一个月系统的系统学习，用惯了动态语言的我来说，**Scala** 编译器型语言的编程体验真的是太棒了。作为阶段性的总结，我将给出我对 **Scala** 最佳初体验的 Top 10：
 
-## 漂亮的操作系统调用 DSL
+## 漂亮的操作系统调用方式
 
 **Scala** 2.9里也提供类似功能：新增加了package: `scala.sys` 及`scala.sys.process`, 这些代码最初由**SBT**(a simple build tool for Scala)项目贡献，主要用于简化与操作系统进程的交互与调用。现在看看用法：
 
@@ -284,4 +284,12 @@ TL;DR
 
 ## 异常捕捉
 
-##
+## 对象即函数
+
+	scala> object addOne extends Function1[Int, Int] {
+	     |   def apply(m: Int): Int = m + 1
+	     | }
+	defined module addOne
+	
+	scala> addOne(1)
+	res2: Int = 2
