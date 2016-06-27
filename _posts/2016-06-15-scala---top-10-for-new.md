@@ -315,16 +315,36 @@ TL;DR
 
 不懂也没关系，后面会花一个大篇幅来讲这块内容。
 
+## 类型擦除和 `implicit`
+
+	scala> :paste
+	object M {
+	  def m(seq: Seq[Int]): Unit = println(s"Seq[Int]: $seq")
+	  def m(seq: Seq[String]): Unit = println(s"Seq[String]: $seq")
+	}
+	<ctrl-d>
+	<console>:8: error: double definition:
+	method m:(seq: Seq[String])Unit and
+	method m:(seq: Seq[Int])Unit at line 7
+	have same type after erasure: (seq: Seq)Unit
+	       def m(seq: Seq[String]): Unit = println(s"Seq[String]: $seq")
+
+类型擦除导致编译时报错
+
+	scala> :paste
+	object M {
+		implicit object IntMarker 
+		implicit object StringMarker
+
+		def m(seq: Seq[Int])(implicit i: IntMarker.type): Unit =
+    println(s"Seq[Int]: $seq")
+
+		def m(seq: Seq[String])(implicit s: StringMarker.type): Unit =
+    println(s"Seq[String]: $seq")
+	}
+	<ctrl-d>
+	scala> import M._
+	scala> m(List(1,2,3))
+	scala> m(List("one", "two", "three"))
+
 ## 异常捕捉与 `Scalaz`
-
-
-
-## 对象即函数
-
-	scala> object addOne extends Function1[Int, Int] {
-	     |   def apply(m: Int): Int = m + 1
-	     | }
-	defined module addOne
-	
-	scala> addOne(1)
-	res2: Int = 2
