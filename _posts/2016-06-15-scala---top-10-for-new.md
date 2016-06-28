@@ -348,3 +348,5 @@ TL;DR
 	scala> m(List("one", "two", "three"))
 
 ## 异常捕捉与 `Scalaz`
+	
+### Scalaz 是什么东东
