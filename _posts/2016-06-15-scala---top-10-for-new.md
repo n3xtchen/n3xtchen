@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Scala 新手眼中的十种美妙特性"
+title: "Scala 新手眼中的十个有趣特性"
 description: ""
 category: Scala
 tags: [jvm]
@@ -159,7 +159,7 @@ TL;DR
 	3. List(1, 2, 3, 4).filter(isEven).foreach(println)
 	4.List(1, 2, 3, 4) filter isEven foreach println
 
-## 简便的类生命：
+## 简便的类声明：
 
 **Java** 党可以看过来，不论是 IDE 和文本编辑器党，代码中到处充斥着大量的 `setter` 和 `getter`：
 
@@ -329,24 +329,175 @@ TL;DR
 	have same type after erasure: (seq: Seq)Unit
 	       def m(seq: Seq[String]): Unit = println(s"Seq[String]: $seq")
 
-类型擦除导致编译时报错
+由于历史原因，**JVM** `忘记了` 参数化类型的参数类型。例如例子中的 `Seq[Int]` 和 `Seq[String]`，**JVM** 看到的只是 `Seq`，而附加的参数类型对于 JVM 来说是不可见，这就是传说中的**类型擦除**。于是乎，从 **JVM** 的视角来看，代码是这样子的：
+
+	object M {
+	  // 两者都是接受一个 Seq 参数，返回Unit
+	  def m(seq: Seq): Unit = println(s"Seq[Int]: $seq")
+	  def m(seq: Seq): Unit = println(s"Seq[String]: $seq")
+	}
+	
+这不就报错了吗？重复定义方法。那怎么办呢？（**JAVA** 语言的痛点之一）Scala 给你提供一种比较优雅的解决方案，使用隐式转换：
 
 	scala> :paste
 	object M {
 		implicit object IntMarker 
 		implicit object StringMarker
-
+		
+		// 对于 JVM 来说是，接受 Seq 参数和 IntMarker.type 型 i 参数，
+		// 返回 Unit
 		def m(seq: Seq[Int])(implicit i: IntMarker.type): Unit =
     println(s"Seq[Int]: $seq")
 
+		// 对于 JVM 来说是，接受 Seq 参数和 StringMarker.type 型 i 参数，
+		// 返回 Unit
+		// 
 		def m(seq: Seq[String])(implicit s: StringMarker.type): Unit =
     println(s"Seq[String]: $seq")
 	}
 	<ctrl-d>
 	scala> import M._
-	scala> m(List(1,2,3))
+	scala> m(List(1,2,3))	// 在调用的时候，忽略隐式类型
 	scala> m(List("one", "two", "three"))
-
-## 异常捕捉与 `Scalaz`
 	
-### Scalaz 是什么东东
+## 异常捕捉与 `Scalaz`
+
+先来看看，异常捕捉语句：
+
+	try {
+		source = Some(Source.fromFile(fileName))
+		val size = source.get.getLines.size
+		println(s"file $fileName has $size lines")
+	} catch {
+		case NonFatal(ex) => println(s"Non fatal exception! $ex")
+	} finally {
+      for (s <- source) {
+        println(s"Closing $fileName...")
+        s.close
+      }
+	}
+	
+这里是打开文件的操作，并且计算行数；`NonFatal` 非致命错误，如内存不足之类的非致命错误，将会被抛掉。`finnaly` 操作结束后，关闭文件。这是 **Scala** 模式匹配的又一大应用场景，你会发现倒是都是模式匹配：
+		 
+		 case NonFatal(ex) => ...
+		 
+如果每条异常的处理语句只是单条的话，**Scala** 写起来应该会挺爽的。
+
+### Java 的 `throws` 和 Scala 的 `Try`
+
+先来看看 `Java` 的：
+
+	...
+	public function m() throws Exception1, Exception2... {
+		...
+	}
+	...
+	
+
+这就是 `JAVA` 的 **Checked Exception**(有人翻译成受检的异常)。大概的原理就是通过方法签名的方式来指明该函数可能会抛出的异常。当初的学 JAVA 的时候，这个特点还是满有趣，但是后来新发明的语言鲜有这种特性（我学过的语言中，仅有 JAVA）。
+
+按照规范，也到这类函数，你就要使用 `try` 来处理：
+
+	try {	... }
+	catch(Exception) { ... }
+	
+在Java 应用程序中，异常处理机制为：抛出异常，捕捉异常。
+
+> 参考：[Java 里的异常(Exception)详解](http://nvd11.blog.163.com/blog/static/20001831220142104229680/)
+
+而 **Scala** 可以返回异常:
+	
+	def addInts2(s1: String, s2: String): Either[NumberFormatException,Int]= 
+	try {
+		Right(s1.toInt + s2.toInt)
+	} catch {
+		case nfe: NumberFormatException => Left(nfe) 
+	}
+	
+	scala> println(addInts2("1", "2"))
+	Right(3)
+	
+	scala> println(addInts2("1", "x"))
+	Left(java.lang.NumberFormatException: For input string: "x")
+	
+这样，他不会直接抛出错误，当然，如果想要使用该函数，最好要明确来处理 `left` 和 `right` 类型:
+	
+	addInts2("x", "1") match {
+		case Left(msg) => println(msg)
+		case Rigth(n) => n	
+	}
+	
+或者你也可以直接忽视异常：
+
+	for (n  <- addInts2("x", "1").rigth) {
+		n
+	}
+
+愚认为，相对于 `throws` 直接抛出错误，`scala` 的实现体验更好，而且不用一直写 `try catch`。
+
+如果不想声明异常类型，那你可以使用 `Try` 对象，用法如下：
+
+	import scala.util.{ Try, Success, Failure }
+	
+	def positive(i: Int): Try[Int] = Try {
+	  assert (i > 0, s"nonpositive number $i")
+	  i
+	}
+	
+这样，你只需要定义你正确返回结果的类型，而异常不需要特殊定义。如果更完整的定义，你可以这样：
+
+	def positive(i: Int): Try[Int] =
+	  if (i > 0) Success(i)
+	  else Failure(new AssertionError("assertion failed"))
+
+这里的 `Failure` 是一个 `Throwable` 对象。这样子有方便了不少。
+
+### Scalaz 验证
+
+在传统的异常处理，无法一次性汇总运行过程中的错误。如果我们在做表单验证的时候，我们就需要考虑到这个场景。而传统的做法就是通过一层层 `try ... catch ...`，把错误追加到一个列表中来实现，而 `scalaz` 中提供一个适用于这个场景的封装，直接看例子吧：
+
+	import scalaz._, std.AllInstances._
+	
+	/* 验证用户名，非空和只包含字母 */
+	def validName(key: String, name: String):
+	    Validation[List[String], List[(String,Any)]] = {
+	  val n = name.trim  // remove whitespace
+	  if (n.length > 0 && n.matches("""^\p{Alpha}$""")) Success(List(key -> n))
+	  else Failure(List(s"Invalid $key <$n>"))
+	} 
+	
+	/* 验证数字，并且大于0 */
+	def positive(key: String, n: String):
+	    Validation[List[String], List[(String,Any)]] = {
+	  try {
+	    val i = n.toInt
+	    if (i > 0) Success(List(key -> i))
+	    else Failure(List(s"Invalid $key $i"))
+	  } catch {
+	    case _: java.lang.NumberFormatException =>
+	      Failure(List(s"$n is not an integer"))
+	  }
+	}
+	
+	/* 验证表单 */
+	def validateForm(firstName: String, lastName: String, age: String):
+	    Validation[List[String], List[(String,Any)]] = {
+	  validName("first-name", firstName) +++ validName("last-name", lastName) +++
+	    positive("age", age)
+	}
+	
+	validateForm("Dean", "Wampler", "29")
+	validateForm("", "Wampler", "0")
+	// Returns: Failure(List(Invalid first-name <>, Invalid age 0))
+	//告知你名字和年龄填写有误
+	validateForm("Dean", "", "0") 
+	// Returns: Failure(List(Invalid last-name <>, Invalid age 0)) 
+	// 告知你姓氏和年龄填写有误
+	validateForm("D e a n", "", "29")
+	// Returns: Failure(List(Invalid first-name <D e a n>, Invalid last-name <>)) 
+	// 告知你名字和姓氏填写错误
+
+这方式还不错吧？
+
+就到这里就结束了，写着写着，就写这么多了，赶紧收住。
+
