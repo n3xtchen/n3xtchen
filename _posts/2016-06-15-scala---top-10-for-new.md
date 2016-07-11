@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Scala 新手眼中的十个有趣特性"
+title: "Scala 新手眼中的十种有趣用法"
 description: ""
 category: Scala
-tags: [jvm]
+tags: [jvm, scala]
 ---
 {% include JB/setup %}
 
@@ -13,7 +13,7 @@ TL;DR
 
 ## 漂亮的操作系统调用方式
 
-**Scala** 2.9里也提供类似功能：新增加了package: `scala.sys` 及`scala.sys.process`, 这些代码最初由**SBT**(a simple build tool for Scala)项目贡献，主要用于简化与操作系统进程的交互与调用。现在看看用法：
+**Scala** 2.9里也提供类似功能：新增加了package: `scala.sys` 及`scala.sys.process`, 这些代码最初由 **SBT** (a simple build tool for Scala)项目贡献，主要用于简化与操作系统进程的交互与调用。现在看看用法：
 
 	scala> import scala.language.postfixOps
 	import scala.language.postfixOps
@@ -27,9 +27,9 @@ TL;DR
 	Java HotSpot(TM) 64-Bit Server VM (build 24.80-b11, mixed mode)
 	res2: Int = 0
 
-当你引入 `scala.sys.process` 后，**scala** 会为你给字符串或数组动态注入 `!` 方法，来调用系统命令
+当你引入 `scala.sys.process` 后，**scala** 会为你给字符串或数组动态注入 `!` 方法来调用系统命令。
 	
-这是我见过调用 shell 最爽最优雅的一个，不是吗？现在看个复杂点的例子，爬取一个页面：
+这是我见过调用 shell 最爽最优雅的方式之一，不是吗？现在看个复杂点的例子，爬取一个页面：
 	
 	scala> import java.io.File
 	import java.io.File
@@ -40,7 +40,7 @@ TL;DR
 	scala> new URL("http://www.scala-lang.org/") #> new File("scala-lang.html") !
 	res4: Int = 0
 	
-这里我们又学到一个新的操作符 `#>`，结果重定向。这条命令等价于如下 **Bash**
+这里我们又学到一个新的操作符 `#>`，结果重定向。这条命令等价于如下 **Bash**：
 
 	$ curl "http://www.scala-lang.org/ > scala-lang.html
 	
@@ -72,9 +72,9 @@ TL;DR
 	scala> 1 |> ((i:Int)=> i*10)
 	res3: Int = 10
 	
-这样就可以将，函数 A 返回的值作为后面函数参数，一条链式调用看起来是那么的优雅（你觉得呢？）。
+这样就可以将，函数返回的值作为后面函数参数，一条链式调用看起来是那么的优雅（你觉得呢？）。
 	
-短短几行的代码，足以让你领教到 **隐式转化**（implicit）的威力吧！因为这个话题比较大，就不在这里阐述了。
+短短几行的代码，足以让你领教到 **隐式转化**（implicit）的威力吧！因为这个话题比较大，就不在这里作详细阐述了。
 
 ## 使用 `{...}` 替代 `(...)` 的语法糖
 
@@ -131,7 +131,7 @@ TL;DR
 
 	1.+(2)
 	
-即，`+` 是整型对象（在 **Scala** 中所有东西都是对象）的一个方法，如果了解到这里，会不会觉得能写成之前的样子很神奇。这里是 **Scala** 一个特性：
+即，`+` 是整型对象（在 **Scala** 中，一切都是对象）的一个方法，如果了解到这里，会不会觉得能写成之前的样子很神奇。这里是 **Scala** 一个特性：
 
 * 如果一个对象有一个带有一个参数的方法， 它的中缀标记可以省略，在这里，点号和括号都可以省略。
 
@@ -151,14 +151,8 @@ TL;DR
 
 	def isEven(n: Int) = (n % 2) == 0
 	List(1, 2, 3, 4) filter isEven foreach println
+	// 等同于 .filter(isEven).foreach(println)
 	
-看看简化过程
-
-	1. List(1, 2, 3, 4).filter((i: Int) => isEven(i)).foreach((i: Int) => println(i))
-	2. List(1, 2, 3, 4).filter(i => isEven(i)).foreach(i => println(i))
-	3. List(1, 2, 3, 4).filter(isEven).foreach(println)
-	4.List(1, 2, 3, 4) filter isEven foreach println
-
 ## 简便的类声明：
 
 **Java** 党可以看过来，不论是 IDE 和文本编辑器党，代码中到处充斥着大量的 `setter` 和 `getter`：
@@ -192,7 +186,7 @@ TL;DR
 
 	case class Person(name: String, age: Int)
 	 
-会不会很心动啊？^_^
+用 Java 的同学会不会很心动啊？^_^
 
 ## 密封类型（Sealed）强制其子类只能定义在同一个文件中
 
@@ -223,7 +217,7 @@ TL;DR
 如果你如之前，少写了其中一個案例：
 
 	scala> def what(d: Drawing) = d match {
-	     |     case Point(_, _)    => "點"
+	     |     case Point(_, _)    => "点"
 	     |     case Cylinder(_, _) => "柱"
 	     | }
 	<console>:14: warning: match may not be exhaustive.
@@ -232,11 +226,11 @@ TL;DR
 	                              ^
 	what: (d: Drawing)String
 
-编译器在告訴你，有些模式的类型你沒有列在 `match` 運算式的案例串（Case sequence）之中。你必须每個都列出來才可以：
+编译器在告訴你，有些模式的类型你沒有列在 `match` 運算式的案例串（Case sequence）之中。你应该每個都列出來才合理：
 	
 	scala> def what(d: Drawing) = d match {
-	     |     case Point(_, _)    => "點"
-	     |     case Circle(_, _)   => "圓"
+	     |     case Point(_, _)    => "点"
+	     |     case Circle(_, _)   => "圆"
 	     |     case Cylinder(_, _) => "柱"
 	     | }
 	what: (d: Drawing)String
@@ -278,9 +272,9 @@ TL;DR
 	
 作为入门，就知道这里就可以了，可以跳到下一个话题了！
 
-如果你看过 **Spark**（一个分布式计算框架）的源码，会发现这样的权限控制符，所以这个还是有必要搞清楚的。
+如果你看过 **Spark**（一个分布式计算框架）的源码，会发现这样的权限控制符到处都是，所以这个还是有必要搞清楚的。
 	
-如果能看懂下面这段代码，那你对 `Scala` 的访问控制算是了解了：
+如果能看懂下面这段代码，那你对 `Scala` 的域访问控制算是了解了：
 
 	package scopeA {
 	  class Class1 {
@@ -337,7 +331,7 @@ TL;DR
 	  def m(seq: Seq): Unit = println(s"Seq[String]: $seq")
 	}
 	
-这不就报错了吗？重复定义方法。那怎么办呢？（**JAVA** 语言的痛点之一）Scala 给你提供一种比较优雅的解决方案，使用隐式转换：
+这不就报错了吗？重复定义方法。那怎么办呢？（**JAVA** 语言的痛点之一）`Scala` 给你提供一种比较优雅的解决方案，使用隐式转换：
 
 	scala> :paste
 	object M {
@@ -382,75 +376,6 @@ TL;DR
 		 case NonFatal(ex) => ...
 		 
 如果每条异常的处理语句只是单条的话，**Scala** 写起来应该会挺爽的。
-
-### Java 的 `throws` 和 Scala 的 `Try`
-
-先来看看 `Java` 的：
-
-	...
-	public function m() throws Exception1, Exception2... {
-		...
-	}
-	...
-	
-
-这就是 `JAVA` 的 **Checked Exception**(有人翻译成受检的异常)。大概的原理就是通过方法签名的方式来指明该函数可能会抛出的异常。当初的学 JAVA 的时候，这个特点还是满有趣，但是后来新发明的语言鲜有这种特性（我学过的语言中，仅有 JAVA）。
-
-按照规范，也到这类函数，你就要使用 `try` 来处理：
-
-	try {	... }
-	catch(Exception) { ... }
-	
-在Java 应用程序中，异常处理机制为：抛出异常，捕捉异常。
-
-> 参考：[Java 里的异常(Exception)详解](http://nvd11.blog.163.com/blog/static/20001831220142104229680/)
-
-而 **Scala** 可以返回异常:
-	
-	def addInts2(s1: String, s2: String): Either[NumberFormatException,Int]= 
-	try {
-		Right(s1.toInt + s2.toInt)
-	} catch {
-		case nfe: NumberFormatException => Left(nfe) 
-	}
-	
-	scala> println(addInts2("1", "2"))
-	Right(3)
-	
-	scala> println(addInts2("1", "x"))
-	Left(java.lang.NumberFormatException: For input string: "x")
-	
-这样，他不会直接抛出错误，当然，如果想要使用该函数，最好要明确来处理 `left` 和 `right` 类型:
-	
-	addInts2("x", "1") match {
-		case Left(msg) => println(msg)
-		case Rigth(n) => n	
-	}
-	
-或者你也可以直接忽视异常：
-
-	for (n  <- addInts2("x", "1").rigth) {
-		n
-	}
-
-愚认为，相对于 `throws` 直接抛出错误，`scala` 的实现体验更好，而且不用一直写 `try catch`。
-
-如果不想声明异常类型，那你可以使用 `Try` 对象，用法如下：
-
-	import scala.util.{ Try, Success, Failure }
-	
-	def positive(i: Int): Try[Int] = Try {
-	  assert (i > 0, s"nonpositive number $i")
-	  i
-	}
-	
-这样，你只需要定义你正确返回结果的类型，而异常不需要特殊定义。如果更完整的定义，你可以这样：
-
-	def positive(i: Int): Try[Int] =
-	  if (i > 0) Success(i)
-	  else Failure(new AssertionError("assertion failed"))
-
-这里的 `Failure` 是一个 `Throwable` 对象。这样子有方便了不少。
 
 ### Scalaz 验证
 
