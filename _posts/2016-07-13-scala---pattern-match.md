@@ -96,7 +96,8 @@ tags: []
 	
 如果是初学者，这个坑肯定躺过。这里又要夸一下 **Scala** 智能了，报错的信息非常有参考价值。编译器已经猜到你的意图了(认真看我的错误注释)。
 
-这里的 `case` 子句中的 `y` 意味着匹配任何东西，把它赋值给新的变量 `y`，此 Y 非彼 Y。
+> ### 注意：
+> 在 `case` 语句中，小写字符开头的词会被假设一个新变量名，存储提取出来的值。为了引用之前定义的变量，你需要用反引号。相反，如果一个单词首字母大写，**Scala** 会把它当作一种类型名。
 
 你只需要将第6行的 `y` 替换成 **\`y\`** 即可。
 
@@ -105,3 +106,50 @@ tags: []
 	int: 99
 	found y!
 	int: 101
+	
+最后，我们还可以在一个 `case` 语句匹配多个。为了避免重复，我们可以使用 `or` 或者 `｜`:
+
+	for {
+		x <- Seq(1, 2, 2.7, "one", "two", 'four)
+	} {
+		val str = x match {
+			case _: Int | _: Double => "a number:" + x	# 注意看这一行
+			case "one" => "string one"
+			case _: String => "other string: " + x
+			case _ => "unexpected value: " + x
+		}
+		println(str)
+	}
+	
+### 匹配 Seq
+
+首先，`Seq` ，`List`， `Vector` 都是 Seq 的子类，仅有它们可以使用此类模式匹配
+
+	val nonEmptySeq    = Seq(1, 2, 3, 4, 5)
+	val emptySeq       = Seq.empty[Int]	# 空 Seq
+	val nonEmptyList   = List(1, 2, 3, 4, 5)	val emptyList      = Nil	# 空列表
+	val nonEmptyVector = Vector(1, 2, 3, 4, 5)	val emptyVector    = Vector.empty[Int]	# 空向量
+	val nonEmptyMap    = Map("one" -> 1, "two" -> 2, "three" -> 3)	val emptyMap       = Map.empty[String,Int]
+	
+	def seqToString[T](seq: Seq[T]): String = seq match {	  case head +: tail => s"$head +: " + seqToString(tail)	  case Nil => "Nil"
+	}
+	
+	for (seq <- Seq(	   
+		nonEmptySeq, emptySeq, nonEmptyList, emptyList,
+		nonEmptyVector, emptyVector, nonEmptyMap.toSeq,
+		emptyMap.toSeq)) {
+	  println(seqToString(seq))
+	}
+
+需要注意的是，对于 `Map 类型`，我们需要使用 `toSeq`，因为它不是 `Seq` 的子类。
+下面是输出：
+	
+	1 +: 2 +: 3 +: 4 +: 5 +: Nil
+	Nil1 +: 2 +: 3 +: 4 +: 5 +: Nil
+	Nil
+	1 +: 2 +: 3 +: 4 +: 5 +: Nil
+	Nil
+	(one,1) +: (two,2) +: (three,3) +: Nil
+	Nil
+
+ 直接看代码就好了。
