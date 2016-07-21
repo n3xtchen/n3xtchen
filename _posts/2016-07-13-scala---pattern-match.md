@@ -153,3 +153,59 @@ tags: []
 	Nil
 
  直接看代码就好了。
+
+### 元组匹配
+
+	val langs = Seq(
+	  ("Scala",   "Martin", "Odersky"),
+	  ("Clojure", "Rich",   "Hickey"),
+	  ("Lisp",    "John",   "McCarthy"))
+	
+	for (tuple <- langs) {
+	  tuple match {
+	    case ("Scala", _, _) => println("Found Scala")                   // 
+	    case (lang, first, last) =>                                      // 
+	      println(s"Found other language: $lang ($first, $last)")
+	  }
+	}
+	
+### 在 `case` 中使用 Guards
+
+
+	for (i <- Seq(1,2,3,4)) {
+	  i match {
+	    case _ if i%2 == 0 => println(s"even: $i")	    case _             => println(s"odd:  $i")	  }
+	}
+
+下面是输出：	
+
+	odd:  1
+	even: 2
+	odd:  3
+	even: 4
+
+### case class 匹配	
+
+	case class Address(street: String, city: String, country: String)
+	case class Person(name: String, age: Int, address: Address)
+	
+	val alice   = Person("Alice",   25, Address("1 Scala Lane", "Chicago", "USA"))
+	val bob     = Person("Bob",     29, Address("2 Java Ave.",  "Miami",   "USA"))
+	val charlie = Person("Charlie", 32, Address("3 Python Ct.", "Boston",  "USA"))
+	
+	for (person <- Seq(alice, bob, charlie)) {
+	  person match {
+	    case Person("Alice", 25, Address(_, "Chicago", _) => println("Hi Alice!")
+	    case Person("Bob", 29, Address("2 Java Ave.", "Miami", "USA")) =>
+	      println("Hi Bob!")
+	    case Person(name, age, _) =>
+	      println(s"Who are you, $age year-old person named $name?")
+	  }
+	} 
+
+这是输出:	
+
+	Hi Alice!
+	Hi Bob!
+	Who are you, 32 year-old person named Charlie?
+
