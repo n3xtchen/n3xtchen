@@ -209,3 +209,18 @@ tags: []
 	Hi Bob!
 	Who are you, 32 year-old person named Charlie?
 
+### 正则表达式匹配
+
+	val BookExtractorRE = """Book: title=([^,]+),\s+author=(.+)""".r
+	
+	val item = "Book: title=Programming Scala Second Edition, author=Dean Wampler"
+	
+	println(item match {
+	  case BookExtractorRE(title, author) =>
+		 println(s"""Book "$title", written by $author""")
+	  case entry => println(s"Unrecognized entry: $entry")
+	})
+
+输出:
+	
+	Book "Programming Scala Second Edition", written by Dean Wampler
