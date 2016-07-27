@@ -225,3 +225,57 @@ tags: []
 	
 	Book "Programming Scala Second Edition", written by Dean Wampler
 
+### 变量绑定
+
+如果你在做模式匹配的时候，除了需要提取匹配的内容，还需要被匹配对象本身的时候，你可以这么处理（以上一个例子的基础）：
+
+	println(item match {
+	  case b @ BookExtractorRE(title, author) => {
+	  	 println(s"""原始：$b""")
+		 println(s"""格式化后:Book "$title", written by $author""")
+	  }
+	  case entry => println(s"Unrecognized entry: $entry")
+	})
+	
+输出：
+
+	原始：Book: title=Programming Scala Second Edition, author=Dean Wampler
+	格式化后:Book "Programming Scala Second Edition", written by Dean Wampler
+
+### 其它常用场景
+
+提取 `case class`：
+
+	scala> case class Person(name: String, age: Int)
+	defined class Person
+	scala> val Person(name, age) = Person("Dean", 29)
+	name: String = Dean
+	age: Int = 29 
+	
+集合匹配：
+
+	scala> val head +: tail = List(1,2,3)
+	head: Int = 1
+	tail: List[Int] = List(2, 3)
+	
+	scala> val head1 +: head2 +: tail = Vector(1,2,3)
+	head1: Int = 1
+	head2: Int = 2
+	tail: scala.collection.immutable.Vector[Int] = Vector(3)
+	
+	scala> val Seq(a,b,c) = List(1,2,3)
+	a: Int = 1
+	b: Int = 2
+	c: Int = 3 
+
+直接提取正则：
+
+	scala> val selectRE =
+	     | s"""SELECT\\s*(DISTINCT)?\\s+($cols)\\s*FROM\\s+($table)\\s*($tail)?;""".r
+	selectRE: scala.util.matching.Regex = \
+	  SELECT\s*(DISTINCT)?\s+(\*|[\w, ]+)\s*FROM\s+(\w+)\s*(.*)?;
+
+	  
+
+
+
