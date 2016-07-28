@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Scalatra: 安装端口配置"
+title: "Scalatra: 安装和端口配置"
 description: ""
 category: Scala
 tags: [scalatra]
