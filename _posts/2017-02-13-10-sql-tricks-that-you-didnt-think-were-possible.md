@@ -314,6 +314,154 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 
 如果一定要从这个文章中得出什么结论的话，那就是你绝对应该知道现代的SQL这两个重要构件。为什么？可以从这个 [站点中](https://modern-sql.com/) 中得到答案。
 
+### 4. 寻找连续无间隔的最长子序列
 
+很多应用或者网站为了刺激用户活跃留存，对连续登录的用户进行奖励。比如，StackOverflow 的徽章：
+
+* Enthusianst: 连续30天访问每天都访问的用户
+* Fanatic：连续100天访问每天都访问的用户
+
+那我们如何计算这些徽章呢？这些徽章用来奖励给连续使用他们平台指定天数的用户。不管婚礼或者结婚纪念日，你也必须登录，否则计数就会归0。
+
+正如我们所使用的是声明式编程，我不需要当心维护任何状态和内存计数。我们想要使用在线分析 SQL 的形式表达她。例如，看看这些数据（测试数据生成方法见附录-1）：
+
+	n3xt-test=# SELECT login_time FROM user_login WHERE id = :user_id;
+	     login_time
+	---------------------
+	 2017-02-17 16:00:00
+	 2017-02-16 20:00:00
+	 2017-02-16 03:00:00
+	 2017-02-15 21:00:00
+	 2017-02-15 20:00:00
+	 2017-02-14 01:00:00
+	 2017-02-12 09:00:00
+	 2017-02-11 00:00:00
+	 2017-02-10 20:00:00
+	 2017-02-10 10:00:00
+	 2017-02-09 20:00:00
+	 2017-02-09 05:00:00
+	 2017-02-08 19:00:00
+	(13 rows)
+  
+一点帮助都没有。让我们从时间戳中去掉小时，并去重。这很简单：
+
+	n3xt-test=# SELECT DISTINCT CAST(login_time AS DATE) login_date FROM user_login WHERE id = :user_id;
+	 login_date
+	------------
+	 2017-02-17
+	 2017-02-16
+	 2017-02-15
+	 2017-02-14
+	 2017-02-12
+	 2017-02-11
+	 2017-02-10
+	 2017-02-09
+	 2017-02-08
+	(9 rows)
+
+就是现在，使用我们已经学过的窗口函数，让我们给每一个日期加上简单的行数：
+
+	n3xt-test=# SELECT
+	    login_date,
+	    row_number() OVER (ORDER BY login_date)
+	FROM login_date;
+	 login_date | row_number
+	------------+------------
+	 2017-02-08 |          1
+	 2017-02-09 |          2
+	 2017-02-10 |          3
+	 2017-02-11 |          4
+	 2017-02-12 |          5
+	 2017-02-14 |          6
+	 2017-02-15 |          7
+	 2017-02-16 |          8
+	 2017-02-17 |          9
+	(9 rows)
+
+接下来仍然很简单。看看发生了什么，如果不单独选择这些值，我们减去它们？
+
+	n3xt-test=# SELECT
+	    login_date,
+	    (row_number() OVER (ORDER BY login_date)),
+	    login_date - (row_number() OVER (ORDER BY login_date))::INT grp
+	FROM login_date;
+	 login_date | row_number |    grp
+	------------+------------+------------
+	 2017-02-08 |          1 | 2017-02-07
+	 2017-02-09 |          2 | 2017-02-07
+	 2017-02-10 |          3 | 2017-02-07
+	 2017-02-11 |          4 | 2017-02-07
+	 2017-02-12 |          5 | 2017-02-07
+	 2017-02-14 |          6 | 2017-02-08
+	 2017-02-15 |          7 | 2017-02-08
+	 2017-02-16 |          8 | 2017-02-08
+	 2017-02-17 |          9 | 2017-02-08
+	(9 rows)
+
+上述这些简单例子来说明了：
+
+1. `ROW_NUMBER()` 不言而喻，不会有间隔。
+2. 然而我们的数据有
+
+因此，我们把不连续有间隔的时间序列减去一个连续的整数序列，得到的新的日期相同的时间处在同一个连续日期：
+
+	n3xt-test=# SELECT
+	  min(login_date), max(login_date),
+	  max(login_date) -
+	  min(login_date) + 1 AS length
+	FROM login_date_groups
+	GROUP BY grp
+	ORDER BY length DESC;
+	    min     |    max     | length
+	------------+------------+--------
+	 2017-02-08 | 2017-02-12 |      5
+	 2017-02-14 | 2017-02-17 |      4
+	(2 rows)
+	
+下面是完整的查询语句：
+
+	1 WITH login_date AS (
+	2     SELECT DISTINCT CAST(login_time AS DATE) login_date
+	3     FROM user_login
+	4     WHERE id = 1
+	5 ), login_date_groups AS (
+	6     SELECT
+	7         login_date,
+	8         (row_number() OVER (ORDER BY login_date)),
+	9         login_date - (row_number() OVER (ORDER BY login_date))::INT grp
+	10     FROM login_date
+	11 )
+	12 SELECT
+	13   min(login_date), max(login_date),
+	14   max(login_date) -
+	15   min(login_date) + 1 AS length
+	16 FROM login_date_groups
+	17 GROUP BY grp
+	18 ORDER BY length DESC;
+
+
+### 附录-1: 随机生成用户登录行为:
+
+	  1 CREATE TABLE user_login AS
+	  2 WITH RECURSIVE users(id) AS (
+	  3     SELECT 1
+	  4     UNION ALL
+	  5     SELECT id + 1
+	  6     FROM users WHERE id <= 20
+	  7 )
+	  8 SELECT u.id,  login_time.login_time
+	  9 FROM
+	 10 (SELECT id FROM users) u,
+	 11 LATERAL(
+	 12     SELECT login_date.*, login_time.*
+	 13     FROM
+	 14     (SELECT date(generate_series(now() - '10 days'::INTERVAL, now(), '1 day')) login_date, (random()*6)::int login_per_day) login_date,
+	 15     LATERAL(
+	 16         SELECT * FROM
+	 17         generate_series(login_date.login_date, login_date.login_date + '1 days'::INTERVAL, '1 hour') login_time
+	 18         ORDER BY random() LIMIT login_date.login_per_day
+	 19     ) login_time
+	 20 ) login_time
+	 21 ORDER BY login_time DESC;
 
 > 参考文献：[10 SQL Tricks That You Didn’t Think ](https://blog.jooq.org/2016/04/25/10-sql-tricks-that-you-didnt-think-were-possible/)	_posts/2017-02-13-10-sql-tricks-that-you-didnt-think-were-possible.md
