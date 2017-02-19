@@ -439,6 +439,217 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 	17 GROUP BY grp
 	18 ORDER BY length DESC;
 
+### 5. 寻找序列长度
+
+上一个例子，我们已经提取连续值的序列。很简单，我们几乎滥用了整数连续队列。倘若序列的定义不够直观，？看看接下来的数据，**LENGTH** 是我们想计算的每一个序列的长度：
+
+| ID   | VALUE_DATE | AMOUNT |     LENGTH |
+|------|------------|--------|------------|
+| 9997 | 2014-03-18 |  99.17 |          2 |
+| 9981 | 2014-03-16 |  71.44 |          2 |
+| 9979 | 2014-03-16 | -94.60 |          3 |
+| 9977 | 2014-03-16 |  -6.96 |          3 |
+| 9971 | 2014-03-15 | -65.95 |          3 |
+| 9964 | 2014-03-15 |  15.13 |          2 |
+| 9962 | 2014-03-15 |  17.47 |          2 |
+| 9960 | 2014-03-15 |  -3.55 |          1 |
+| 9959 | 2014-03-14 |  32.00 |          1 |
+
+是的，你的猜测是正确，这个是收支方向（`SIGN(AMOUNT)`）相同根据订单ID排序生成的连续序列，看下格式化后的数据：
+
+| ID   | VALUE_DATE | AMOUNT |     LENGTH |
+|------|------------|--------|------------|
+| 9997 | 2014-03-18 | +99.17 |          2 |
+| 9981 | 2014-03-16 | +71.44 |          2 |
+| 9979 | 2014-03-16 | -94.60 |          3 |
+| 9977 | 2014-03-16 | - 6.96 |          3 |
+| 9971 | 2014-03-15 | -65.95 |          3 |
+| 9964 | 2014-03-15 | +15.13 |          2 |
+| 9962 | 2014-03-15 | +17.47 |          2 |
+| 9960 | 2014-03-15 | - 3.55 |          1 |
+| 9959 | 2014-03-14 | +32.00 |          1 |
+
+那我们要怎么做？太简单，首先去除所有的噪音，加入行数
+
+SELECT 
+  id, amount,
+  sign(amount) AS sign,
+  row_number() 
+    OVER (ORDER BY id DESC) AS rn
+FROM trx
+
+| ID   | AMOUNT | SIGN | RN |
+|------|--------|------|----|
+| 9997 |  99.17 |    1 |  1 |
+| 9981 |  71.44 |    1 |  2 |
+
+| 9979 | -94.60 |   -1 |  3 |
+| 9977 |  -6.96 |   -1 |  4 |
+| 9971 | -65.95 |   -1 |  5 |
+
+| 9964 |  15.13 |    1 |  6 |
+| 9962 |  17.47 |    1 |  7 |
+
+| 9960 |  -3.55 |   -1 |  8 |
+
+| 9959 |  32.00 |    1 |  9 |
+
+下一个目标是生成下面这样的表：
+
+| ID   | AMOUNT | SIGN | RN | LO | HI |
+|------|--------|------|----|----|----|
+| 9997 |  99.17 |    1 |  1 |  1 |    |
+| 9981 |  71.44 |    1 |  2 |    |  2 |
+
+| 9979 | -94.60 |   -1 |  3 |  3 |    |
+| 9977 |  -6.96 |   -1 |  4 |    |    |
+| 9971 | -65.95 |   -1 |  5 |    |  5 |
+
+| 9964 |  15.13 |    1 |  6 |  6 |    |
+| 9962 |  17.47 |    1 |  7 |    |  7 |
+
+| 9960 |  -3.55 |   -1 |  8 |  8 |  8 |
+
+| 9959 |  32.00 |    1 |  9 |  9 |  9 |
+
+在这个表中，我想复制行数到一个子系列的起始行（下界）的 *LO* 字段，和结束行（上界）的 *HI* 字段中。为了这个，我们需要使用两个魔法函数 `LEAD()` 和 `LAG()`：
+
+* `LEAD()`：当前行的下 n 行
+* `LAG()`：当前行的上 n 行
+
+	n3xt-test=# SELECT
+	  lag(v) OVER (ORDER BY v),
+	  v,
+	  lead(v) OVER (ORDER BY v)
+	FROM (
+	  VALUES (1), (2), (3), (4)
+	) t(v);
+	 lag | v | lead
+	-----+---+------
+	     | 1 |    2
+	   1 | 2 |    3
+	   2 | 3 |    4
+	   3 | 4 |
+	(4 rows)
+	
+很神奇有木有？记住，在窗口函数内，你可以对 **和当前相关的行的子集** 进行排行或者聚合。在 `LEAD()` 和 `LAG()` 的例子中，我们访问当前行相关的行，重要指定偏离位置，是很容易的。在很多场景中时很有用的。
+
+继续我的 *LO* 和 *HGIH* 例子：
+
+	SELECT 
+	  trx.*,
+	  CASE WHEN lag(sign) 
+	       OVER (ORDER BY id DESC) != sign 
+	       THEN rn END AS lo,
+	  CASE WHEN lead(sign) 
+	       OVER (ORDER BY id DESC) != sign 
+	       THEN rn END AS hi,
+	FROM trx
+	
+通过与上一行（`lag()`）对比 *sign* 字段，如果他们符号相反，我们把当前的行数复制到 *LO* 字段，因为这是我们序列的下界。
+
+然后通过与下一行（`lead()`）对比 *sign* 字段，如果他们符号相反，我们把当前的行数复制到 *LO* 字段，因为这是我们序列的上界。
+
+最后，我们需要处理讨厌的空值（`NULL`）：
+
+SELECT -- With NULL handling...
+  trx.*,
+  CASE WHEN coalesce(lag(sign) 
+       OVER (ORDER BY id DESC), 0) != sign 
+       THEN rn END AS lo,
+  CASE WHEN coalesce(lead(sign) 
+       OVER (ORDER BY id DESC), 0) != sign 
+       THEN rn END AS hi,
+FROM trx
+
+下一步，我们想要 *LO* 和 *HI* 出现在我们的所有行中。
+
+| ID   | AMOUNT | SIGN | RN | LO | HI |
+|------|--------|------|----|----|----|
+| 9997 |  99.17 |    1 |  1 |  1 |  2 |
+| 9981 |  71.44 |    1 |  2 |  1 |  2 |
+| 9979 | -94.60 |   -1 |  3 |  3 |  5 |
+| 9977 |  -6.96 |   -1 |  4 |  3 |  5 |
+| 9971 | -65.95 |   -1 |  5 |  3 |  5 |
+| 9964 |  15.13 |    1 |  6 |  6 |  7 |
+| 9962 |  17.47 |    1 |  7 |  6 |  7 |
+| 9960 |  -3.55 |   -1 |  8 |  8 |  8 |
+| 9959 |  32.00 |    1 |  9 |  9 |  9 |
+
+我们所使用的特性至少在 Redshift，Sybase SQL，DB2 以及 Oracle 中都可用。我们使用 `IGNORE NULLS` 语句：
+
+SELECT 
+  trx.*,
+  last_value (lo) IGNORE NULLS OVER (
+    ORDER BY id DESC 
+    ROWS BETWEEN UNBOUNDED PRECEDING 
+    AND CURRENT ROW) AS lo,
+  first_value(hi) IGNORE NULLS OVER (
+    ORDER BY id DESC 
+    ROWS BETWEEN CURRENT ROW 
+    AND UNBOUNDED FOLLOWING) AS hi
+FROM trx
+
+很多关键字！但是本质往往是相同的。在任何给定的当前行，我们寻找之前的值（previous values，`ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`），但是忽略所有的空值。从之前的之中，我们获取最后的值，和我们的新 *LO* 值。换句话说，我们获取向前最接近当前行（closest preceding）的 *LO* 值。
+
+*HI* 也是同理。在任何给定的当前行，我们寻找随后的值（subsequent values，`ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`），但是忽略所有的空值。从之前的之中，我们获取最后的值，和我们的新 *HI* 值。换句话说，我们获取向后最接近当前行（closest following）的 *HI* 值。
+
+SELECT -- With NULL handling...
+  trx.*,
+  coalesce(last_value (lo) IGNORE NULLS OVER (
+    ORDER BY id DESC 
+    ROWS BETWEEN UNBOUNDED PRECEDING 
+    AND CURRENT ROW), rn) AS lo,
+  coalesce(first_value(hi) IGNORE NULLS OVER (
+    ORDER BY id DESC 
+    ROWS BETWEEN CURRENT ROW 
+    AND UNBOUNDED FOLLOWING), rn) AS hi
+FROM trx
+
+最后，我们只是做一个微不足道的最后一步，记住处理 **off-by-1** 错误：
+
+SELECT
+  trx.*,
+  1 + hi - lo AS length
+FROM trx
+
+这个是我们最后的结果：
+
+| ID   | AMOUNT | SIGN | RN | LO | HI | LENGTH|
+|------|--------|------|----|----|----|-------|
+| 9997 |  99.17 |    1 |  1 |  1 |  2 |     2 |
+| 9981 |  71.44 |    1 |  2 |  1 |  2 |     2 |
+| 9979 | -94.60 |   -1 |  3 |  3 |  5 |     3 |
+| 9977 |  -6.96 |   -1 |  4 |  3 |  5 |     3 |
+| 9971 | -65.95 |   -1 |  5 |  3 |  5 |     3 |
+| 9964 |  15.13 |    1 |  6 |  6 |  7 |     2 |
+| 9962 |  17.47 |    1 |  7 |  6 |  7 |     2 |
+| 9960 |  -3.55 |   -1 |  8 |  8 |  8 |     1 |
+| 9959 |  32.00 |    1 |  9 |  9 |  9 |     1 |
+
+下面是完整版的查询：
+
+	WITH 
+	  trx1(id, amount, sign, rn) AS (
+	    SELECT id, amount, sign(amount), row_number() OVER (ORDER BY id DESC)
+	    FROM trx
+	  ),
+	  trx2(id, amount, sign, rn, lo, hi) AS (
+	    SELECT trx1.*,
+	    CASE WHEN coalesce(lag(sign) OVER (ORDER BY id DESC), 0) != sign 
+	         THEN rn END,
+	    CASE WHEN coalesce(lead(sign) OVER (ORDER BY id DESC), 0) != sign 
+	         THEN rn END
+	    FROM trx1
+	  )
+	SELECT 
+	  trx2.*, 1
+	  - last_value (lo) IGNORE NULLS OVER (ORDER BY id DESC 
+	    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+	  + first_value(hi) IGNORE NULLS OVER (ORDER BY id DESC 
+	    ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+	FROM trx2
+
 
 ### 附录-1: 随机生成用户登录行为:
 
