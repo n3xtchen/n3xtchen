@@ -686,6 +686,83 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 	  max(trx2.lo) OVER (PARTITION BY trx2.lo_partition) + 1 length
 	FROM trx2;
 
+### 6. 子集和問題（The subset sum problem with SQL）
+
+什么是子集和问题？这里进行了有趣的解释：
+
+[https://xkcd.com/287](https://xkcd.com/287)
+
+还是维基百科上乏味的解释：
+
+[子集和问题[编辑]](https://zh.wikipedia.org/wiki/%E5%AD%90%E9%9B%86%E5%92%8C%E5%95%8F%E9%A1%8C
+)
+
+本质上，对每一个的求和。。。
+
+| ID | TOTAL |
+|----|-------|
+|  1 | 25150 |
+|  2 | 19800 |
+|  3 | 27511 |
+
+我想要尽可能地从这些组合项中找到“最好”的和：
+
+| ID   |  ITEM |
+|------|-------|
+|    1 |  7120 |
+|    2 |  8150 |
+|    3 |  8255 |
+|    4 |  9051 |
+|    5 |  1220 |
+|    6 | 12515 |
+|    7 | 13555 |
+|    8 |  5221 |
+|    9 |   812 |
+|   10 |  6562 |
+
+如果你心算够好的话，你可以直接得出最佳的和：
+
+| TOTAL |  BEST | CALCULATION
+|-------|-------|--------------------------------
+| 25150 | 25133 | 7120 + 8150 + 9051 + 812
+| 19800 | 19768 | 1220 + 12515 + 5221 + 812
+| 27511 | 27488 | 8150 + 8255 + 9051 + 1220 + 812
+
+使用 SQL 怎么处理呢？简单，只需要使用创建一个 CTE，枚举出 2的n次方种汇总，并找到最接近的一个：
+
+	-- All the possible 2N sums
+	WITH sums(sum, max_id, calc) AS (...)
+	 
+	-- Find the best sum per “TOTAL”
+	SELECT
+	  totals.total,
+	  something_something(total - sum) AS best,
+	  something_something(total - sum) AS calc
+	FROM draw_the_rest_of_the_*bleep*_owl
+
+如果你读到这里，说明我们是真朋友^_^：
+
+不要担心，方法并没有想象中那么难（）
+
+	WITH sums(sum, id, calc) AS (
+	  SELECT item, id, to_char(item) FROM items
+	  UNION ALL
+	  SELECT item + sum, items.id, calc || ' + ' || item
+	  FROM sums JOIN items ON sums.id < items.id
+	)
+	SELECT
+	  totals.id,
+	  totals.total,
+	  min (sum) KEEP (
+	    DENSE_RANK FIRST ORDER BY abs(total - sum)
+	  ) AS best,
+	  min (calc) KEEP (
+	    DENSE_RANK FIRST ORDER BY abs(total - sum)
+	  ) AS calc,
+	FROM totals 
+	CROSS JOIN sums
+	GROUP BY totals.id, totals.total
+
 ### 附录-1: 随机生成用户登录行为:
 
 	  1 CREATE TABLE user_login AS
