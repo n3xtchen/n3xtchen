@@ -742,26 +742,121 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 
 如果你读到这里，说明我们是真朋友^_^：
 
-不要担心，方法并没有想象中那么难（）
+不要担心，方法并没有想象中那么难:
 
-	WITH sums(sum, id, calc) AS (
-	  SELECT item, id, to_char(item) FROM items
-	  UNION ALL
-	  SELECT item + sum, items.id, calc || ' + ' || item
-	  FROM sums JOIN items ON sums.id < items.id
+	n3xt-test=# WITH ASSIGN(ID, ASSIGN_AMT) AS (
+	              SELECT 1, 25150
+	    UNION ALL SELECT 2, 19800
+	    UNION ALL SELECT 3, 27511
+	), VALS (ID, WORK_AMT) AS (
+	              SELECT 1 , 7120
+	    UNION ALL SELECT 2 , 8150
+	    UNION ALL SELECT 3 , 8255
+	    UNION ALL SELECT 4 , 9051
+	    UNION ALL SELECT 5 , 1220
+	    UNION ALL SELECT 6 , 12515
+	    UNION ALL SELECT 7 , 13555
+	    UNION ALL SELECT 8 , 5221
+	    UNION ALL SELECT 9 , 812
+	    UNION ALL SELECT 10, 6562
+	), SUMS (ID, WORK_AMT, SUBSET_SUM) AS (
+	    SELECT
+	        VALS.*,
+	        SUM (WORK_AMT) OVER (ORDER BY ID)
+	    FROM
+	        VALS
 	)
-	SELECT
-	  totals.id,
-	  totals.total,
-	  min (sum) KEEP (
-	    DENSE_RANK FIRST ORDER BY abs(total - sum)
-	  ) AS best,
-	  min (calc) KEEP (
-	    DENSE_RANK FIRST ORDER BY abs(total - sum)
-	  ) AS calc,
-	FROM totals 
-	CROSS JOIN sums
-	GROUP BY totals.id, totals.total
+	SELECT ASSIGN.ID, ASSIGN.ASSIGN_AMT, SUBSET_SUM
+	FROM ASSIGN JOIN SUMS
+	ON ABS (ASSIGN_AMT - SUBSET_SUM) <= ALL (
+	    SELECT ABS (ASSIGN_AMT - SUBSET_SUM) FROM SUMS
+	);
+	 id | assign_amt | subset_sum
+	----+------------+------------
+	  1 |      25150 |      23525
+	  2 |      19800 |      23525
+	  3 |      27511 |      23525
+	(3 rows)
+	
+### 7. 覆盖运行中的汇总
+
+之前，我们已经知道怎么使用窗口函数计算“一般的”运行中汇总。很简单。现在，如果我们想要覆盖运行中的汇总，使得她永远大于0？基本上，我们星耀计算这个：
+
+| DATE       | AMOUNT | TOTAL |
+|------------|--------|-------|
+| 2012-01-01 |    800 |   800 |
+| 2012-02-01 |   1900 |  2700 |
+| 2012-03-01 |   1750 |  4450 |
+| 2012-04-01 | -20000 |     0 |
+| 2012-05-01 |    900 |   900 |
+| 2012-06-01 |   3900 |  4800 |
+| 2012-07-01 |  -2600 |  2200 |
+| 2012-08-01 |  -2600 |     0 |
+| 2012-09-01 |   2100 |  2100 |
+| 2012-10-01 |  -2400 |     0 |
+| 2012-11-01 |   1100 |  1100 |
+| 2012-12-01 |   1300 |  2400 |
+
+当一笔很大支出 -20000 被剪去，我将其归0即可，而不是显示世纪的 -15550。看我的注释就明白了：
+
+| DATE       | AMOUNT | TOTAL | Total 的公式
+|------------|--------|-------|---------------------
+| 2012-01-01 |    800 |   800 | **GREATEST(0,    800)**
+| 2012-02-01 |   1900 |  2700 | **GREATEST(0,   2700)**
+| 2012-03-01 |   1750 |  4450 | **GREATEST(0,   4450)**
+| 2012-04-01 | -20000 |     0 | **GREATEST(0, -15550)**
+| 2012-05-01 |    900 |   900 | **GREATEST(0,    900)**
+| 2012-06-01 |   3900 |  4800 | **GREATEST(0,   4800)**
+| 2012-07-01 |  -2600 |  2200 | **GREATEST(0,   2200)**
+| 2012-08-01 |  -2600 |     0 | **GREATEST(0,   -400)**
+| 2012-09-01 |   2100 |  2100 | **GREATEST(0,   2100)**
+| 2012-10-01 |  -2400 |     0 | **GREATEST(0,   -300)**
+| 2012-11-01 |   1100 |  1100 | **GREATEST(0,   1100)**
+| 2012-12-01 |   1300 |  2400 | **GREATEST(0,   2400)**
+
+我们怎么做呢？窗口函数和递归CTE都是可以实现，看到这里大家估计也已经视觉疲劳了，我们换个新法子？但是这个法子只有 **Oracle**，vendor-specific SQL。
+
+将会非常的惊艳，只需要在任何报表的后面加上 `MODEL`：
+
+	SELECT ... FROM some_table
+
+	-- 放在任何表后面	 
+	MODEL ...
+	
+然后你就可以直接在 **SQL** 语句中实现电子表格的逻辑，和 **Excel** 一样。
+
+下面是接下来三个语句将非常实用和广泛的使用
+
+	MODEL
+	  -- 维度
+	  DIMENSION BY ...
+	   
+	  -- 报表字段
+	  MEASURES ...
+	   
+	  -- 公司
+	  RULES ...
+	  
+稍微解释下：
+
+* `DIMENSION BY`：指定电子表格的维度。不像 **Excel**，你可以在 **Oracle** 中指定任意数量的维度，而不是2个。
+* `MEASURES`：可用的值。不像 Excel ，在单元格中可以使用元祖，而不是单一的值。
+* `RULES`：每一个单元格的公式。不像 Excel，这个公式集中放在这里，而不是在每一个单元格中。
+
+使得 `MODEL` 使用起来比 **Excel** 难一些，但是功能更强大，如果你敢用。下面给一个小 demo：
+
+	SELECT *
+	FROM (
+	  SELECT date, amount, 0 AS total
+	  FROM amounts
+	)
+	MODEL 
+	  DIMENSION BY (row_number() OVER (ORDER BY date) AS rn)
+	  MEASURES (date, amount, total)
+	  RULES (
+	    total[any] = greatest(0,
+	    coalesce(total[cv(rn) - 1], 0) + amount[cv(rn)])
+	  )
 
 ### 附录-1: 随机生成用户登录行为:
 
@@ -787,7 +882,7 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 	 20 ) login_time
 	 21 ORDER BY login_time DESC;
 	 
-附录-2: 生成订单数据：
+### 附录-2: 生成订单数据：
 
 	1 CREATE TABLE orders AS
 	2 SELECT *, round((100-random()*200)::NUMERIC, 2) amount
