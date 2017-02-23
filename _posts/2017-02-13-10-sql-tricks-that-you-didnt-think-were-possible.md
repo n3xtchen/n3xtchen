@@ -858,6 +858,127 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 	    coalesce(total[cv(rn) - 1], 0) + amount[cv(rn)])
 	  )
 
+### 8. 时间序列模式识别（Time Series Pattern Recognition）
+
+如果你对诈骗识别或者其他运行实时大数据的领域感兴趣，时间模式识别这个名词对你来说将不会太陌生。
+
+如果我们重温 **5. 寻找序列长度** 的章节，将会想在我们时间序列的复杂事件（**Event**）上生成触发器（**Trigger**）：
+
+|   ID | VALUE_DATE |  AMOUNT | LEN | TRIGGER
+|------|------------|---------|-----|--------
+| 9997 | 2014-03-18 | + 99.17 |   1 |
+| 9981 | 2014-03-16 | - 71.44 |   4 |
+| 9979 | 2014-03-16 | - 94.60 |   4 |      x
+| 9977 | 2014-03-16 | -  6.96 |   4 |
+| 9971 | 2014-03-15 | - 65.95 |   4 |
+| 9964 | 2014-03-15 | + 15.13 |   3 |
+| 9962 | 2014-03-15 | + 17.47 |   3 |
+| 9960 | 2014-03-15 | +  3.55 |   3 |
+| 9959 | 2014-03-14 | - 32.00 |   1 |
+
+触发器的规则是：
+
+>	如果某个事件连续发生3次，则触发该触发器（**Trigger**）。
+
+也和之前的 `MODEL` 语句类似，我们能做的就是使用 **Oracle 12c** 语法：
+
+	SELECT ... FROM some_table	 
+	MATCH_RECOGNIZE (...) 
+	
+`MATCH_RECOGNIZE` 的最简单的应用包括以下子句：
+
+	SELECT *
+	FROM series
+	MATCH_RECOGNIZE (
+	  -- 模式匹配在这个顺序下完成
+	  ORDER BY ...
+	 
+	  -- 用来匹配的字段
+	  MEASURES ...
+	 
+	  -- 每一次匹配后返回行的配置
+	  ALL ROWS PER MATCH
+	 
+	  -- 匹配事件的正则表达式
+	  PATTERN (...)
+	 
+	  -- 事件的定义
+	  DEFINE ...
+	) 
+	
+这个听起来太疯狂了。现在看一个实际的例子：
+
+	SELECT *
+	FROM series
+	MATCH_RECOGNIZE (
+	  ORDER BY id
+	  MEASURES classifier() AS trg
+	  ALL ROWS PER MATCH
+	  PATTERN (S (R X R+)?)
+	  DEFINE
+	    R AS sign(R.amount) = prev(sign(R.amount)),
+	    X AS sign(X.amount) = prev(sign(X.amount))
+	) 
+
+我们做了什么？
+
+* 根据 *ID* 排序
+* 然后我们指定我们想要的值作为结果。 我们需要 `MEASURE` 触发器（**Trigger**），它被定义为分类器，即我们将在模式中使用的文字。 此外，我们想要匹配的所有行。
+* 我们指定类正则表达式模式。这个模式是一个 *S* 事件（**Event**）定义开始，接着 *R* 时间定义重复。如果全部模式匹配，我们会的得到 *SRXR*，*SRXRR* 或 *SRXRRR*，例如， X 将会在序列长度大于 4 的第三个位置北标记
+* 最后，我们定义 *R* 和 *X* 成同一个事件（**Event**），即当前行和上一行的 `SIGN(AMOUNT)` 相同时触发。我们没有定义 *S*，他可以是任何的其他行。
+
+这个查询会产生下面魔法般的输出：
+
+|   ID | VALUE_DATE |  AMOUNT | TRG |
+|------|------------|---------|-----|
+| 9997 | 2014-03-18 | + 99.17 |   S |
+| 9981 | 2014-03-16 | - 71.44 |   R |
+| 9979 | 2014-03-16 | - 94.60 |   X |
+| 9977 | 2014-03-16 | -  6.96 |   R |
+| 9971 | 2014-03-15 | - 65.95 |   S |
+| 9964 | 2014-03-15 | + 15.13 |   S |
+| 9962 | 2014-03-15 | + 17.47 |   S |
+| 9960 | 2014-03-15 | +  3.55 |   S |
+| 9959 | 2014-03-14 | - 32.00 |   S |
+
+我们可以看到一个 *X* 在我们的事件（**Event**）系统。这个就是实际上我们想要的。在一系列长度大于3的事件（相同符号）的第三次重复时触发。
+
+Boom！
+
+实际上，我们根本不 Care *S* 和 *R* 事件（**Event**），只需要像这样去掉就好：
+
+	SELECT
+	  id, value_date, amount, 
+	  CASE trg WHEN 'X' THEN 'X' END trg
+	FROM series
+	MATCH_RECOGNIZE (
+	  ORDER BY id
+	  MEASURES classifier() AS trg
+	  ALL ROWS PER MATCH
+	  PATTERN (S (R X R+)?)
+	  DEFINE
+	    R AS sign(R.amount) = prev(sign(R.amount)),
+	    X AS sign(X.amount) = prev(sign(X.amount))
+	) 
+
+最后的结果如下：
+
+|   ID | VALUE_DATE |  AMOUNT | TRG |
+|------|------------|---------|-----|
+| 9997 | 2014-03-18 | + 99.17 |     |
+| 9981 | 2014-03-16 | - 71.44 |     |
+| 9979 | 2014-03-16 | - 94.60 |   X |
+| 9977 | 2014-03-16 | -  6.96 |     |
+| 9971 | 2014-03-15 | - 65.95 |     |
+| 9964 | 2014-03-15 | + 15.13 |     |
+| 9962 | 2014-03-15 | + 17.47 |     |
+| 9960 | 2014-03-15 | +  3.55 |     |
+| 9959 | 2014-03-14 | - 32.00 |     |
+
+感谢， **ORACLE**！
+
+另外别要期待我继续介绍 **Oracle** 白皮书（如果你在使用 **Oracle 12c**, 那强烈建议看一下她的[文档](http://www.oracle.com/ocom/groups/public/@otn/documents/webcontent/1965433.pdf)）的其他特性了。
+
 ### 附录-1: 随机生成用户登录行为:
 
 	  1 CREATE TABLE user_login AS
