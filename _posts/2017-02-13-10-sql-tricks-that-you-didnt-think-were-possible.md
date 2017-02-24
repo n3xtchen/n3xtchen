@@ -1176,7 +1176,16 @@ Boom！
 
 开始总结陈词：
 
+### 解语
 
+这文章中所有的内容都是声明式的。并且相对简单。当然，我尝试然这篇文章更有趣味性，一切夸张的 SQL 被采用，并让大部分东西都比较易学。也不是都很简单，你必须多练习写 **SQL**。和其他语言一样，但是稍微难度大一点，因为：
+
+1. 时不时出现比较晦涩的语法
+2. 使用声明式的思想并不太容易。至少，和面向对象和面向过程式的思想差异很大。
+
+但是一旦你习惯了，使用 **SQL** 的 **声明式编程** 还是值得你学习的。您可以通过描述要从数据库获取的结果，在非常少的代码中表达您的数据之间的复杂关系。
+
+是不是很棒？
 
 ### 附录-1: 随机生成用户登录行为:
 
@@ -1208,6 +1217,4 @@ Boom！
 	2 SELECT *, round((100-random()*200)::NUMERIC, 2) amount
 	3 FROM generate_series(1, 20) id;
 
-
-
-> 参考文献：[10 SQL Tricks That You Didn’t Think ](https://blog.jooq.org/2016/04/25/10-sql-tricks-that-you-didnt-think-were-possible/)	_posts/2017-02-13-10-sql-tricks-that-you-didnt-think-were-possible.md
+> 参考文献：[10 SQL Tricks That You Didn’t Think ](https://blog.jooq.org/2016/04/25/10-sql-tricks-that-you-didnt-think-were-possible/)
