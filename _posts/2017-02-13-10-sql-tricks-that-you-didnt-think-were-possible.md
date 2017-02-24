@@ -983,6 +983,108 @@ Boom！
 
 另外别要期待我继续介绍 **Oracle** 白皮书（如果你在使用 **Oracle 12c**, 那强烈建议看一下她的[文档](http://www.oracle.com/ocom/groups/public/@otn/documents/webcontent/1965433.pdf)）的其他特性了。
 
+### 9. 数据表行列转换（Pivoting and Unpivoting）
+
+如果你已经读到这里，接下来的内容都太简单了，和大家过一下：
+
+这是我们的数据，**主演**，**电影名**以及**电影评级**：
+
+| NAME      | TITLE           | RATING |
+|-----------|-----------------|--------|
+| A. GRANT  | ANNIE IDENTITY  | G      |
+| A. GRANT  | DISCIPLE MOTHER | PG     |
+| A. GRANT  | GLORY TRACY     | PG-13  |
+| A. HUDSON | LEGEND JEDI     | PG     |
+| A. CRONYN | IRON MOON       | PG     |
+| A. CRONYN | LADY STAGE      | PG     |
+| B. WALKEN | SIEGE MADRE     | R      |
+
+我们想要转换成：
+
+| NAME      | NC-17 |  PG |   G | PG-13 |   R |
+|-----------|-------|-----|-----|-------|-----|
+| A. GRANT  |     3 |   6 |   5 |     3 |   1 |
+| A. HUDSON |    12 |   4 |   7 |     9 |   2 |
+| A. CRONYN |     6 |   9 |   2 |     6 |   4 |
+| B. WALKEN |     8 |   8 |   4 |     7 |   3 |
+| B. WILLIS |     5 |   5 |  14 |     3 |   6 |
+| C. DENCH  |     6 |   4 |   5 |     4 |   5 |
+| C. NEESON |     3 |   8 |   4 |     7 |   3 |
+
+如果是用过 **Excel** 的 **透视表** 的可以略过接下来的两段解释。
+
+大家注意到了，我可以根据演员进行分组，然后把该演员每个评级分组下的电影数量**转化成列（PIVOTING）**。不以关系的形式显示，（例如，每组一行），我们把所有的组都转换成列。之所以可以这么做，是因为我们实现知道所有可能出现的分组。
+
+**列转行（Unpivoting）** 则是相反的操作。
+
+| NAME      | RATING | COUNT |
+|-----------|--------|-------|
+| A. GRANT  | NC-17  |     3 |
+| A. GRANT  | PG     |     6 |
+| A. GRANT  | G      |     5 |
+| A. GRANT  | PG-13  |     3 |
+| A. GRANT  | R      |     6 |
+| A. HUDSON | NC-17  |    12 |
+| A. HUDSON | PG     |     4 |
+
+这个实际上很简单。下面是 PostgreSQL 的实现：
+
+	SELECT
+	  first_name, last_name,
+	  count(*) FILTER (WHERE rating = 'NC-17') AS "NC-17",
+	  count(*) FILTER (WHERE rating = 'PG'   ) AS "PG",
+	  count(*) FILTER (WHERE rating = 'G'    ) AS "G",
+	  count(*) FILTER (WHERE rating = 'PG-13') AS "PG-13",
+	  count(*) FILTER (WHERE rating = 'R'    ) AS "R"
+	FROM actor AS a
+	JOIN film_actor AS fa USING (actor_id)
+	JOIN film AS f USING (film_id)
+	GROUP BY actor_id
+
+我们可以向聚合函数附加一个简单的 `FILTER` 子句，以便只计算相关的数据。
+
+在其他数据库下，我们可以这么做：
+
+	SELECT
+	  first_name, last_name,
+	  count(CASE rating WHEN 'NC-17' THEN 1 END) AS "NC-17",
+	  count(CASE rating WHEN 'PG'    THEN 1 END) AS "PG",
+	  count(CASE rating WHEN 'G'     THEN 1 END) AS "G",
+	  count(CASE rating WHEN 'PG-13' THEN 1 END) AS "PG-13",
+	  count(CASE rating WHEN 'R'     THEN 1 END) AS "R"
+	FROM actor AS a
+	JOIN film_actor AS fa USING (actor_id)
+	JOIN film AS f USING (film_id)
+	GROUP BY actor_id
+	
+现在，如果你在使用 **SQL Server** 或者 **Oracle** 的话，你还可以使用内建的 `PIVOT` 或 `UNPIVOT` 语句，就像 `MODEL` 和 `MATCH_RECOGNIZE` 一样，在一个表的后面添加新的关键词就好：
+
+	-- 行转列
+	SELECT something, something
+	FROM some_table
+	PIVOT (
+	  count(*) FOR rating IN (
+	    'NC-17' AS "NC-17", 
+	    'PG'    AS "PG", 
+	    'G'     AS "G", 
+	    'PG-13' AS "PG-13", 
+	    'R'     AS "R"
+	  )
+	)
+	 
+	-- 列转行
+	SELECT something, something
+	FROM some_table
+	UNPIVOT (
+	  count    FOR rating IN (
+	    "NC-17" AS 'NC-17', 
+	    "PG"    AS 'PG', 
+	    "G"     AS 'G', 
+	    "PG-13" AS 'PG-13', 
+	    "R"     AS 'R'
+	  )
+	)
+
 ### 附录-1: 随机生成用户登录行为:
 
 	  1 CREATE TABLE user_login AS
