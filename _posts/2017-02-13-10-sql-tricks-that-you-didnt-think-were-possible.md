@@ -1085,6 +1085,99 @@ Boom！
 	  )
 	)
 
+### 10. 滥用 XML 和 JSON
+
+首先
+
+> JSON 只是更少特性和语法的 XML
+
+现在，所有人都知道 **XML** 很棒。必然的结果是：
+
+> JSON 就逊多了
+
+不要使用 **JSON**。
+
+现在我们已经解决了这一点，我们可以安全地忽略正在进行的 **JSON** 数据库中的炒作（你们大多数将在五年后遗憾），并继续到最后的例子。 如何在数据库中做XML。
+
+给定一个原始的 **XML** 文档，我们想要解析他，不要在每个演员中嵌套逗号分隔的电影列表，在一个表中产生演员/电影的无范式表示。
+
+开始，我们接下来要写三个 **CTE**：
+
+第一个，我们简单的解析 XML。下面使用 PostgreSQL：
+
+	n3xt-test=# WITH RECURSIVE
+	  x(v) AS (SELECT '
+	<actors>
+	  <actor>
+	    <first-name>Bud</first-name>
+	    <last-name>Spencer</last-name>
+	    <films>God Forgives... I Don’t, Double Trouble, They Call Him Bulldozer</films>
+	  </actor>
+	  <actor>
+	    <first-name>Terence</first-name>
+	    <last-name>Hill</last-name>
+	    <films>God Forgives... I Don’t, Double Trouble, Lucky Luke</films>
+	  </actor>
+	</actors>'::xml)
+	SELECT *
+	FROM x;
+	
+简单。
+
+然后，我们使用 **XPATH** 来提取 **XML** 结构中的每一个值，并把它放到字段中：
+
+	n3xt-test=# WITH RECURSIVE
+	  x(v) AS (SELECT '...'::xml), 
+	  actors(actor_id, first_name, last_name, films) AS (
+	    SELECT
+	      row_number() OVER (),
+	      (xpath('//first-name/text()', t.v))[1]::TEXT,
+	      (xpath('//last-name/text()' , t.v))[1]::TEXT,
+	      (xpath('//films/text()'     , t.v))[1]::TEXT
+	    FROM unnest(xpath('//actor', (SELECT v FROM x))) t(v)
+	  )
+	SELECT *
+	FROM actors;
+	 actor_id | first_name | last_name |                              films
+	----------+------------+-----------+------------------------------------------------------------------
+	        1 | Bud        | Spencer   | God Forgives... I Don’t, Double Trouble, They Call Him Bulldozer
+	        2 | Terence    | Hill      | God Forgives... I Don’t, Double Trouble, Lucky Luke
+	(2 rows)
+
+同样很简单。
+
+最后，使用递归正则表达式模式匹配，然后就结束教程吗^_^
+
+	n3xt-test=# WITH RECURSIVE
+	  x(v) AS (SELECT '...'::xml),
+	  actors(actor_id, first_name, last_name, films) AS (...),
+	  films(actor_id, first_name, last_name, film_id, film) AS (
+	    SELECT actor_id, first_name, last_name, 1,
+	      regexp_replace(films, ',.+', '')
+	    FROM actors
+	    UNION ALL
+	    SELECT actor_id, a.first_name, a.last_name, f.film_id + 1,
+	      regexp_replace(a.films, '.*' || f.film || ', ?(.*?)(,.+)?', '\1')
+	    FROM films AS f
+	    JOIN actors AS a USING (actor_id)
+	    WHERE a.films NOT LIKE '%' || f.film
+	  )
+	SELECT *
+	FROM films;
+	 actor_id | first_name | last_name | film_id |          film
+	----------+------------+-----------+---------+-------------------------
+	        1 | Bud        | Spencer   |       1 | God Forgives... I Don’t
+	        2 | Terence    | Hill      |       1 | God Forgives... I Don’t
+	        1 | Bud        | Spencer   |       2 | Double Trouble
+	        2 | Terence    | Hill      |       2 | Double Trouble
+	        1 | Bud        | Spencer   |       3 | They Call Him Bulldozer
+	        2 | Terence    | Hill      |       3 | Lucky Luke
+	(6 rows)
+
+开始总结陈词：
+
+
+
 ### 附录-1: 随机生成用户登录行为:
 
 	  1 CREATE TABLE user_login AS
