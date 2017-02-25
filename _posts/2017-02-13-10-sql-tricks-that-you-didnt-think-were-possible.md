@@ -698,7 +698,7 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 
 还是维基百科上乏味的解释：
 
-[子集和问题[编辑]](https://zh.wikipedia.org/wiki/%E5%AD%90%E9%9B%86%E5%92%8C%E5%95%8F%E9%A1%8C
+[子集和问题](https://zh.wikipedia.org/wiki/%E5%AD%90%E9%9B%86%E5%92%8C%E5%95%8F%E9%A1%8C
 )
 
 本质上，对每一个的求和。。。
@@ -1217,4 +1217,9 @@ Boom！
 	2 SELECT *, round((100-random()*200)::NUMERIC, 2) amount
 	3 FROM generate_series(1, 20) id;
 
-> 参考文献：[10 SQL Tricks That You Didn’t Think ](https://blog.jooq.org/2016/04/25/10-sql-tricks-that-you-didnt-think-were-possible/)
+> 参考文献：
+> 
+> * [10 SQL Tricks That You Didn’t Think ](https://blog.jooq.org/2016/04/25/10-sql-tricks-that-you-didnt-think-were-possible/)
+> * [How to Find the Closest Subset Sum with SQL](https://blog.jooq.org/2015/10/26/how-to-find-the-closest-subset-sum-with-sql/)
+> * [子集和问题](https://zh.wikipedia.org/wiki/%E5%AD%90%E9%9B%86%E5%92%8C%E5%95%8F%E9%A1%8C
+)
