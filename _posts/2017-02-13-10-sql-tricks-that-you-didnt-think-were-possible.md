@@ -732,49 +732,61 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 | 19800 | 19768 | 1220 + 12515 + 5221 + 812
 | 27511 | 27488 | 8150 + 8255 + 9051 + 1220 + 812
 
-使用 SQL 怎么处理呢？简单，只需要使用创建一个 CTE，枚举出 2的n次方种汇总，并找到最接近的一个：
+使用 **SQL** 怎么处理呢？简单，只需要使用创建一个 **CTE**，枚举出 2的n次方种汇总，并找到最接近的一个：
 
-	-- All the possible 2N sums
+	-- 枚举所有的组合，2 的 n 次方种求和方式
 	WITH sums(sum, max_id, calc) AS (...)
-	 
-	-- Find the best sum per “TOTAL”
+	-- 找出最接近 total 的条数
 	SELECT
 	  totals.total,
 	  something_something(total - sum) AS best,
 	  something_something(total - sum) AS calc
 	FROM draw_the_rest_of_the_*bleep*_owl
 
-如果你读到这里，说明我们是真朋友^_^：
+如果你读到这里，说明我们是真朋友，^_^：
 
 不要担心，方法并没有想象中那么难:
 
-	n3xt-test=# WITH ASSIGN(ID, ASSIGN_AMT) AS (
-	              SELECT 1, 25150
-	    UNION ALL SELECT 2, 19800
-	    UNION ALL SELECT 3, 27511
-	), VALS (ID, WORK_AMT) AS (
-	              SELECT 1 , 7120
-	    UNION ALL SELECT 2 , 8150
-	    UNION ALL SELECT 3 , 8255
-	    UNION ALL SELECT 4 , 9051
-	    UNION ALL SELECT 5 , 1220
-	    UNION ALL SELECT 6 , 12515
-	    UNION ALL SELECT 7 , 13555
-	    UNION ALL SELECT 8 , 5221
-	    UNION ALL SELECT 9 , 812
-	    UNION ALL SELECT 10, 6562
-	), SUMS (ID, WORK_AMT, SUBSET_SUM) AS (
-	    SELECT
-	        VALS.*,
-	        SUM (WORK_AMT) OVER (ORDER BY ID)
-	    FROM
-	        VALS
+	n3xt-test=# WITH
+	assign(id, assign_amt) AS (
+	            SELECT 1, 25150
+	  UNION ALL SELECT 2, 19800
+	  UNION ALL SELECT 3, 27511
+	),
+	vals (id, work_amt) AS (
+	            SELECT 1 , 7120
+	  UNION ALL SELECT 2 , 8150
+	  UNION ALL SELECT 3 , 8255
+	  UNION ALL SELECT 4 , 9051
+	  UNION ALL SELECT 5 , 1220
+	  UNION ALL SELECT 6 , 12515
+	  UNION ALL SELECT 7 , 13555
+	  UNION ALL SELECT 8 , 5221
+	  UNION ALL SELECT 9 , 812
+	  UNION ALL SELECT 10, 6562
+	),
+	sums (id, work_amt, subset_sum) AS (
+	  SELECT
+	      vals.*,
+	      SUM (work_amt) OVER (ORDER BY id)
+	  FROM
+	      vals
 	)
-	SELECT ASSIGN.ID, ASSIGN.ASSIGN_AMT, SUBSET_SUM
-	FROM ASSIGN JOIN SUMS
-	ON ABS (ASSIGN_AMT - SUBSET_SUM) <= ALL (
-	    SELECT ABS (ASSIGN_AMT - SUBSET_SUM) FROM SUMS
-	);
+	SELECT
+	  assign.id,
+	  assign.assign_amt,
+	  closest_sum
+	FROM
+	  assign
+	CROSS JOIN LATERAL (
+	  SELECT
+	      subset_sum AS closest_sum
+	  FROM
+	      sums
+	  ORDER BY
+	      ABS (ASsign.assign_amt - subset_sum)
+	  FETCH FIRST 1 ROW ONLY
+	) sums;
 	 id | assign_amt | subset_sum
 	----+------------+------------
 	  1 |      25150 |      23525
@@ -1221,5 +1233,6 @@ Boom！
 > 
 > * [10 SQL Tricks That You Didn’t Think ](https://blog.jooq.org/2016/04/25/10-sql-tricks-that-you-didnt-think-were-possible/)
 > * [How to Find the Closest Subset Sum with SQL](https://blog.jooq.org/2015/10/26/how-to-find-the-closest-subset-sum-with-sql/)
+> * [如何在 PostgreSQL 中正确使用 FETCH FIRST?](http://stackoverflow.com/questions/38467298/how-to-correctly-use-fetch-first-in-postgresql)
 > * [子集和问题](https://zh.wikipedia.org/wiki/%E5%AD%90%E9%9B%86%E5%92%8C%E5%95%8F%E9%A1%8C
 )
