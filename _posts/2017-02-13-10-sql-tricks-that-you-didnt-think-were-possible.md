@@ -726,34 +726,66 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 
 如果你心算够好的话，你可以直接得出最佳的和：
 
-| TOTAL |  BEST | CALCULATION
+| TOTAL |  SUM | CALC
 |-------|-------|--------------------------------
 | 25150 | 25133 | 7120 + 8150 + 9051 + 812
 | 19800 | 19768 | 1220 + 12515 + 5221 + 812
 | 27511 | 27488 | 8150 + 8255 + 9051 + 1220 + 812
 
-使用 **SQL** 怎么处理呢？简单，只需要使用创建一个 **CTE**，枚举出 2的n次方种汇总，并找到最接近的一个：
+使用 **SQL** 怎么处理呢？简单，只需要使用创建一个 **CTE**，枚举出 2的n次方种减1个组合，并找到最接近的一个：
 
-	-- 枚举所有的组合，2 的 n 次方种求和方式
+	-- 枚举所有的组合，2**n - 1 组合
 	WITH sums(sum, max_id, calc) AS (...)
-	-- 找出最接近 total 的条数
+	-- 找出最接近 total 的那一条
 	SELECT
 	  totals.total,
 	  something_something(total - sum) AS best,
 	  something_something(total - sum) AS calc
 	FROM draw_the_rest_of_the_*bleep*_owl
 
-如果你读到这里，说明我们是真朋友，^_^：
+如果你读到这里，说明我们是真朋友，^_^
 
-不要担心，方法并没有想象中那么难:
+不要担心，方法并没有想象中那么难。
 
-	n3xt-test=# WITH
-	assign(id, assign_amt) AS (
+首先，我们需要枚举所有子集合(实现全排列的算法)，这个比较简单：
+
+	WITH RECURSIVE
+	assign(id, total) AS ( ... ),
+	vals(id, item) AS (...),
+	sums (start_id, max_id, sum, cacl) AS (
+	  SELECT id, id, item, item::text FROM vals
+	  UNION ALL
+	  SELECT
+	    sums.start_id, t.id, sum+item,
+	    cacl|| '+' || item::text
+	  FROM sums JOIN vals t ON sums.max_id < t.id
+	)
+	SELECT * FROM sums
+
+然后，我们把需要结果从候选组合中找到最接近的组合：
+
+	SELECT total, sum, cacl
+	FROM assign a, LATERAL (
+	    SELECT sum, cacl FROM sums
+	    ORDER BY ABS(a.total - sum)
+	    FETCH FIRST 1 ROW ONLY	-- 等同于 limit 1，这个是 SQL 标准，limit 不是
+	) b;
+	
+为 *ASSIGN* 的每个值通过和 *SUMS* 连表获取按照排序的的一行的值。我们需要使用 `LATERAL`，因为他允许我们访问左边的表的字段，否则正常的 `JOIN` 无法直接获取的。
+
+同样的功能在 **SQL Server**（它的关键字是 `CROSS APPLY`） 也支持。
+
+在连表的右侧的结果依赖于左边的时候，`LATERAL` 可能很有用。与普通连接不同，这意味着 `JOIN` 顺序将从左到右依次设置，优化器具有一组减少的连接算法选项。想现在这个场景（带着 `ORDER BY` 和 `FETCH FRIST`），或者连接非嵌套的表值函数。
+
+下面是完整的查询。
+
+	n3xt-test=# WITH RECURSIVE
+	assign(id, total) AS (
 	            SELECT 1, 25150
 	  UNION ALL SELECT 2, 19800
 	  UNION ALL SELECT 3, 27511
 	),
-	vals (id, work_amt) AS (
+	vals (id, item) AS (
 	            SELECT 1 , 7120
 	  UNION ALL SELECT 2 , 8150
 	  UNION ALL SELECT 3 , 8255
@@ -765,33 +797,25 @@ SQL 中，一切都是表。当你插入数据到表，你并不是在插入独�
 	  UNION ALL SELECT 9 , 812
 	  UNION ALL SELECT 10, 6562
 	),
-	sums (id, work_amt, subset_sum) AS (
+	sums (start_id, max_id, sum, cacl) AS (
+	  SELECT id, id, item, item::text FROM vals
+	  UNION ALL
 	  SELECT
-	      vals.*,
-	      SUM (work_amt) OVER (ORDER BY id)
-	  FROM
-	      vals
+	    sums.start_id, t.id, sum+item,
+	    cacl|| '+' || item::text
+	  FROM sums JOIN vals t ON sums.max_id < t.id
 	)
-	SELECT
-	  assign.id,
-	  assign.assign_amt,
-	  closest_sum
-	FROM
-	  assign
-	CROSS JOIN LATERAL (
-	  SELECT
-	      subset_sum AS closest_sum
-	  FROM
-	      sums
-	  ORDER BY
-	      ABS (ASsign.assign_amt - subset_sum)
-	  FETCH FIRST 1 ROW ONLY
-	) sums;
-	 id | assign_amt | subset_sum
-	----+------------+------------
-	  1 |      25150 |      23525
-	  2 |      19800 |      23525
-	  3 |      27511 |      23525
+	SELECT total, sum, cacl
+	FROM assign a, LATERAL (
+	    SELECT sum, cacl FROM sums
+	    ORDER BY ABS(a.total - sum)
+	    FETCH FIRST 1 ROW ONLY
+	) b;
+	 total |  sum  |          cacl
+	-------+-------+-------------------------
+	 25150 | 25133 | 7120+8150+9051+812
+	 19800 | 19768 | 1220+12515+5221+812
+	 27511 | 27488 | 8150+8255+9051+1220+812
 	(3 rows)
 	
 ### 7. 覆盖运行中的汇总
