@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "调戏 Postgres 和 Kafka"
+title: "让 Postgres 和 Kafka 一起玩耍"
 description: ""
 category: PostgreSQL
 tags: [pgsql, kafka]
