@@ -9,19 +9,19 @@ tags: [pgsql, kafka]
 
 ### Apache Kafka 和 Postgres: 处理事务和报表能力
 
-Apache Kafka 是一款知名的分布式流处理平台，用于数据处理和信息一致化。她允许你集中数据流，完成多种目的。我突然对 [Mozilla 的数据管道](https://robertovitillo.com/2017/01/23/an-overview-of-mozillas-data-pipeline/) 实现感兴趣，尤其是其中展示了 Kafka 作为流的入口。
+**Apache Kafka** 是目前主流的分布式流处理平台，用于数据处理和信息一致保证。她允许你集中数据流，完成多种目的。我突然对 [Mozilla 的数据管道](https://robertovitillo.com/2017/01/23/an-overview-of-mozillas-data-pipeline/) 实现感兴趣，尤其是其中展示了 **Kafka** 作为流的入口。
 
-Postgres Bottled Water 是另一种方式。在这个场景下，Postgres 实例作为生产者，Broker 接受流，并定向到其他平台。她的优势就是拥有结合先进的 SQL 特性 的 Postgres ACID 能力。作为一个拓展，可以和其他特性一起运行。
+[Postgres Bottled Water](https://www.confluent.io/blog/bottled-water-real-time-integration-of-postgresql-and-kafka/) 是另一种方式。在这个场景下，**Postgres** 实例作为生产者，**Broker** 接受流，并定向到其他平台。她的优势就是拥有结合先进的 SQL 特性 的 **Postgres** 的 **ACID** 能力。将它作为一个拓展，还可以和其他特性一起运行。
 
-新版的 Postgres 的 COPY 工具（[详见文档](http://paquier.xyz/postgresql-2/postgres-9-6-feature-highlight-copy-dml-statements/)）还可以执行命令行来操作数据IO，这样就可以消费和生产数据给 Broker。
+**Postgres 9.6** 的 `COPY` 工具（[详见文档](http://paquier.xyz/postgresql-2/postgres-9-6-feature-highlight-copy-dml-statements/)）还可以执行命令行来操作数据IO，这样就可以消费和生产数据给 Broker。
 
 ### kafkacat 和 librdkafka
 
-[kafkacat](https://github.com/edenhill/kafkacat) 是由 [librdkafka](https://github.com/edenhill/librdkafka) 库的作者开发的另一个工具，功能用一句话概括：想 cat 命令那样在 Kafka Broker 中使用和生成数据。
+[kafkacat](https://github.com/edenhill/kafkacat) 是由 [librdkafka](https://github.com/edenhill/librdkafka) 库的作者开发的另一个工具，功能用一句话概括：像 `cat` 命令那样在 **Kafka** 的 **Broker** 中生产和消费数据。
 
 #### 生成数据到 Kafka Broker
 
-造模拟数据发送给 Kafka Broker
+造模拟数据发送给 **Kafka** 的 **Broker**
 
 	# 随机文本
 	randtext() {cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1}
@@ -118,4 +118,4 @@ awk 不是被严格要求的，它只是为了展示该功能的灵活。使用 
 	
 **注意：**你需要在 *server.properties* 文件中设置 `delete.topic.enable=true` 选项，来激活删除主题操作
 
-> 引用自：[Playing with Postgres and Kafka.](http://www.3manuek.com/kafkacatandcopypg?utm_source=postgresweekly&utm_medium=email)
+> 引用自：[Playing with Postgres and Kafka.](http://www.3manuek.com/kafkacatandcopypg)
