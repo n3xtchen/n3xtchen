@@ -15,6 +15,16 @@ tags: [pgsql, kafka]
 
 **Postgres 9.6** 的 `COPY` 工具（[详见文档](http://paquier.xyz/postgresql-2/postgres-9-6-feature-highlight-copy-dml-statements/)）还可以执行命令行来操作数据IO，这样就可以消费和生产数据给 Broker。
 
+### 开始之前的准备
+
+测试环境的相关参数：
+
+* 系统： **Ubuntu 16.04.2 LTS**
+* JAVA 版本：**openjdk version "1.8.0_121"**
+	* `apt-get -y install default-jre default-jdk`
+* Kafka 版本：**kafka 3.2**（confluent 官方，scala：2.11）
+	* 安装教程详见 [基础的 Kafka 操作](#基础的 Kafka 操作)
+
 ### kafkacat 和 librdkafka
 
 [kafkacat](https://github.com/edenhill/kafkacat) 是由 [librdkafka](https://github.com/edenhill/librdkafka) 库的作者开发的另一个工具，功能用一句话概括：像 `cat` 命令那样在 **Kafka** 的 **Broker** 中生产和消费数据。
@@ -99,23 +109,34 @@ awk 不是被严格要求的，它只是为了展示该功能的灵活。使用 
 	{"topic":"AGGREGATIONS","partition":0,"offset":4,"key":"127.0.0.1/32","payload":"\t{\"f1\":\"2017-02-24T12:40:39.017644-03:00\",\"f2\":\"P0\",\"f3\":994}"}
 	{"topic":"AGGREGATIONS","partition":0,"offset":5,"key":"127.0.0.1/32","payload":"\t{\"f1\":\"2017-02-24T12:40:39.017644-03:00\",\"f2\":\"P2\",\"f3\":716}"}
 
-#### 基础的主题操作
+#### 基础的 Kafka 操作
 
 如果你是 Kafka 新手，接下来讲的一些命令将会帮助你，快速上手。
 
+下载并解压包 kafka
+
+	ichexw$ wget -P path/to/dowload/directory http://packages.confluent.io/archive/3.2/confluent-oss-3.2.0-2.11.tar.gz
+	# -P 下载文件存储的地址，我使用 /usr/loca/src/
+	ichexw$ cd path/to/dowload/directory
+	ichexw$ tar -xzvf confluent-oss-3.2.0-2.11.tar.gz
+	ichexw$ mv confluent-3.2.0 /path/to/install/directory/
+	# /path/to/install/directory/: kafka 的安装目录，我使用的是 /usr/local/
+
 启动相关服务
 
-	bin/zookeeper-server-start.sh config/zookeeper.properties 2> zookeper.log &
-	bin/kafka-server-start.sh config/server.properties 2> kafka.log &
+	ichexw$ bin/zookeeper-server-start etc/kafka/zookeeper.properties 2> zookeper.log &
+	ichexw$ bin/kafka-server-start etc/kafka/server.properties 2> kafka.log &
 	
 创建主题：
 
-	bin/kafka-topics.sh --list --zookeeper localhost:2181
-	bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic PGSHARD
-	bin/kafka-topics.sh --delete  --zookeeper localhost:2181 --topic PGSHARD
-	bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic AGGREGATIONS
-	bin/kafka-topics.sh --delete  --zookeeper localhost:2181 --topic AGGREGATIONS
+	ichexw$ bin/kafka-topics --list --zookeeper localhost:2181
+	ichexw$ bin/kafka-topics --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic PGSHARD
+	# 创建名为 PGSHARD, 3 个分区, 一个副本的主题
+	ichexw$ bin/kafka-topics --delete  --zookeeper localhost:2181 --topic PGSHARD
+	# 删除分区
+	ichexw$ bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic AGGREGATIONS
+	ichexw$ bin/kafka-topics --delete  --zookeeper localhost:2181 --topic AGGREGATIONS
 	
-**注意：**你需要在 *server.properties* 文件中设置 `delete.topic.enable=true` 选项，来激活删除主题操作
+**注意：**你需要在 *server.properties*（默认在 **kafka** 安装文件夹的 */etc/kafka* 中） 文件中设置 `delete.topic.enable=true` 选项，来激活删除主题操作
 
 > 引用自：[Playing with Postgres and Kafka.](http://www.3manuek.com/kafkacatandcopypg)
