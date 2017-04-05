@@ -33,9 +33,9 @@ Ubuntu/Debian 安装命令如下：
 
 	ichexw$ sudo apt-get install kafkacat
 
-#### 生成数据到 Kafka Broker(生产者模式)
+#### 生成数据到 Kafka Broker
 
-造模拟数据发送给 **Kafka** 的 **Broker**；Bash 脚本如下：
+造模拟数据发送给 **Kafka** 的 **Broker**；**Bash** 脚本如下：
 
 	# 随机文本
 	function randtext() {
@@ -56,12 +56,12 @@ Ubuntu/Debian 安装命令如下：
 kafkacat 使用的参数：	
  
 * `-P`: 生产者模式；对应的 `-C`，就是消费者模式
-* `-b`: 这个就是 **Broker** 的地址
+* `-b <brokers,..>`: 这个就是 **Broker** 的地址
 * `-qe`: 两条命令合并
 	* `-q` 静默状态
 	* `-e` 最后一条发送成功后推出
-* `-K`: 定义了界定符
-* `-t`: 定义想要把数据发送的 **Topic**。
+* `-K <delim>`: 定义了界定符
+* `-t <topic>`: 定义想要把数据发送的 **Topic**。
 
 默认，这个 **Topic** 已经创建了 3 个分区（0-2），允许我们并行从不同的频道消费数据。
 
@@ -71,63 +71,84 @@ kafkacat 使用的参数：
 
 通常语法和下面差不多：
 
-	COPY main(group_id,payload)
+	kafka_db=# COPY main(group_id,payload) 
 	  FROM PROGRAM
-	  'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o beginning  -p 0 | awk ''{print "P0\t" $0 }'' ';
+	  'kafkacat -C -b localhost:9092 -o beginning -c100 -qeJ -t PGSHARD -p 0 |
+	   awk ''{print "P0\t" $0 }''';
 
-awk 不是被严格要求的，它只是为了展示该功能的灵活。使用 `-J` 选项时，输出将会被打印成 json 格式，包含所有的消息信息，包括分区，键值和信息。
+`awk` 不是被强制要求的，它只是为了展示该功能的灵活。
 
--c 选项将会限制数据的行数。COPY 命令也是具有事务的，这意味着处理的数据行数越多，事务越巨大，提交的时间也会受影响。
+kafkacat 使用的参数：	
+
+* `-J`: 输出将会被打印成 json 格式，包含所有的消息信息，包括分区，键值和信息。
+* `-o <offset>`: 提取数据的提取偏移量
+	* 常量：beginning 从头开始；end 从尾部开始；stored 后面会接受
+	* 整型: 绝对位置
+	* -整型: 从尾部开始相对位置 	
+* `-c <cnt>`: 将会限制数据的行数。COPY 命令也是具有事务的，这意味着处理的数据行数越多，事务越巨大，提交的时间也会受影响。
+
+**Postgres** 的 `COPY` 命令： 
+	
+	COPY table_name [ ( column_name [, ...] ) ]
+	  FROM { 'filename' | PROGRAM 'command' | STDIN }
+	 
+命令解释： 
+	  
+* filename: 要导入的文件名，直接从文件导入数据
+* command: 命令，从读取命令的输出定向给数据表
+* STDIN: 输入
 
 #### 增量消费主题
 
-从头开始消费主体分区，并设置 100 个文档的限制时很容易的：
+从头开始消费 **Topic** 分区，并设置 100 个文档的限制：
 
-	bin/psql -p7777 -Upostgres master <<EOF
-	COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o beginning  -p 0 | awk ''{print "P0\t" \$0 }'' ';
-	COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o beginning  -p 1 | awk ''{print "P1\t" \$0 }'' ';
-	COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o beginning  -p 2 | awk ''{print "P2\t" \$0 }'' ';
+	ichexw$ psql -Upostgres kafka_db <<EOF
+	  COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD -o beginning  -p 0 | awk ''{print "P0\t" \$0 }'' ';
+	  COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD -o beginning  -p 1 | awk ''{print "P1\t" \$0 }'' ';
+	  COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD -o beginning  -p 2 | awk ''{print "P2\t" \$0 }'' ';
 	EOF
 
-然后使用 `stored`，为了每次只消费消费者在所在组未使用过的数据：
+然后使用 `stored`，为了每次只消费在所在分区未使用过的数据：
 
-	bin/psql -p7777 -Upostgres master <<EOF
-	COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o stored  -p 0 | awk ''{print "P0\t" \$0 }'' ';
-	COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o stored  -p 1 | awk ''{print "P1\t" \$0 }'' ';
-	COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD  -X group.id=1  -o stored  -p 2 | awk ''{print "P2\t" \$0 }'' ';
+	ichexw$ psql -Un3xtchen kafka_db <<EOF
+	  COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD -o stored  -p 0 | awk ''{print "P0\t" \$0 }'' ';
+	  COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD -o stored  -p 1 | awk ''{print "P1\t" \$0 }'' ';
+	  COPY main(group_id,payload) FROM PROGRAM 'kafkacat -C -b localhost:9092 -c100 -qeJ -t PGSHARD -o stored  -p 2 | awk ''{print "P2\t" \$0 }'' ';
 	EOF
-
+	
 每一个 `COPY` 命令都是并行执行的，使得这种方式足够灵活，易于拓展到集群。
 
-并不是绝对的一致性，一旦偏移量被消费了，将在 Broker 被标记；如果在 Postgres 端事务失败会导致潜在的数据丢失。
+**注意**：并不是绝对的一致性，一旦偏移量被消费了，将在 Broker 被标记；如果在 **Postgres** 端事务失败会导致潜在的数据丢失。
 
-#### 在Postgres实例中生成消息
+#### 在 Postgres 实例中生成消息
 
-同样的方式也可以消费变更，用法和生产数据给 Broker 一样。这使得通过从 broker 消费原始数据进行微聚合时，超级有用。
+同样的方式也可以消费数据，用法和生产数据给 **Broker** 一样。这使得通过从 **Broker** 消费原始数据进行微聚合时，超级有用。
 
-下面的例子展示了如何使用超简单的聚合查询，并以 json 的格式回吐给 broker：
+下面的例子展示了如何使用超简单的聚合查询，并以 **json** 格式回吐给 **Broker**：
 
-	master=# COPY (select row_to_json(row(now() ,group_id , count(*))) from main group by group_id)
-	         TO PROGRAM 'kafkacat -P -b localhost:9092 -qe  -t AGGREGATIONS';
+	kafka_db=# COPY (select row_to_json(row(now() ,group_id , count(*))) from main group by group_id) TO PROGRAM 'kafkacat -P -b localhost:9092 -qe -t AGGREGATIONS';
 	COPY 3
 	
 如果你有一堆的服务器，想要通过 key 查询主体内容，你可以这么做：
 
-	COPY (select inet_server_addr() || ';', row_to_json(row(now() ,group_id , count(*))) from main group by group_id)
+	kafka_db=# COPY (select inet_server_addr() || ';', row_to_json(row(now() ,group_id , count(*))) from main group by group_id)
 	   TO PROGRAM 'kafkacat -P -K '';'' -b localhost:9092 -qe  -t AGGREGATIONS';
-	   
-发布的数据想这样（不带 key 的）：
 
-	➜  PG10 kafkacat -C -b localhost:9092 -qeJ -t AGGREGATIONS -X group.id=1  -o beginning
-	{"topic":"AGGREGATIONS","partition":0,"offset":0,"key":"","payload":"{\"f1\":\"2017-02-24T12:34:13.711732-03:00\",\"f2\":\"P1\",\"f3\":172}"}
-	{"topic":"AGGREGATIONS","partition":0,"offset":1,"key":"","payload":"{\"f1\":\"2017-02-24T12:34:13.711732-03:00\",\"f2\":\"P0\",\"f3\":140}"}
-	{"topic":"AGGREGATIONS","partition":0,"offset":2,"key":"","payload":"{\"f1\":\"2017-02-24T12:34:13.711732-03:00\",\"f2\":\"P2\",\"f3\":155}"}
+现在查看信息：
+
+	ichexw$ kafkacat -C -b localhost:9092 -qeJ -t AGGREGATIONS -o beginning
+	
+注意看输出的区别
+	   
+不带 key 的：
+
+	{"topic":"AGGREGATIONS","partition":0,"offset":0,"key":"","payload":"{\"f1\":\"2017-04-05T07:50:52.148631+00:00\",\"f2\":\"P0\",\"f3\":100}"}
+	{"topic":"AGGREGATIONS","partition":0,"offset":1,"key":"","payload":"\\N\t{\"f1\":\"2017-04-05T07:51:10.004637+00:00\",\"f2\":\"P0\",\"f3\":100}"}
 
 带 key 的：
 
-	{"topic":"AGGREGATIONS","partition":0,"offset":3,"key":"127.0.0.1/32","payload":"\t{\"f1\":\"2017-02-24T12:40:39.017644-03:00\",\"f2\":\"P1\",\"f3\":733}"}
-	{"topic":"AGGREGATIONS","partition":0,"offset":4,"key":"127.0.0.1/32","payload":"\t{\"f1\":\"2017-02-24T12:40:39.017644-03:00\",\"f2\":\"P0\",\"f3\":994}"}
-	{"topic":"AGGREGATIONS","partition":0,"offset":5,"key":"127.0.0.1/32","payload":"\t{\"f1\":\"2017-02-24T12:40:39.017644-03:00\",\"f2\":\"P2\",\"f3\":716}"}
+	{"topic":"AGGREGATIONS","partition":0,"offset":0,"key":"127.0.0.1/32","payload":"{\"f1\":\"2017-04-05T07:50:52.148631+00:00\",\"f2\":\"P0\",\"f3\":100}"}
+	{"topic":"AGGREGATIONS","partition":0,"offset":1,"key":"127.0.0.1/32","payload":"\\N\t{\"f1\":\"2017-04-05T07:51:10.004637+00:00\",\"f2\":\"P0\",\"f3\":100}"}
 
 #### 基础的 Kafka 操作
 
