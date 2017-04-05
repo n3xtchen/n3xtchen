@@ -20,7 +20,7 @@ tags: [pgsql, kafka]
 测试环境的相关参数：
 
 * 系统： **Ubuntu 16.04.2 LTS**
-* JAVA 版本：**openjdk version "1.8.0_121"**
+* JAVA 版本：**openjdk version "1.8.0_121"**, 下面提供 Ubuntu/Debian 下的安装方法:
 	* `apt-get -y install default-jre default-jdk`
 * Kafka 版本：**kafka 3.2**（confluent 官方，scala：2.11）
 	* 安装教程详见 [基础的 Kafka 操作](#基础的 Kafka 操作)
@@ -29,24 +29,44 @@ tags: [pgsql, kafka]
 
 [kafkacat](https://github.com/edenhill/kafkacat) 是由 [librdkafka](https://github.com/edenhill/librdkafka) 库的作者开发的另一个工具，功能用一句话概括：像 `cat` 命令那样在 **Kafka** 的 **Broker** 中生产和消费数据。
 
-#### 生成数据到 Kafka Broker
+Ubuntu/Debian 安装命令如下：
 
-造模拟数据发送给 **Kafka** 的 **Broker**
+	ichexw$ sudo apt-get install kafkacat
+
+#### 生成数据到 Kafka Broker(生产者模式)
+
+造模拟数据发送给 **Kafka** 的 **Broker**；Bash 脚本如下：
 
 	# 随机文本
-	randtext() {cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1}
-	while (true) ;
-	  do
-	    for i in $(seq 1 50)  
-	      do echo "$(uuidgen);$(randtext)"
-	     done  | kafkacat -P -b localhost:9092 -qe -K ';' -t PGSHARD
-	     sleep 10
-	  done
-	  
-`-K` 定义了界定符，`-t` 定义想要把数据发送的主题。默认，这个主题已经创建了 3 个分区（0-2），允许我们并行从不同的频道消费数据。
+	function randtext() {
+		cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
+	}
+	while (true); do
+		# 每 10s 升成 50 个随机序列
+		for i in $(seq 1 50)  
+			do echo "$(uuidgen);$(randtext)"
+		done | kafkacat -P -b localhost:9092 -qe -K ';' -t PGSHARD
+		sleep 10
+	done
 
-生产数据给 Broker 时，Keys 不是强制要求的；并不是每一个场景都需要，你可以无视它。
+**温馨小提示**：如果 `uuidgen` 在你环境下找不到，你需要自行安装 **uuid-runtime**，这里提供 Ubuntu/Debian 下的安装方法:
 
+>	ichexw$ `apt-get install uuid-runtime`
+
+kafkacat 使用的参数：	
+ 
+* `-P`: 生产者模式；对应的 `-C`，就是消费者模式
+* `-b`: 这个就是 **Broker** 的地址
+* `-qe`: 两条命令合并
+	* `-q` 静默状态
+	* `-e` 最后一条发送成功后推出
+* `-K`: 定义了界定符
+* `-t`: 定义想要把数据发送的 **Topic**。
+
+默认，这个 **Topic** 已经创建了 3 个分区（0-2），允许我们并行从不同的频道消费数据。
+
+生产数据给 **Broker** 时，Keys 不是强制要求的；并不是每一个场景都需要，你可以无视它。
+ 
 #### 在Postgres实例中使用和生成
 
 通常语法和下面差不多：
@@ -113,7 +133,7 @@ awk 不是被严格要求的，它只是为了展示该功能的灵活。使用 
 
 如果你是 Kafka 新手，接下来讲的一些命令将会帮助你，快速上手。
 
-下载并解压包 kafka
+下载并解压包 kafka：
 
 	ichexw$ wget -P path/to/dowload/directory http://packages.confluent.io/archive/3.2/confluent-oss-3.2.0-2.11.tar.gz
 	# -P 下载文件存储的地址，我使用 /usr/loca/src/
@@ -122,12 +142,12 @@ awk 不是被严格要求的，它只是为了展示该功能的灵活。使用 
 	ichexw$ mv confluent-3.2.0 /path/to/install/directory/
 	# /path/to/install/directory/: kafka 的安装目录，我使用的是 /usr/local/
 
-启动相关服务
+启动相关服务：
 
 	ichexw$ bin/zookeeper-server-start etc/kafka/zookeeper.properties 2> zookeper.log &
 	ichexw$ bin/kafka-server-start etc/kafka/server.properties 2> kafka.log &
 	
-创建主题：
+创建主题（Tipics）：
 
 	ichexw$ bin/kafka-topics --list --zookeeper localhost:2181
 	ichexw$ bin/kafka-topics --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic PGSHARD
