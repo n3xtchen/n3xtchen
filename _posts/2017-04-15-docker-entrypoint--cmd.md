@@ -18,6 +18,8 @@ tags: [docker]
 
 #### 没有 ENTRYPOINT
 
+带方括号（`[]`）的是执行形式（exec form，推荐使用），如果不带方括号则是shell形式（就会在命令的前面加上 `/bin/sh -c` ）。
+
 | 命令                        | 说明                       |
 |:---------------------------|:---------------------------|
 | No CMD                     | 错误，不允许                 |
@@ -25,10 +27,9 @@ tags: [docker]
 | CMD [“p1_cmd”, “p2_cmd”]   | p1_cmd p2_cmd              |
 | CMD exec_cmd p1_cmd        | /bin/sh -c exec_cmd p1_cmd |
 
-带方括号（`[]`）的是执行形式（exec form，推荐使用），如果不带方括号则是shell形式（就会在命令的前面加上 `/bin/sh -c` ）。
-
-
 #### ENTRYPOINT exec_entry p1_entry（shell 形式）
+
+第三个命令就是使用 CMD 为 ENTRYPOINT 设置默认参数（CMD 中都只是参数而不是可执行程序）。
 
 | 命令                        | 说明                                                     |
 |:---------------------------|:---------------------------------------------------------|
@@ -36,8 +37,6 @@ tags: [docker]
 | CMD [“exec_cmd”, “p1_cmd”] | /bin/sh -c exec_entry p1_entry exec_cmd p1_cmd           |
 | CMD [“p1_cmd”, “p2_cmd”]   | /bin/sh -c exec_entry p1_entry p1_cmd p2_cmd             |
 | CMD exec_cmd p1_cmd        | /bin/sh -c exec_entry p1_entry /bin/sh -c exec_cmd p1_cmd |
-
-第三个命令就是使用 CMD 为 ENTRYPOINT 设置默认参数（CMD 中都只是参数而不是可执行程序）。
 
 #### ENTRYPOINT [“exec_entry”, “p1_entry”]（执行形式）
 
@@ -47,6 +46,8 @@ tags: [docker]
 | CMD [“exec_cmd”, “p1_cmd”] | exec_entry p1_entry exec_cmd p1_cmd            |
 | CMD [“p1_cmd”, “p2_cmd”]   | exec_entry p1_entry p1_cmd p2_cmd              |
 | CMD exec_cmd p1_cmd        | exec_entry p1_entry /bin/sh -c exec_cmd p1_cmd |
+
+#### Over！
 
 > 引用自：[What is the difference between CMD and ENTRYPOINT in a Dockerfile?](http://stackoverflow.com/questions/21553353/what-is-the-difference-between-cmd-and-entrypoint-in-a-dockerfile/21558992#21558992)
 
