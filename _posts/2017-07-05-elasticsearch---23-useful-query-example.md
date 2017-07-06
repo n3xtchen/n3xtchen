@@ -81,6 +81,21 @@ tags: [elasticsearch]
 	      }
 	    ]
 
+下面是完整 Body 版本的查询，生成相同的内容：
+
+	{
+	    "query": {
+	        "multi_match" : {
+	            "query" : "guide",
+	            "fields" : ["_all"]
+	        }
+	    }
+	}
+	
+`multi_match` 是 `match` 的作为在多个字段运行相同操作的一个速记法。`fields` 属性用来指定查询针对的字段，在这个例子中，我们想要对文档的所有字段进行匹配。
+
+
+> 引用自：http://distributedbytes.timojo.com/2016/07/23-useful-elasticsearch-example-queries.html?utm_source=dbweekly&utm_medium=email
 
 
 
