@@ -32,7 +32,7 @@ tags: [elasticsearch]
 	    
 ### 栗子：
 
-#### 基本的匹配查询
+#### 1. 基本的匹配查询
 
 有两种方式来执行一个全文匹配查询：
 
@@ -92,10 +92,114 @@ tags: [elasticsearch]
 	    }
 	}
 	
-`multi_match` 是 `match` 的作为在多个字段运行相同操作的一个速记法。`fields` 属性用来指定查询针对的字段，在这个例子中，我们想要对文档的所有字段进行匹配。
+`multi_match` 是 `match` 的作为在多个字段运行相同操作的一个速记法。`fields` 属性用来指定查询针对的字段，在这个例子中，我们想要对文档的所有字段进行匹配。两个 **API** 都允许你指定要查询的字段。例如，查询 `title` 字段中包含 `in Action` 的书：
+
+    GET /bookdb_index/book/_search?q=title:in action
+    
+    [Results]
+    "hits": [
+          {
+            "_index": "bookdb_index",
+            "_type": "book",
+            "_id": "4",
+            "_score": 0.6259885,
+            "_source": {
+              "title": "Solr in Action",
+              "authors": [
+                "trey grainger",
+                "timothy potter"
+              ],
+              "summary": "Comprehensive guide to implementing a scalable search engine using Apache Solr",
+              "publish_date": "2014-04-05",
+              "num_reviews": 23,
+              "publisher": "manning"
+            }
+          },
+          {
+            "_index": "bookdb_index",
+            "_type": "book",
+            "_id": "3",
+            "_score": 0.5975345,
+            "_source": {
+              "title": "Elasticsearch in Action",
+              "authors": [
+                "radu gheorge",
+                "matthew lee hinman",
+                "roy russo"
+              ],
+              "summary": "build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms",
+              "publish_date": "2015-12-03",
+              "num_reviews": 18,
+              "publisher": "manning"
+            }
+          }
+        ]
+然而， 完整的 DSL 给予你灵活创建更复杂查询和指定返回结果的能力（后面，我们会一一阐述）。在下面例子中，我们指定 size 限定返回的结果条数，from 指定起始位子，_source 指定要返回的字段，以及语法高亮
+
+    POST /bookdb_index/book/_search
+    {
+        "query": {
+            "match" : {
+                "title" : "in action"
+            }
+        },
+        "size": 2,
+        "from": 0,
+        "_source": [ "title", "summary", "publish_date" ],
+        "highlight": {
+            "fields" : {
+                "title" : {}
+            }
+        }
+    }
+    
+    [Results]
+    "hits": {
+        "total": 2,
+        "max_score": 0.9105287,
+        "hits": [
+          {
+            "_index": "bookdb_index",
+            "_type": "book",
+            "_id": "3",
+            "_score": 0.9105287,
+            "_source": {
+              "summary": "build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms",
+              "title": "Elasticsearch in Action",
+              "publish_date": "2015-12-03"
+            },
+            "highlight": {
+              "title": [
+                "Elasticsearch <em>in</em> <em>Action</em>"
+              ]
+            }
+          },
+          {
+            "_index": "bookdb_index",
+            "_type": "book",
+            "_id": "4",
+            "_score": 0.9105287,
+            "_source": {
+              "summary": "Comprehensive guide to implementing a scalable search engine using Apache Solr",
+              "title": "Solr in Action",
+              "publish_date": "2014-04-05"
+            },
+            "highlight": {
+              "title": [
+                "Solr <em>in</em> <em>Action</em>"
+              ]
+            }
+          }
+        ]
+      }
+      
+注意：对于多个词查询，`match` 允许指定是否使用 `and` 操作符来取代默认的 `or` 操作符。你还可以指定 `mininum_should_match` 选项来调整返回结果的相关程度。具体看后面的例子。
+
+未完待续
 
 
-> 引用自：http://distributedbytes.timojo.com/2016/07/23-useful-elasticsearch-example-queries.html?utm_source=dbweekly&utm_medium=email
+
+> 引用自：[23 USEFUL ELASTICSEARCH EXAMPLE QUERIES](http://distributedbytes.timojo.com/2016/07/23-useful-elasticsearch-example-queries.html)
 
 
 
