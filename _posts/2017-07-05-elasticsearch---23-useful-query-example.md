@@ -134,6 +134,7 @@ tags: [elasticsearch]
             }
           }
         ]
+        
 然而， 完整的 DSL 给予你灵活创建更复杂查询和指定返回结果的能力（后面，我们会一一阐述）。在下面例子中，我们指定 size 限定返回的结果条数，from 指定起始位子，_source 指定要返回的字段，以及语法高亮
 
     POST /bookdb_index/book/_search
@@ -573,7 +574,7 @@ tags: [elasticsearch]
 
 注意：采用“查询时即时搜索”具有较大的性能成本，更好的解决方案是采用“索引时即时搜索”。更多信息，请查看自动补齐 API（Completion Suggester API）或边缘分词器（Edge-Ngram filters）的用法。
 
-请求字符串
+#### 请求字符串
 
 请求字符串类型（query_string）的查询提供了一个方法，用简洁的简写语法来执行多匹配查询、布尔查询、提权查询、模糊查询、通配符查询、正则查询和范围查询。下面的例子中，我们在那些作者是“grant ingersoll”或“tom morton”的某本书当中，使用查询项“search algorithm”进行一次模糊查询，搜索全部字段，但给摘要字段的权重提升2倍。
 
@@ -619,7 +620,7 @@ tags: [elasticsearch]
 	 
 #### 简单请求字符串
 
-简单请求字符串类型（simple_query_string）的查询是请求字符串类型（query_string）查询的一个版本，它更适合那种仅暴露给用户一个简单搜索框的场景，因为，它用+/|/-分别替换了AND/OR/NOT，并且自动丢弃了请求中无效的部分，不会在用户犯错时抛出异常。
+简单请求字符串类型（simple_query_string）的查询是请求字符串类型（query_string）查询的一个版本，它更适合那种仅暴露给用户一个简单搜索框的场景，因为，它用+/\|/-分别替换了AND/OR/NOT，并且自动丢弃了请求中无效的部分，不会在用户犯错时抛出异常。
 
 	POST /bookdb_index/book/_search
 	{
