@@ -1,7 +1,7 @@
 ---
 layout: post
-title: ""
-description: "跳过 GREP，使用 AWK"
+title: "跳过 GREP，使用 AWK"
+description: ""
 category: BASH
 tags: [bash]
 ---

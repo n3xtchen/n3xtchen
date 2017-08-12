@@ -7,16 +7,15 @@ tags: [elasticsearch]
 ---
 {% include JB/setup %}
 
-为了演示不同类型的 **ElasticSearch** 的查询，我们将使用书文档信息的集合（有以下字段：title（标题）, authors（作者）, summary（摘要）, publish_date（发布日期）和 num_reviews（浏览数））。
+为了演示不同类型的 **ElasticSearch** 的查询，我们将使用书文档信息的集合（有以下字段：**title**（标题）, **authors**（作者）, **summary**（摘要）, **publish_date**（发布日期）和 **num_reviews**（浏览数））。
 
-在这之前，首先我们应该先创建一个新的索引，并批量导入一些文档：
+在这之前，首先我们应该先创建一个新的索引（index），并批量导入一些文档：
 
 
 创建索引：
 
 	PUT /bookdb_index
-	    { "settings": { "number_of_shards": 1 }}
-	    
+	    { "settings": { "number_of_shards": 1 }} 
 
 批量上传文档：
 
@@ -32,12 +31,12 @@ tags: [elasticsearch]
 	    
 ### 栗子：
 
-#### 1. 基本的匹配查询
+#### 1. 基本的匹配（Query）查询
 
 有两种方式来执行一个全文匹配查询：
 
-* 使用 Search Lite API，它从 URL 中读取所有的查询参数
-* 使用完整 JSON 作为请求体，这样你可以使用完整的 **Elasticsearch DSL**
+* 使用 **Search Lite API**，它从 `url` 中读取所有的查询参数
+* 使用完整 **JSON** 作为请求体，这样你可以使用完整的 **Elasticsearch DSL**
 
 下面是一个基本的匹配查询，查询任一字段包含 Guide 的记录
 
@@ -52,10 +51,7 @@ tags: [elasticsearch]
 	        "_score": 0.28168046,
 	        "_source": {
 	          "title": "Elasticsearch: The Definitive Guide",
-	          "authors": [
-	            "clinton gormley",
-	            "zachary tong"
-	          ],
+	          "authors": ["clinton gormley", "zachary tong"],
 	          "summary": "A distibuted real-time search and analytics engine",
 	          "publish_date": "2015-02-07",
 	          "num_reviews": 20,
@@ -69,10 +65,7 @@ tags: [elasticsearch]
 	        "_score": 0.24144039,
 	        "_source": {
 	          "title": "Solr in Action",
-	          "authors": [
-	            "trey grainger",
-	            "timothy potter"
-	          ],
+	          "authors": ["trey grainger", "timothy potter"],
 	          "summary": "Comprehensive guide to implementing a scalable search engine using Apache Solr",
 	          "publish_date": "2014-04-05",
 	          "num_reviews": 23,
@@ -92,7 +85,7 @@ tags: [elasticsearch]
 	    }
 	}
 	
-`multi_match` 是 `match` 的作为在多个字段运行相同操作的一个速记法。`fields` 属性用来指定查询针对的字段，在这个例子中，我们想要对文档的所有字段进行匹配。两个 **API** 都允许你指定要查询的字段。例如，查询 `title` 字段中包含 `in Action` 的书：
+`multi_match` 是 `match` 的作为在多个字段运行相同操作的一个速记法。`fields` 属性用来指定查询针对的字段，在这个例子中，我们想要对文档的所有字段进行匹配。两个 **API** 都允许你指定要查询的字段。例如，查询 `title` 字段中包含 **in Action** 的书：
 
     GET /bookdb_index/book/_search?q=title:in action
     
@@ -135,7 +128,7 @@ tags: [elasticsearch]
           }
         ]
         
-然而， 完整的 DSL 给予你灵活创建更复杂查询和指定返回结果的能力（后面，我们会一一阐述）。在下面例子中，我们指定 size 限定返回的结果条数，from 指定起始位子，_source 指定要返回的字段，以及语法高亮
+然而， 完整的 **DSL** 给予你灵活创建更复杂查询和指定返回结果的能力（后面，我们会一一阐述）。在下面例子中，我们指定 `size` 限定返回的结果条数，from 指定起始位子，`_source` 指定要返回的字段，以及语法高亮
 
     POST /bookdb_index/book/_search
     {
@@ -196,9 +189,9 @@ tags: [elasticsearch]
       
 注意：对于多个词查询，`match` 允许指定是否使用 `and` 操作符来取代默认的 `or` 操作符。你还可以指定 `mininum_should_match` 选项来调整返回结果的相关程度。具体看后面的例子。
 
-#### 多字段查询
+#### 多字段（Multi-filed）查询
 
-正如我们已经看到来的，为了根据多个字段检索（e.g. 在 title 和 summary 字段都是相同的查询字符串的结果），你可以使用 `multi_match` 语句
+正如我们已经看到来的，为了根据多个字段检索（e.g. 在 `title` 和 `summary` 字段都是相同的查询字符串的结果），你可以使用 `multi_match` 语句
 
 	POST /bookdb_index/book/_search
 	{
@@ -270,11 +263,11 @@ tags: [elasticsearch]
 	    ]
 	  }
 	  
-注意第三条被匹配，因为 guide 在 summary 字段中被找到
+注意第三条被匹配，因为 `guide` 在 `summary` 字段中被找到。
 
 #### Boosting
 
-由于我们是多个字段查询，我们可能需要提高某一个字段的分值。在下面的例子中，我们把 summary 字段的分数提高三倍，为了提升 summary 字段的重要度；因此，我们把文档 4 的相关度提高了。
+由于我们是多个字段查询，我们可能需要提高某一个字段的分值。在下面的例子中，我们把 `summary` 字段的分数提高三倍，为了提升 `summary` 字段的重要度；因此，我们把文档 4 的相关度提高了。
 
 	POST /bookdb_index/book/_search
 	{
@@ -328,7 +321,6 @@ tags: [elasticsearch]
 
 #### Bool 查询
 
-为了提供多个相关或指定的结果，AND/OR/NOT 操作符来微调我们查询。这个是通过查询 API 的 bool 查询来实现的。bool 查询接受 must 参数（等同于 AND），must_not 参数（等同于 NOT）以及 should 参数（等同于 OR）。举个例子，如果我想要查询一个书标题包含 Elasticsearch 或者 solor 的结果，以及由 clinton gormley 编写的而不是 radu gheorge 的：
 
 	POST /bookdb_index/book/_search
 	{
@@ -1196,3 +1188,4 @@ tags: [elasticsearch]
 
 
 
+ 
