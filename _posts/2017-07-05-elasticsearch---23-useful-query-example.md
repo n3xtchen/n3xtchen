@@ -560,15 +560,55 @@ tags: [elasticsearch]
 
 注意：在上述例子中，对于非整句类型的查询，_id为1的文档一般会比_id为4的文档得分高，结果位置也更靠前，因为它的字段长度较短，但是对于整句类型查询，由于查询项之间的接近程度是一个计算因素，因此_id为4的文档得分更高。
 
-#### 短语前缀式查询
+#### 短语前缀（Match Phrase）式查询
 
-短语前缀式查询能够进行“即时搜索”（search-as-you-type）类型的匹配，或者说提供一个查询时的初级自动补全功能，无需以任何方式备全你的数据。和match_phrase查询类似，它也接收slop参数，用来调整单词顺序和不太严格的相对位置，它还接收max_expansions参数，用来限制查询项的数量，降低对资源需求的强度。
+**短语前缀式查询** 能够进行 **即时搜索（search-as-you-type）** 类型的匹配，或者说提供一个查询时的初级自动补全功能，无需以任何方式准备你的数据。和 `match_phrase` 查询类似，它接收`slop` 参数（用来调整单词顺序和不太严格的相对位置）和 `max_expansions` 参数（用来限制查询项的数量，降低对资源需求的强度）。
 
-注意：采用“查询时即时搜索”具有较大的性能成本，更好的解决方案是采用“索引时即时搜索”。更多信息，请查看自动补齐 API（Completion Suggester API）或边缘分词器（Edge-Ngram filters）的用法。
+	POST /bookdb_index/book/_search
+	{
+	    "query": {
+	        "match_phrase_prefix" : {
+	            "summary": {
+	                "query": "search en",
+	                "slop": 3,
+	                "max_expansions": 10
+	            }
+	        }
+	    },
+	    "_source": [ "title", "summary", "publish_date" ]
+	}
+	
+	[Results]
+	"hits": [
+	      {
+	        "_index": "bookdb_index",
+	        "_type": "book",
+	        "_id": "4",
+	        "_score": 0.5161346,
+	        "_source": {
+	          "summary": "Comprehensive guide to implementing a scalable search engine using Apache Solr",
+	          "title": "Solr in Action",
+	          "publish_date": "2014-04-05"
+	        }
+	      },
+	      {
+	        "_index": "bookdb_index",
+	        "_type": "book",
+	        "_id": "1",
+	        "_score": 0.37248808,
+	        "_source": {
+	          "summary": "A distibuted real-time search and analytics engine",
+	          "title": "Elasticsearch: The Definitive Guide",
+	          "publish_date": "2015-02-07"
+	        }
+	      }
+	    ]
 
-#### 请求字符串
+**注意**：采用 **查询时即时搜索** 具有较大的性能成本。更好的解决方案是采用 **索引时即时搜索**。更多信息，请查看 **自动补齐接口（Completion Suggester API）** 或 **边缘分词器（Edge-Ngram filters）的用法**。
 
-请求字符串类型（query_string）的查询提供了一个方法，用简洁的简写语法来执行多匹配查询、布尔查询、提权查询、模糊查询、通配符查询、正则查询和范围查询。下面的例子中，我们在那些作者是“grant ingersoll”或“tom morton”的某本书当中，使用查询项“search algorithm”进行一次模糊查询，搜索全部字段，但给摘要字段的权重提升2倍。
+#### 查询字符串（Query String）
+
+**查询字符串** 类型（**query_string**）的查询提供了一个方法，用简洁的简写语法来执行 **多匹配查询**、 **布尔查询** 、 **提权查询**、 **模糊查询**、 **通配符查询**、 **正则查询** 和**范围查询**。下面的例子中，我们在那些作者是 **“grant ingersoll”** 或 **“tom morton”** 的某本书当中，使用查询项 **“search algorithm”** 进行一次模糊查询，搜索全部字段，但给 `summary` 的权重提升 2 倍。
 
 	POST /bookdb_index/book/_search
 	{
@@ -610,9 +650,9 @@ tags: [elasticsearch]
 	      }
 	    ]
 	 
-#### 简单请求字符串
+#### 简单查询字符串（Simple Query String）
 
-简单请求字符串类型（simple_query_string）的查询是请求字符串类型（query_string）查询的一个版本，它更适合那种仅暴露给用户一个简单搜索框的场景，因为，它用+/\|/-分别替换了AND/OR/NOT，并且自动丢弃了请求中无效的部分，不会在用户犯错时抛出异常。
+**简单请求字符串** 类型（**simple_query_string**）的查询是请求**字符串类型**（**query_string**）查询的一个版本，它更适合那种仅暴露给用户一个简单搜索框的场景；因为它用 `+/\|/-` 分别替换了 `AND/OR/NOT`，并且自动丢弃了请求中无效的部分，不会在用户出错时，抛出异常。
 
 	POST /bookdb_index/book/_search
 	{
@@ -630,9 +670,9 @@ tags: [elasticsearch]
 	    }
 	} 
 
-#### 词条/多词条查询
+#### 词条（Term）/多词条（Terms）查询
 
-以上例子均为全文检索的示例。有时我们对结构化查询更感兴趣，希望得到更准确的匹配并返回结果，词条查询和多词条查询可帮我们实现。在下面的例子中，我们要在索引中找到所有由曼宁出版社出版的图书。
+以上例子均为 `full-text`(全文检索) 的示例。有时我们对结构化查询更感兴趣，希望得到更准确的匹配并返回结果，**词条查询** 和 **多词条查询** 可帮我们实现。在下面的例子中，我们要在索引中找到所有由 **Manning** 出版的图书。
 
 	POST /bookdb_index/book/_search
 	{
@@ -691,9 +731,9 @@ tags: [elasticsearch]
 	    }
 	} 
 	
-#### 词条查询 - 排序
+#### 词条（Term）查询 - 排序（Sorted）
 
-词条查询的结果（和其他查询结果一样）可以被轻易排序，多级排序也被允许。
+**词条查询** 的结果（和其他查询结果一样）可以被轻易排序，多级排序也被允许：
 	
 	POST /bookdb_index/book/_search
 	{
@@ -760,7 +800,7 @@ tags: [elasticsearch]
 
 #### 范围查询
 
-另一个结构化查询的例子是范围查询。在这个例子中，我们要查找2015年出版的书。
+另一个结构化查询的例子是 **范围查询**。在这个例子中，我们要查找 2015 年出版的书。
 
 	POST /bookdb_index/book/_search
 	{
@@ -801,11 +841,11 @@ tags: [elasticsearch]
 	      }
 	    ]
 
-注意：范围查询作用于日期、数字和字符串类型的字段。
+**注意**：**范围查询** 用于日期、数字和字符串类型的字段。
 
-#### 过滤查询
+#### 过滤(Filtered)查询
 
-过滤查询让你可以过滤查询结果，对于我们的这个示例，要在标题或摘要中检索一些书，查询项为“Elasticsearch”，但我们又想筛出那些仅有20个以上评论的。
+过滤查询允许你可以过滤查询结果。对于我们的例子中，要在标题或摘要中检索一些书，查询项为 **Elasticsearch**，但我们又想筛出那些仅有 20 个以上评论的。
 
 	POST /bookdb_index/book/_search
 	{
@@ -845,11 +885,37 @@ tags: [elasticsearch]
 	      }
 	    ]
 
-注意：过滤查询并不强制它作用于其上的查询必须存在，如果未指定查询，那么过滤将作用于match_all查询，match_all基本上会返回索引内的全部文档。实际上，过滤只在第一次运行，以减少所需的查询面积，并且，在第一次使用后过滤会被缓存，大大提高了性能。
+**注意**：**过滤查询** 并不强制它作用于其上的查询必须存在。如果未指定查询，`match_all` 基本上会返回索引内的全部文档。实际上，过滤只在第一次运行，以减少所需的查询面积，并且，在第一次使用后过滤会被缓存，大大提高了性能。
 
-#### 多重过滤
+**更新**：**过滤查询** 将在 `ElasticSearch 5` 中移除，使用 **布尔查询** 替代。 下面有个例子使用 **布尔查询** 重写上面的例子：
 
-多重过滤可以结合布尔查询使用，下一个例子中，过滤查询决定只返回那些包含至少20条评论，且必须在2015年前出版，且由oreilly出版的结果。
+	POST /bookdb_index/book/_search
+	{
+	    "query": {
+	        "bool": {
+	            "must" : {
+	                "multi_match": {
+	                    "query": "elasticsearch",
+	                    "fields": ["title","summary"]
+	                }
+	            },
+	            "filter": {
+	                "range" : {
+	                    "num_reviews": {
+	                        "gte": 20
+	                    }
+	                }
+	            }
+	        }
+	    },
+	    "_source" : ["title","summary","publisher", "num_reviews"]
+	}
+	
+在后续的例子中，我们将会把它使用在 **多重过滤** 中。
+
+#### 多重过滤（Multiple Filters）
+
+**多重过滤** 可以结合 **布尔查询** 使用，下一个例子中，过滤查询决定只返回那些包含至少20条评论，且必须在 2015 年前出版，且由 O'Reilly 出版的结果。
 	
 	POST /bookdb_index/book/_search
 	{
@@ -896,9 +962,9 @@ tags: [elasticsearch]
 	      }
 	    ] 
 
-#### 作用分值: 域值因子
+#### 作用分值: 域值（Field Value）因子
 
-也许在某种情况下，你想把文档中的某个特定域作为计算相关性分值的一个因素，比较典型的场景是你想根据普及程度来提高一个文档的相关性。在我们的示例中，我们想把最受欢迎的书（基于评论数判断）的权重进行提高，可使用field_value_factor用以影响分值。
+也许在某种情况下，你想把文档中的某个特定域作为计算相关性分值的一个因素，比较典型的场景是你想根据普及程度来提高一个文档的相关性。在我们的示例中，我们想把最受欢迎的书（基于评论数判断）的权重进行提高，可使用 `field_value_factor` 用以影响分值。
 
 	POST /bookdb_index/book/_search
 	{
@@ -972,13 +1038,13 @@ tags: [elasticsearch]
 	      }
 	    ]
 
-注意 1: 我们可能刚运行了一个常规的多匹配查询，并对num_reviews域进行了排序，这让我们失去了评估相关性分值的好处。
+**注意 1**: 我们可能刚运行了一个常规的 `multi_match` (多匹配)查询，并对 `num_reviews` 域进行了排序，这让我们失去了评估相关性分值的好处。
 
-注意 2: 有大量的附加参数可用来调整提升原始相关性分值效果的程度，比如“modifier”, “factor”, “boost_mode”等等，至于细节可在Elasticsearch指南中探索。
+**注意 2**: 有大量的附加参数可用来调整提升原始相关性分值效果的程度，比如 `modifier`, `factor`, `boost_mode` 等等，至于细节可在 **Elasticsearch** 指南中探索。
 
-#### 作用分值: 衰变函数
+#### 作用分值: 衰变（Decay）函数
 
-假设不想使用域值做递增提升，而你有一个理想目标值，并希望用这个加权因子来对这个离你较远的目标值进行衰减。有个典型的用途是基于经纬度，或是像价格、日期等数值域的提升。在如下的人造例子中，我们查找出版日期大约在2014年6月左右，查询项是“搜索引擎”（“search engines”）的书。
+假设不想使用域值做递增提升，而你有一个理想目标值，并希望用这个加权因子来对这个离你较远的目标值进行衰减。有个典型的用途是基于经纬度、价格或日期等数值域的提升。在如下的例子中，我们查找在2014年6月左右出版的，查询项是 **search engines** 的书。
 
 	POST /bookdb_index/book/_search
 	{
@@ -1059,9 +1125,9 @@ tags: [elasticsearch]
 	      }
 	    ]
 
-#### 作用分值: 脚本评分
+#### 函数分值: 脚本评分
 
-当内置的评分函数无法满足你的需求时，还有一个选择是用Groovy脚本。在我们的例子中，想要指定一个脚本，能在决定把评论数量的因素计算多少之前，先将publish_date考虑在内。因为很新的书也许不会有多少评论数，分值不应该被惩罚。
+当内置的评分函数无法满足你的需求时，还可以用 **Groovy** 脚本。在我们的例子中，想要指定一个脚本，能在决定把 `num_reviews` 的因子计算多少之前，先将 `publish_date` 考虑在内。因为很新的书也许不会有评论，分值不应该被惩罚。
 
 评分脚本如下：
 
@@ -1075,7 +1141,7 @@ tags: [elasticsearch]
 	}
 	return my_score
 
-在script_score参数内动态调用评分脚本： 
+在 `script_score` 参数内动态调用评分脚本： 
 
 	POST /bookdb_index/book/_search
 	{
@@ -1158,9 +1224,9 @@ tags: [elasticsearch]
 	    ]
 	  }
 	  
-注意 1: 要在ES实例中使用动态脚本，必须在config/elasticsearch.yaml文件中enable它，也可以使用存储在ES服务器上的脚本。建议看看Elasticsearch指南文档获取更多信息。
+**注意 1**: 要在 **Elasticsearch** 实例中使用动态脚本，必须在 *config/elasticsearch.yaml* 文件中启用它；也可以使用存储在 **Elasticsearch** 服务器上的脚本。建议看看 **Elasticsearch** 指南文档获取更多信息。
 
-注意 2: 因JSON不能包含嵌入式换行符，请使用分号来分割语句。
+**注意 2**: 因 **JSON** 不能包含嵌入式换行符，请使用分号来分割语句。
 
 > 引用自：[23 USEFUL ELASTICSEARCH EXAMPLE QUERIES](http://distributedbytes.timojo.com/2016/07/23-useful-elasticsearch-example-queries.html)
 
