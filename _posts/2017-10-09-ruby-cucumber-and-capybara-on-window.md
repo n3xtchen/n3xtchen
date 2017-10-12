@@ -275,7 +275,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 * 点击 yahoo 链接
 * 等待 10 秒
 
-现在，我们使用 `notepad++`（或者其他文件） 打开 *test.feature* 文件，使用 **Gherkin** 语法编写上面的测试用例。
+现在，我们使用 `notepad++`（或者其他文字编辑系统） 打开 *test.feature* 文件，使用 **Gherkin** 语法编写上面的测试用例。
 
     Feature: Find the Yahoo Website
     Scenario: Search a website in google        
@@ -285,12 +285,112 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
      Then I will click the yahoo link
      Then I will wait for 10 seconds
      
-编写完，我们运行下 `cucumber`：
+编写完，我们尝试运行下我们的测试：
 
+    cucumber features\test.feature
+
+我们还没有定义好测试步骤。因此，我们运行测试后会得到上述结果
+
+首先在 *features* 目录中创建一个名为 *step_definitions* 文件。然后，创建一个名为 *test_steps.rb* 的脚本文件。
+
+文件结构如下：
+
+    Project
+    |-----feature
+    
+你可以把刚才测试结果的代码片段粘贴到 *test_steps.rb* 文件中。现在，我们可以编写测试步骤了。我现在将要教会你们如何一步步实现自动化测试的。
+
+### 第一步：首先，我们需要访问 *google.com.hk* 站点。**Capybara** 提供 `visit` 方法来实现这个目的。在 **Selenium** ，我们可以使用 `driver.get()` 或 `driver.navigate().to()` 来完成这个动作。因此，我们应该添加如下代码来访问 *google.com.hk*:
+
+    visit 'http://www.google.com.uk'
+    
+### 第二步：经过上面的操作，我们已经到 *google.com.hk* 的页面上，我们要在搜索框中输入我们要查询的文本。如下所述，查询框的 `id` 是 `lst-ib`。
+
+![查看工具栏的 id]()
+
+**Capybara** 提供一个方法叫 `fill_in`，用于文本填充操作。我们可以使用如下代码实现这个操作。在 **Selenium** 中，我们可以使用 `textElement.sendKeys(String)` 方法。
+
+    fill_in 'lst-ib', :with => searchText
+    
+### 第三步：接着，我们需要在当前页面检索期待的查询结果。我们可以使用 `page.should have_content` 方法。在 **Selenium** 中，我们可以使用 **JUnit**，**TestNG** 或者 **Hamcrest** 断言。比如，`assertThat(element.getText(), containString("Yahoo"))`；
+
+    page.should have_content(expectedText)
+    
+### 第四步：现在，该点击 **Yahoo** 链接了。如下图所示，链接文本就是 **Yahoo**。
+
+![查看Yahoo超链接的文本]()
+
+在 **Capybara** 中，我们可以使用 `click_link` 来执行点击操作。在 **Selenium** 中，我们可以使用 `driver.findElement(By.linkText("Yahoo"))`；
+
+    click_link('Yahoo')
+
+### 第五步：最后一步了，我们将在 **Yahoo** 的站点上停留 10 秒，使用 `sleep(10)` 来实现。在 **Selenium** 中，我们使用 `Thread.sleep(10)`;
+
+现在，我们把之前的代码都整合在一起。我们的 *test_steos.rb* 代码如下：
+
+    #Navigate to google.co.uk
+    Given(/^I am on the Google homepage$/) do
+    	visit 'https://www.google.co.uk/'
+    end
+     
+    #Write "yahoo" search text to the search bar  
+    When(/^I will search for "([fusion_builder_container hundred_percent="yes" overflow="visible"][fusion_builder_row][fusion_builder_column type="1_1" background_position="left top" background_color="" border_size="" border_color="" border_style="solid" spacing="yes" background_image="" background_repeat="no-repeat" padding="" margin_top="0px" margin_bottom="0px" class="" id="" animation_type="" animation_speed="0.3" animation_direction="left" hide_on_mobile="no" center_content="no" min_height="none"][^"]*)"$/) do |searchText|
+    	fill_in 'lst-ib', :with => searchText
+    end
+     
+    #In the current page, we should see "yahoo" text
+    Then(/^I should see "([^"]*)"$/) do |expectedText|
+        page.should have_content(expectedText)
+    end
+     
+    #Click the yahoo link 
+    Then(/^I will click the yahoo link$/) do
+        click_link('Yahoo')
+    end
+     
+    #Wait 10 seconds statically to see yahoo website
+    Then(/^I will wait for (\d+) seconds$/) do |waitTime|
+    	sleep (waitTime.to_i)
+    end
+
+写完步骤定义后，我们在 *features* 目录中创建一个 *support* 文件夹，然后创建 *env.rb* 文件，来初始化环境。*env.rb* 代码如下：
+
+    require 'rubygems'
+    require 'capybara'
+    require 'capybara/dsl'
+    require 'rspec'
+     
+    Capybara.run_server = false
+    #Set default driver as Selenium
+    Capybara.default_driver = :selenium
+    #Set default selector as css
+    Capybara.default_selector = :css
+     
+    #Syncronization related settings
+    module Helpers
+      def without_resynchronize
+        page.driver.options[:resynchronize] = false
+        yield
+        page.driver.options[:resynchronize] = true
+      end
+    end
+    World(Capybara::DSL, Helpers)
+
+最后，我们已经可以开始我们完整的测试用例了。首先，进入你的项目目录，它包含如下所示的 *features* 目录
+    
+    dir
+    
+然后，我们开始运行 **Cucumber**：
+
+    cucumber feature\test.feature
+    
+接着，看看整个测试执行过程^_^
 
 ## 结语
 
-在这个文章中，我想解释清楚 **Ruby**、**Cucumber** 和 **Capybara** 自动化测试的入门。我希望这个说明能对你有帮助。这个文章，只是这个主题的开始。你应该做更多的调研，多看官方文档，提高你自动测试能力和 **Ruby** 的编程能力。
+用 **Ruby** 好多年了，写起来真心爽，主要用来做自动化测试和页面监控。不认真看，还以为你是在写作文，看看 **Capybara** 的封装方法，明显就是主谓宾结构嘛 ^_^，这样编程语言你不觉得酷吗？**Cucumber** 真的做到了 `只要你识字，肯定看得懂用例`，产品 🐶 也能过来对着代码指指点点了（终于可以更好融入了产品迭代中），自豪不自豪？这就是使用 **Ruby** 开发自动化测试的魅力所在。
 
-Happy Testing！
+我常说：“如果当初可以选择，我希望我的第一门语言是 **Ruby**”。现在后生的语言多少都能看到 **Ruby** 的影子。
+ 
+Happy Programming！Happy Testing！
 
