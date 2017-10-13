@@ -45,17 +45,15 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 1. 对于 **Windows** 来说，安装 **Ruby** 最好的地方是 [http://rubyinstaller.org/downloads/](http://rubyinstaller.org/downloads/)。打开网站，下载最新的 32 位 **Ruby**。
 
-    ![Ruby 下载](http://p.aybe.me/blog/DingTalk20171010145948.png)
+    ![Ruby 下载](http://p.aybe.me/blog/DingTalk20171010145948.png?x-oss-process=image/resize,w_300,h_400,limit_0)
 
 2. 在这里，我们将使用 **Ruby 2.4.2** 版本。下面是我勾选的安装选项，大家可以参考下。
 
-    ![Ruby 安装选项](http://p.aybe.me/blog/DingTalk20171013004705.png
-)
+    ![Ruby 安装选项](http://p.aybe.me/blog/DingTalk20171013004705.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
     > 如果你习惯使用 **Window** 自带的命令行工具（**cmd.exe** 或 **PowerShell**），大家务必把 **Add Ruby executables to your PATH.** 这个选项选中；
 
-    ![Ruby 安装完成](http://p.aybe.me/blog/DingTalk20171013004849.png
-)
+    ![Ruby 安装完成](http://p.aybe.me/blog/DingTalk20171013004849.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
     看到红色方框了没有？像 **Capybara** 和 **Cucumber** 这样的类库会依赖原生的 **C** 拓展，所以**必须安装**。
 
@@ -86,7 +84,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
     安装过程中会弹出 MSYS2 安装向导，要你选择安装路径；这个路径要记住，环境变量的配置文件就存放在这里。在这里，我把 **MSYS2** 安装在 *C://msys2* 目录下面
 
-    ![MSYS2 安装路径](http://p.aybe.me/blog/DingTalk20171013005343.png)
+    ![MSYS2 安装路径](http://p.aybe.me/blog/DingTalk20171013005343.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
     > 好久没倒腾 **Windows**，发现 **mingw** 居然自带了 **ArchLinux** 的包管理工具 **pacman**，好吃惊！
 
@@ -98,8 +96,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 > Note: 后续的步骤都在 **msys2** 中执行
 
-![MinGW 界面](http://p.aybe.me/blog/DingTalk20171013011136.png
-)
+![MinGW 界面](http://p.aybe.me/blog/DingTalk20171013011136.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
 #### 接下来我们验证下环境是否可用
      
