@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Window 下 cucumber 新人手册：使用 capybara 进行自动化测试"
+title: "Window 下 Cucumber 新人手册：使用 Ruby 和 Capybara 进行自动化测试"
 description: ""
 category: Ruby 
 tags: [cucumber,capybara]
@@ -130,8 +130,8 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 3. 验证 **MSYS2-DEVKIT** 是否安装正确
         
-        Test@t-w7sp1eng-ie9 MINGW32 /c/Devkit
-        $ gem install json --platform ruby
+        Test@t-w7sp1eng-ie9 MINGW32 ~
+        $ gem install json --platform ruby  <<< 命令在这里
         Temporarily enhancing PATH for MSYS/MINGW...
         # 这里插句话，下面就是说明安装 JSON 库我时，我们编译了原生拓展（native extensions）
         Building native extensions.  This could take a while...
@@ -155,21 +155,9 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 1. 在你的 **MSYS2** 命令行中，执行如下命令
 
         Test@t-w7sp1eng-ie9 MINGW32 ~
-        $ gem install cucumber capybara selenium-webdriver rspec
+        $ gem install cucumber capybara selenium-webdriver rspec    <<< 命令在这里
         Couldn't find file to include 'Contributing.rdoc' from README.rdoc
         Couldn't find file to include 'License.rdoc' from README.rdoc
-        ...此处省略无数行安装信息...
-        Parsing documentation for cucumber-3.0.1
-        Installing ri documentation for cucumber-3.0.1
-        Done installing documentation for gherkin, cucumber-tag_expressions, backports, cucumber-core, builder, diff-lcs, multi_json, multi_test, cucumber-wire, cucumber-expressions, cucumber after 18 seconds
-        ...此处省略无数行安装信息...
-        Parsing documentation for capybara-2.15.4
-        Installing ri documentation for capybara-2.15.4
-        Done installing documentation for mini_portile2, nokogiri, mini_mime, rack, rack-test, xpath, public_suffix, addressable, capybara after 24 seconds
-        ...此处省略无数行安装信息...
-        Parsing documentation for selenium-webdriver-3.6.0
-        Installing ri documentation for selenium-webdriver-3.6.0
-        Done installing documentation for rubyzip, ffi, childprocess, selenium-webdriver after 6 seconds
         ...此处省略无数行安装信息...
         Parsing documentation for rspec-3.6.0
         Installing ri documentation for rspec-3.6.0
@@ -181,7 +169,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 2. 验证 **Cucumber** 是否安装成功。如果出现如下信息，说明安装成功：
     
         Test@t-w7sp1eng-ie9 MINGW32 ~
-        $ cucumber help
+        $ cucumber help <<< 命令在这里
         *** WARNING: You must use ANSICON 1.31 or higher (https://github.com/adoxa/ansicon/) to get coloured output on Windows
         No such file or directory - help. You can use `cucumber --init` to get started.
 
@@ -209,20 +197,20 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 进入 *features* 目录，创建一个 *test.feature* 文件。我们的测试用例如下：
 
 * 进入 www.google.com.hk
-* 搜索 yahoo
-* 看到 yahoo 的搜索内容
-* 点击 yahoo 链接
+* 搜索 N3xt-Tech 博客
+* 看到 N3xt-Tech 博客 的搜索内容
+* 点击 N3xt-Tech 博客 链接
 * 等待 10 秒
 
-现在，我们使用 `notepad++`（或者其他文字编辑系统） 打开 *test.feature* 文件，使用 **Gherkin** 语法编写上面的测试用例。
+现在，我们使用 `notepad++`（或者其他文字编辑系统） 打开 *test.feature* 文件（**注意**：一定要使用 **UTF-8** 字符编码保存），使用 **Gherkin** 语法编写上面的测试用例。
 
     Feature: Find the Yahoo Website
     Scenario: Search a website in google        
-     Given I am on the Google homepage
-     When I will search for "yahoo"
-     Then I should see "yahoo"
-     Then I will click the yahoo link
-     Then I will wait for 10 seconds
+      Given I am on the Google homepage
+      When I will search for "N3xt-Tech 博客"
+      Then I should see "N3xt-Tech 博客"
+      Then I will click the “N3xt-Tech 博客” link
+      Then I will wait for 10 seconds
      
 编写完，我们尝试运行下我们的测试：
 
@@ -230,14 +218,63 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 我们还没有定义好测试步骤。因此，我们运行测试后会得到上述结果
 
-首先在 *features* 目录中创建一个名为 *step_definitions* 文件。然后，创建一个名为 *test_steps.rb* 的脚本文件。
+![无步骤定义的输出]()
 
-文件结构如下：
+这个就是 **Cucumber** 人性化的一个体现，你直接测试说明，她会帮助你生成测试代码模版，这是你只需要填充的测试逻辑就好了。
 
-    Project
-    |-----feature
+首先在 *features* 目录中创建一个名为 *step_definitions* 文件。然后，创建一个名为 *test_steps.rb* 的脚本文件，把刚才测试结果的代码片段（上图中红色方框中的内容）粘贴进去。
+
+> **说明**：**Ruby** 程序文件都是使用 *.rb* 后缀保存，所以后续看到 *.rb* 文件，里面就是 Ruby 程序了，
+
+在执行一遍命令，查看下输出：
+
+![填充步骤定义的输出]()
+
+看红色方框的部分，对比上一个输出，之前场景（**scenario**）和测试步骤（**steps**）时都是未定义（**undefined**），现在都是 **pending**（待定）和 **skipped** 状态。
+
+代码中 **pending** 的部分就是我们后续要填充的测试逻辑。
+
+现在，我们可以编写测试步骤了。我现在将要教会你们如何一步步实现自动化测试的。
+
+开始前，现在先看看最终目录结构（标准的 **Cucumber** 目录结构）：
+
+    .   # C:\\msys2\home\test
+    └── web_test    # 项目目录
+        └── features    # 测试用例目录
+            ├── step_definitions    # 测试步骤具体实现
+            │   └── test_steps.rb
+            ├── support           
+            │   └── env.rb
+            └── test.feature    # Gherkin
     
-你可以把刚才测试结果的代码片段粘贴到 *test_steps.rb* 文件中。现在，我们可以编写测试步骤了。我现在将要教会你们如何一步步实现自动化测试的。
+    4 directories, 3 files
+    
+由于作为初学者教程，我将隐藏一些复杂的代码逻辑。
+
+我们在 *features* 目录中创建一个 *support* 目录（如何之前的目录结构中），然后创建 *env.rb* 文件，来初始化环境。*env.rb* 代码如下：
+
+    require 'rubygems'
+    require 'capybara'
+    require 'capybara/dsl'
+    require 'rspec'
+     
+    Capybara.run_server = false
+    #设置默认的 Driver
+    Capybara.default_driver = :selenium
+    #设置默认的选择器
+    Capybara.default_selector = :css
+     
+    #同步相关设置    
+    module Helpers
+      def without_resynchronize
+        page.driver.options[:resynchronize] = false
+        yield
+        page.driver.options[:resynchronize] = true
+      end
+    end
+    World(Capybara::DSL, Helpers)
+    
+它主要用来配置后续我们可以在 **Cucumber** 使用 **Capybara** 方法，这里暂时不需要了解代码具体实现，在后续博客中将会一一解释。
 
 ### 第一步：首先，我们需要访问 *google.com.hk* 站点。**Capybara** 提供 `visit` 方法来实现这个目的。在 **Selenium** ，我们可以使用 `driver.get()` 或 `driver.navigate().to()` 来完成这个动作。因此，我们应该添加如下代码来访问 *google.com.hk*:
 
@@ -292,35 +329,9 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
     	sleep (waitTime.to_i)
     end
 
-写完步骤定义后，我们在 *features* 目录中创建一个 *support* 文件夹，然后创建 *env.rb* 文件，来初始化环境。*env.rb* 代码如下：
+最后，我们已经可以开始我们完整的测试用例了。首先，进入你的项目目录，它包含如下所示的 *features* 目录，开始运行 **Cucumber**：
 
-    require 'rubygems'
-    require 'capybara'
-    require 'capybara/dsl'
-    require 'rspec'
-     
-    Capybara.run_server = false
-    #Set default driver as Selenium
-    Capybara.default_driver = :selenium
-    #Set default selector as css
-    Capybara.default_selector = :css
-     
-    #Syncronization related settings
-    module Helpers
-      def without_resynchronize
-        page.driver.options[:resynchronize] = false
-        yield
-        page.driver.options[:resynchronize] = true
-      end
-    end
-    World(Capybara::DSL, Helpers)
-
-最后，我们已经可以开始我们完整的测试用例了。首先，进入你的项目目录，它包含如下所示的 *features* 目录
-    
-    dir
-    
-然后，我们开始运行 **Cucumber**：
-
+    cd ~/web_test
     cucumber feature\test.feature
     
 接着，看看整个测试执行过程^_^
