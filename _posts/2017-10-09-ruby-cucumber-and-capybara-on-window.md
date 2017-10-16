@@ -58,14 +58,14 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
     看到红色方框了没有？像 **Capybara** 和 **Cucumber** 这样的类库会依赖原生的 **C** 拓展，所以**必须安装**。
 
     > #### 关于 DevKit
-    > 
+    >
     > 对于老用户来说，使用安装 **DevKit** 来解决安装原生拓展的问题，现在该项目已经不在维护了。从 **Ruby 2.4** 开始，我们使用 **MYSYS2** 编译 **Ruby** 来取代 **Devkit**；
-    > 
+    >
     > 具体内容详见 [Meet MSYS and the DevKit](https://rubyinstaller.org/add-ons/devkit.html)
 
 3. 安装成功后，直接弹出命令行工具，内容如如下；你应该先选择 **2**，安装并更新 **MinGW**，因为 **RubyInstaller** 中的 **MinGW** 版本比较旧，不更新会导致后续安装失败。另外，你还可以一堆的 **Gnome** 工具（Linux 下常见的工具，如 **Bash**，`sed` 等等）
 
-    
+
          _____       _           _____           _        _ _         ___
         |  __ \     | |         |_   _|         | |      | | |       |__ \
         | |__) |   _| |__  _   _  | |  _ __  ___| |_ __ _| | | ___ _ __ ) |
@@ -81,15 +81,15 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
            3 - MSYS2 and MINGW development toolchain
         
         Which components shall be installed? If unsure press ENTER [1,2,3] 
-
+    
     安装过程中会弹出 MSYS2 安装向导，要你选择安装路径；这个路径要记住，环境变量的配置文件就存放在这里。在这里，我把 **MSYS2** 安装在 *C://msys2* 目录下面
-
+    
     ![MSYS2 安装路径](http://p.aybe.me/blog/DingTalk20171013005343.png?x-oss-process=image/resize,w_500,h_350,limit_0)
-
+    
     > 好久没倒腾 **Windows**，发现 **mingw** 居然自带了 **ArchLinux** 的包管理工具 **pacman**，好吃惊！
 
 4. 安装完，会重新回到上述界面。这时，你选择 **3**，来安装开发工具链，比如 `make`、`autoconf`、`automake` 这些常用编译工具。
-   
+
 5. 最后，回车退出。
 
 目前为止，你已经安装你的 **Ruby** 开发环境。
@@ -99,19 +99,19 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 ![MinGW 界面](http://p.aybe.me/blog/DingTalk20171013011136.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
 #### 接下来我们验证下环境是否可用
-     
+
 1. 执行 `ruby -v` 来验证 **Ruby** 安装。命令输出如下：
 
         Test@t-w7sp1eng-ie9 MINGW32 ~
         $ ruby -v
         bash: ruby: command not found
-        
+
     尴尬的发现 **MinGW** 没把 **Ruby** 程序加到路径中。怎么办？打开 *C:\msys32\home\Test\.bash_rc* 文件，在文件末尾追加如下命令：
-    
+
         export PATH=/c/Ruby24/bin:$PATH
-        
+
     > 小常识：*/c/Ruby24/bin*，**Posix Path**，这是一种文件路径规范，**Unix**/**Linux** 都遵循这个规范，**MinGW** 会把这个格式转化成 **Windows** 的路径格式；如果希望深入了解，详见 [MinGW-Posix Path Conversion](http://www.mingw.org/wiki/Posix_path_conversion)。为了便于学习，我整理一个规律：
-    > 
+    >
     > * 如果遇到第一个 **／**，你将第一个 **／** 去掉，并把第二个改成 **\:**
     > * 其他的 **／** 一律转化成 **\\**
 
@@ -129,18 +129,14 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 
 3. 验证 **MSYS2-DEVKIT** 是否安装正确
-        
-        Test@t-w7sp1eng-ie9 MINGW32 ~
-        $ gem install json --platform ruby  <<< 命令在这里
-        Temporarily enhancing PATH for MSYS/MINGW...
-        # 这里插句话，下面就是说明安装 JSON 库我时，我们编译了原生拓展（native extensions）
-        Building native extensions.  This could take a while...
-        Successfully installed json-2.1.0
-        Parsing documentation for json-2.1.0
-        Installing ri documentation for json-2.1.0
-        Done installing documentation for json after 1 seconds
-        1 gem installed
-        
+
+		Test@t-w7sp1eng-ie9 MINGW32 ~
+		$ gem install json --platform ruby  <<< 命令在这里
+		Temporarily enhancing PATH for MSYS/MINGW...
+		# 这里插句话，下面就是说明安装 JSON 库我时，我们编译了原生拓展（native extensions）
+		Building native extensions.  This could take a while...
+		...
+
 #### 安装自动化测试所需要的库
 
 要安装的库如下:
@@ -154,20 +150,13 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 1. 在你的 **MSYS2** 命令行中，执行如下命令
 
-        Test@t-w7sp1eng-ie9 MINGW32 ~
-        $ gem install cucumber capybara selenium-webdriver rspec    <<< 命令在这里
-        Couldn't find file to include 'Contributing.rdoc' from README.rdoc
-        Couldn't find file to include 'License.rdoc' from README.rdoc
-        ...此处省略无数行安装信息...
-        Parsing documentation for rspec-3.6.0
-        Installing ri documentation for rspec-3.6.0
-        Done installing documentation for rspec-support, rspec-core, rspec-expectations, rspec-mocks, rspec after 12 seconds
-        29 gems installed
-        
+		Test@t-w7sp1eng-ie9 MINGW32 ~
+		$ gem install cucumber capybara selenium-webdriver rspec
+
     > 为了安装这 4 个 gems（相当于软件包），我们总共安装了 29 个 gems(包括依赖)。
 
 2. 验证 **Cucumber** 是否安装成功。如果出现如下信息，说明安装成功：
-    
+
         Test@t-w7sp1eng-ie9 MINGW32 ~
         $ cucumber help <<< 命令在这里
         *** WARNING: You must use ANSICON 1.31 or higher (https://github.com/adoxa/ansicon/) to get coloured output on Windows
@@ -191,7 +180,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
     And I am logged in
     Then I should see "Welcome!"
     And I should see "Personal Details"
-    
+
 这个例子中，第一个 **And** 扮演 **Given**，而第二个扮演 **Then**。
 
 进入 *features* 目录，创建一个 *test.feature* 文件。我们的测试用例如下：
@@ -211,14 +200,14 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
       Then I should see "N3xt-Tech 博客"
       Then I will click the “N3xt-Tech 博客” link
       Then I will wait for 10 seconds
-     
+
 编写完，我们尝试运行下我们的测试：
 
     cucumber features\test.feature
 
 我们还没有定义好测试步骤。因此，我们运行测试后会得到上述结果
 
-![无步骤定义的输出]()
+![无步骤定义的输出](http://p.aybe.me/blog/DingTalk20171014171445.png?x-oss-process=image/resize,w_500,h_600,limit_0)
 
 这个就是 **Cucumber** 人性化的一个体现，你直接测试说明，她会帮助你生成测试代码模版，这是你只需要填充的测试逻辑就好了。
 
@@ -228,7 +217,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 在执行一遍命令，查看下输出：
 
-![填充步骤定义的输出]()
+![填充步骤定义的输出](http://p.aybe.me/blog/DingTalk20171014172141.png?x-oss-process=image/resize,w_500,h_300,limit_0)
 
 看红色方框的部分，对比上一个输出，之前场景（**scenario**）和测试步骤（**steps**）时都是未定义（**undefined**），现在都是 **pending**（待定）和 **skipped** 状态。
 
@@ -248,7 +237,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
             └── test.feature    # Gherkin
     
     4 directories, 3 files
-    
+
 由于作为初学者教程，我将隐藏一些复杂的代码逻辑。
 
 我们在 *features* 目录中创建一个 *support* 目录（如何之前的目录结构中），然后创建 *env.rb* 文件，来初始化环境。*env.rb* 代码如下：
@@ -273,67 +262,67 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
       end
     end
     World(Capybara::DSL, Helpers)
-    
+
 它主要用来配置后续我们可以在 **Cucumber** 使用 **Capybara** 方法，这里暂时不需要了解代码具体实现，在后续博客中将会一一解释。
 
-### 第一步：首先，我们需要访问 *google.com.hk* 站点。**Capybara** 提供 `visit` 方法来实现这个目的。在 **Selenium** ，我们可以使用 `driver.get()` 或 `driver.navigate().to()` 来完成这个动作。因此，我们应该添加如下代码来访问 *google.com.hk*:
+1. 首先，我们需要访问 *google.com.hk* 站点。**Capybara** 提供 `visit` 方法来实现这个目的。在 **Selenium** ，我们可以使用 `driver.get()` 或 `driver.navigate().to()` 来完成这个动作。因此，我们应该添加如下代码来访问 *google.com.hk*:
+   
+		visit 'http://www.google.com.uk'
 
-    visit 'http://www.google.com.uk'
-    
-### 第二步：经过上面的操作，我们已经到 *google.com.hk* 的页面上，我们要在搜索框中输入我们要查询的文本。如下所述，查询框的 `id` 是 `lst-ib`。
+2. 经过上面的操作，我们已经到 *google.com.hk* 的页面上，我们要在搜索框中输入我们要查询的文本。如下所述，查询框的 `id` 是 `lst-ib`。
 
-![查看工具栏的 id]()
+	![查看工具栏的 id](http://p.aybe.me/blog/DingTalk20171017010602.png?x-oss-process=image/resize,w_600,h_600,limit_0)
 
-**Capybara** 提供一个方法叫 `fill_in`，用于文本填充操作。我们可以使用如下代码实现这个操作。在 **Selenium** 中，我们可以使用 `textElement.sendKeys(String)` 方法。
+	**Capybara** 提供一个方法叫 `fill_in`，用于文本填充操作。我们可以使用如下代码实现这个操作。在 **Selenium** 中，我们可以使用 `textElement.sendKeys(String)` 方法:
 
-    fill_in 'lst-ib', :with => searchText
-    
-### 第三步：接着，我们需要在当前页面检索期待的查询结果。我们可以使用 `page.should have_content` 方法。在 **Selenium** 中，我们可以使用 **JUnit**，**TestNG** 或者 **Hamcrest** 断言。比如，`assertThat(element.getText(), containString("Yahoo"))`；
+		fill_in 'lst-ib', :with => searchText
 
-    page.should have_content(expectedText)
-    
-### 第四步：现在，该点击 **Yahoo** 链接了。如下图所示，链接文本就是 **Yahoo**。
+3. 接着，我们需要在当前页面检索期待的查询结果。我们可以使用 `page.should have_content` 方法。在 **Selenium** 中，我们可以使用 **JUnit**，**TestNG** 或者 **Hamcrest** 断言:
 
-![查看Yahoo超链接的文本]()
+		page.should have_content(expectedText)
 
-在 **Capybara** 中，我们可以使用 `click_link` 来执行点击操作。在 **Selenium** 中，我们可以使用 `driver.findElement(By.linkText("Yahoo"))`；
+4. 现在，该点击 **Next-Tech 博客** 链接了。如下图所示，链接文本就是 **Next-Tech 博客**：
 
-    click_link('Yahoo')
+	![查看Next-Tech 博客超链接的文本](http://p.aybe.me/blog/DingTalk20171017010410.png?x-oss-process=image/resize,w_600,h_600,limit_0)
 
-### 第五步：最后一步了，我们将在 **Yahoo** 的站点上停留 10 秒，使用 `sleep(10)` 来实现。在 **Selenium** 中，我们使用 `Thread.sleep(10)`;
+	在 **Capybara** 中，我们可以使用 `click_link` 来执行点击操作。在 **Selenium** 中，我们可以使用 `driver.findElement(By.linkText("Yahoo"))`:
 
-现在，我们把之前的代码都整合在一起。我们的 *test_steps.rb* 代码如下：
+		click_link('Next-Tech 博客')
 
-    #Navigate to google.co.uk
-    Given(/^I am on the Google homepage$/) do
-    	visit 'https://www.google.co.uk/'
-    end
-     
-    #Write "yahoo" search text to the search bar  
-    When(/^I will search for "([fusion_builder_container hundred_percent="yes" overflow="visible"][fusion_builder_row][fusion_builder_column type="1_1" background_position="left top" background_color="" border_size="" border_color="" border_style="solid" spacing="yes" background_image="" background_repeat="no-repeat" padding="" margin_top="0px" margin_bottom="0px" class="" id="" animation_type="" animation_speed="0.3" animation_direction="left" hide_on_mobile="no" center_content="no" min_height="none"][^"]*)"$/) do |searchText|
-    	fill_in 'lst-ib', :with => searchText
-    end
-     
-    #In the current page, we should see "yahoo" text
-    Then(/^I should see "([^"]*)"$/) do |expectedText|
-        page.should have_content(expectedText)
-    end
-     
-    #Click the yahoo link 
-    Then(/^I will click the yahoo link$/) do
-        click_link('Yahoo')
-    end
-     
-    #Wait 10 seconds statically to see yahoo website
-    Then(/^I will wait for (\d+) seconds$/) do |waitTime|
-    	sleep (waitTime.to_i)
-    end
+5. 最后一步了，我们将在 **Next-Tech 博客** 的站点上停留 10 秒，使用 `sleep(10)` 来实现。在 **Selenium** 中，我们使用 `Thread.sleep(10)`;
 
-最后，我们已经可以开始我们完整的测试用例了。首先，进入你的项目目录，它包含如下所示的 *features* 目录，开始运行 **Cucumber**：
+	现在，我们把之前的代码都整合在一起。我们的 *test_steps.rb* 代码如下：
+		
+		# 访问 google.com.hk
+		Given(/^I am on the Google homepage$/) do
+		  visit 'https://www.google.co.uk/'
+		end
+		  
+		# 输入 "Next-Tech 博客" 到搜索框中
+		When(/^I will search for "([^"]*)"$/) do |searchText|
+		  fill_in 'lst-ib', :with => searchText
+		end
+		  
+		# 在当前页面将看到 “Next-Tech 博客”
+		Then(/^I should see "([^"]*)"$/) do |expectedText|
+		  page.should have_content(expectedText)
+		end
+		  
+		# 点击链接
+		Then(/^I will click the “Next-Tech 博客” link$/) do
+		  click_link('Next-Tech 博客')
+		end
+		  
+		# 等待 10 s
+		Then(/^I will wait for (\d+) seconds$/) do |waitTime|
+		  sleep (waitTime.to_i)
+		end
 
-    cd ~/web_test
-    cucumber feature\test.feature
-    
+6. 我们已经可以开始我们完整的测试用例了。首先，进入你的项目目录，它包含如下所示的 *features* 目录，开始运行 **Cucumber**：
+
+		cd ~/web_test
+		cucumber feature\test.feature
+
 接着，看看整个测试执行过程^_^
 
 ## 结语
@@ -341,7 +330,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 用 **Ruby** 好多年了，写起来真心爽，主要用来做自动化测试和页面监控。不认真看，还以为你是在写作文，看看 **Capybara** 的封装方法，明显就是主谓宾结构嘛 ^_^，这样编程语言你不觉得酷吗？**Cucumber** 真的做到了 `只要你识字，肯定看得懂用例`，产品 🐶 也能过来对着代码指指点点了（终于可以更好融入了产品迭代中），自豪不自豪？这就是使用 **Ruby** 开发自动化测试的魅力所在。
 
 我常说：“如果当初可以选择，我希望我的第一门语言是 **Ruby**”。现在后生的语言多少都能看到 **Ruby** 的影子。
- 
+
 Happy Programming！Happy Testing！
 
 
