@@ -276,6 +276,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 	**Capybara** 提供一个方法叫 `fill_in`，用于文本填充操作。我们可以使用如下代码实现这个操作。在 **Selenium** 中，我们可以使用 `textElement.sendKeys(String)` 方法:
 
 		fill_in 'lst-ib', :with => searchText
+		click_on 'Google 搜索'	# 点击搜索按钮
 
 3. 接着，我们需要在当前页面检索期待的查询结果。我们可以使用 `page.should have_content` 方法。在 **Selenium** 中，我们可以使用 **JUnit**，**TestNG** 或者 **Hamcrest** 断言:
 
@@ -285,13 +286,15 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 	![查看Next-Tech 博客超链接的文本](http://p.aybe.me/blog/DingTalk20171017010410.png?x-oss-process=image/resize,w_600,h_600,limit_0)
 
-	在 **Capybara** 中，我们可以使用 `click_link` 来执行点击操作。在 **Selenium** 中，我们可以使用 `driver.findElement(By.linkText("Yahoo"))`:
+	在 **Capybara** 中，我们可以使用 `click_link` 来执行点击操作。在 **Selenium** 中，我们可以使用 `driver.findElement(By.linkText("Next-Tech 博客"))`:
 
 		click_link('Next-Tech 博客')
 
 5. 最后一步了，我们将在 **Next-Tech 博客** 的站点上停留 10 秒，使用 `sleep(10)` 来实现。在 **Selenium** 中，我们使用 `Thread.sleep(10)`;
 
 	现在，我们把之前的代码都整合在一起。我们的 *test_steps.rb* 代码如下：
+		
+		# encoding: UTF-8
 		
 		# 访问 google.com.hk
 		Given(/^I am on the Google homepage$/) do
@@ -301,6 +304,7 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 		# 输入 "Next-Tech 博客" 到搜索框中
 		When(/^I will search for "([^"]*)"$/) do |searchText|
 		  fill_in 'lst-ib', :with => searchText
+		  click_on 'Google 搜索'
 		end
 		  
 		# 在当前页面将看到 “Next-Tech 博客”
@@ -309,8 +313,8 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 		end
 		  
 		# 点击链接
-		Then(/^I will click the “Next-Tech 博客” link$/) do
-		  click_link('Next-Tech 博客')
+		Then(/^I will click the “([^"]*)” link$/) do |link|
+		  click_link(link)
 		end
 		  
 		# 等待 10 s
