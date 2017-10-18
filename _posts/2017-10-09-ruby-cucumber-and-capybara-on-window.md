@@ -41,6 +41,11 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 ## 安装和配置
 
+#### 前置条件：
+
+* Window （我的系统是 Win7）
+* [FireFox](http://www.firefox.com.cn/)（由于新手，不建议折腾 IE）
+
 #### 安装和配置 Ruby 环境
 
 1. 对于 **Windows** 来说，安装 **Ruby** 最好的地方是 [http://rubyinstaller.org/downloads/](http://rubyinstaller.org/downloads/)。打开网站，下载最新的 32 位 **Ruby**。
@@ -326,6 +331,18 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 		cd ~/web_test
 		cucumber feature\test.feature
+
+在运行的是发现如下错误：
+
+![缺少geckodriver的报错信息]()
+
+这个错误的主要意思就是 Selenium 调用 FireFox 进行自动化测试时，没找到相应的驱动，所以我们就按照指示，下载 [geckodriver](https://github.com/mozilla/geckodriver/releases)，并解压到指定：
+
+![下载指定geckdriver]()
+
+打开 C:\msys32\home\Test.bash_rc 文件，在文件末尾追加如下命令：
+
+    export PATH=/geckodrive路径/geckodriver.exe:$PATH
 
 接着，看看整个测试执行过程^_^
 
