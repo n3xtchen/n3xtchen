@@ -15,29 +15,28 @@ tags: [cucumber,capybara]
 
 ## 什么是 Capybara
 
-Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的是为了简化模拟用户交互。Capybara 提供统一简洁的接口来操作很多不同的驱动来执行你的测试。你可以无差别地选择 **Selenium**, **Webkit** 或 **纯 Ruby drivers**。用 **Capybara** 强大的同步功能来处理异步网页。**Capybara** 会自动等待你的内容出现在页面上，而不用手动的睡眠。“
+下面是 [官方](http://teamcapybara.github.io/capybara/) 的描述的非常清楚了：
 
-下面是官方原文：
+> Capybara 是由 Ruby 编写的一个库，目的是为了简化模拟用户在应用中的交互。
 
-> Capybara is a library written in the Ruby programming language which makes it easy to simulate how a user interacts with your application.
 
-> Capybara can talk with many different drivers which execute your tests through the same clean and simple interface. You can seamlessly choose between Selenium, Webkit or pure Ruby drivers.
+> Capybara 提供统一简洁的接口来操作不同的驱动来执行你的测试。你可以无差别地选择 **Selenium**, **Webkit** 或 **纯 Ruby drivers**。
 
-> Tackle the asynchronous web with Capybara's powerful synchronization features. Capybara automatically waits for your content to appear on the page, you never have to issue any manual sleeps.
+> 用 **Capybara** 强大的同步功能来处理异步网页。**Capybara** 会自动等待你的内容出现在页面上，而不用进行手动的睡眠。
 
 ## 什么是 Cucumber
 
-**Cucumber** 是一个用于编写和执行软件功能描述。她支持 **行为驱动开发（BDD）**。它提供一种编写测试的方式：不受限于他们的技术背景，任何人都可以读懂。**Cucumber（中文名：黄瓜）** 理解的语言叫做 **Gherkin（中文名：嫩黄瓜）**。**Cucumber** 自己本身是使用 **Ruby** 实现的，但是她允许使用 **Ruby** 活着其他语言（不仅仅限于 **Java**、**C#** 和 **Python**）来编写测试。
+**Cucumber** 是一个用于编写和执行软件功能描述。她支持 **行为驱动开发（BDD）**。它提供一种编写测试的方式：不受限于他们的技术背景，任何人都可以读懂。**Cucumber（中文名：黄瓜）** 理解的语言叫做 **Gherkin（中文名：嫩黄瓜）**。**Cucumber** 自己本身是使用 **Ruby** 实现的，但是她允许使用 **Ruby** 或者其他语言（不仅仅限于 **Java**、**C#** 和 **Python**）来编写测试。
 
 下面是 **Gherkin** 脚本：
 
     Scenario: Filter the television list
-        Given some different televisions in the TV listing page
-        When I visit the TV listing page 
-        And I search for "Samsung" TVs
-        Then I only see titles matching with Samsung TVs
-        When I erase the search term
-        Then I see all television brands again
+      Given some different televisions in the TV listing page
+      When I visit the TV listing page 
+      And I search for "Samsung" TVs
+      Then I only see titles matching with Samsung TVs
+      When I erase the search term
+      Then I see all television brands again
 
 ## 安装和配置
 
@@ -354,7 +353,8 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 
 我常说：“如果当初可以选择，我希望我的第一门语言是 **Ruby**”。现在后生的语言多少都能看到 **Ruby** 的影子。
 
-Happy Programming！Happy Testing！
+Happy Programming！
+Happy Testing！
 
 
 
