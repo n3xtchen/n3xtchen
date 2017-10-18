@@ -332,23 +332,25 @@ Capybara 官网是这要描述的：”Capybara 是由 Ruby 编写的，目的�
 		cd ~/web_test
 		cucumber feature\test.feature
 
-在运行的是发现如下错误：
+在运行时候，发现如下错误：
 
-![缺少geckodriver的报错信息]()
+![缺少geckodriver的报错信息](http://p.aybe.me/blog/DingTalk20171019005104.png?x-oss-process=image/resize,w_500,h_600,limit_0)
 
-这个错误的主要意思就是 Selenium 调用 FireFox 进行自动化测试时，没找到相应的驱动，所以我们就按照指示，下载 [geckodriver](https://github.com/mozilla/geckodriver/releases)，并解压到指定：
+这个错误（红色方框内）的主要意思就是 调用 **FireFox** 进行自动化测试时，**Selenium**  没找到相应的驱动来操纵浏览器，所以我们就按照错误中的提示，进行操作。
 
-![下载指定geckdriver]()
+下载 [geckodriver](https://github.com/mozilla/geckodriver/releases)（地址就是图中**绿色下划线**的部分，当前最新版本是 **0.19.0**），并解压到指定位置（我把它放到 *C://geckodriver-v0.19.0-win32* 中）：
 
-打开 C:\msys32\home\Test.bash_rc 文件，在文件末尾追加如下命令：
+![下载指定geckdriver](http://p.aybe.me/blog/DingTalk20171018234341.png?x-oss-process=image/resize,w_400,h_300,limit_0)
 
-    export PATH=/geckodrive路径/geckodriver.exe:$PATH
+把刚刚下载的程序添加到 **PATH** 中。于是，我们再次打开 *C:\msys32\home\Test.bash_rc* 文件，在该文件末尾追加如下命令：
 
-接着，看看整个测试执行过程^_^
+    export PATH=/c/geckodriver-v0.19.0-win32:$PATH
+
+接着，重新运行 **Cucumber**，看看整个测试执行过程，^_^
 
 ## 结语
 
-用 **Ruby** 好多年了，写起来真心爽，主要用来做自动化测试和页面监控。不认真看，还以为你是在写作文，看看 **Capybara** 的封装方法，明显就是主谓宾结构嘛 ^_^，这样编程语言你不觉得酷吗？**Cucumber** 真的做到了 `只要你识字，肯定看得懂用例`，产品 🐶 也能过来对着代码指指点点了（终于可以更好融入了产品迭代中），自豪不自豪？这就是使用 **Ruby** 开发自动化测试的魅力所在。
+用 **Ruby** 好多年了，写起来真心爽，主要用来做自动化测试和页面监控。不认真看，还以为你是在写作文，看看 **Capybara** 的封装方法，明显就是主谓宾结构嘛 \^_\^，这样编程语言你不觉得酷吗？**Cucumber** 真的做到了 `只要你识字，肯定看得懂用例`，产品 🐶 也能过来对着代码指指点点了（终于可以更好融入了产品迭代中），自豪不自豪？这就是使用 **Ruby** 开发自动化测试的魅力所在。
 
 我常说：“如果当初可以选择，我希望我的第一门语言是 **Ruby**”。现在后生的语言多少都能看到 **Ruby** 的影子。
 
