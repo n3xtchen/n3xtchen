@@ -356,5 +356,8 @@ tags: [cucumber,capybara]
 Happy Programming！
 Happy Testing！
 
-
+> 参考文献：
+> 
+> * [Ruby for Newbies: Testing Web Apps with Capybara and Cucumber](https://code.tutsplus.com/tutorials/ruby-for-newbies-testing-web-apps-with-capybara-and-cucumber--net-21446)
+> * [Hassle-Free Start Guide for Ruby, Cucumber, and Capybara on Windows](http://www.swtestacademy.com/ruby-cucumber-and-capybara-on-windows/)
 
