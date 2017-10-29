@@ -147,22 +147,34 @@ When you next come to validate the chain, what do you find? Block 1 checks out, 
 
 Woah！区块 3 声称那不是他的 **上一个哈希**！实际上，这根本不行 —— 正常的哈希函数式不连续的。你现在知道链被篡改了。你需要，当你不知道，银行在这种情况下会怎么做 —— 从上一个备份还原链？
 
-我想很恐慌。
+想想都很可怕。
 
-How come it was so important to me earlier on that you understand that each block's "previous hash" is the hash of the entire previous block and not just its data string? To see, just go one step further into your validation process and look at block 4. If you've been good and recalculated block 3's "previous hash" to take account of block 2's changes, then you're going to find that block 4's "previous hash" now no longer matches the hash of block 3! This is because part of block 3 has changed - namely, the "previous hash" referring to block 2.
+对于我来说这是非常重要的，因为你明白每个块的 **“前一个哈希”** 是整个上一个块的**哈希**，而不仅仅是它的数据？为了证明这一点，只要进一步验证区块 4 就好了。如果你是好的，重新计算 区块 3 的 **“前一个哈希”** 来考虑 区块 2 的变化，你会发现 区块 4 的 **“前一个哈希”** 不能和 区块 3 匹配了！这似乎因为 区块 3 被改变了 —— **“前一个哈希”** 指的是 区块 2
 
 See how the hash-chaining mechanism of a blockchain means that even a single corrupt or tampered-with block will invalidate the entire chain after it. Cool, right? If each block only had the hash of the previous block's content, but not its metadata too, then in our example block 3 would have told us something was amiss, but block 4 would have checked out as good again. A much weaker state of affairs, I hope you agree.
 
+看看区块链的哈希机制如何让单一损害或者篡改的区块会导致整个链条失效的。很酷，对吧？如果每一个只有钱一个区块内容的 **哈希**, 也不是它的元数据，然后在我们的例子中，区块 3 将告诉我们有东西出错了，但是区块 3 将被检测出是好的。我希望你同意这是更弱的状态。
+
 Now...
 
-## Go take a break
+现在……
+
+## 休息一会
 
 And so will I. To write the second half of this rundown.
 
+我也一样。开始写，下半部分的概述。
+
 In this part, we've learned about hashes, and the structure of a basic blockchain. We've also taken a look at an only-a-bit-contrived example of how a blockchain can provide security that a more basic list structure can't, using the power of hashes for data integrity checks.
+
+在这个部分，我们将学习哈希，和基本的区块链结构。我们还看过一个只修改一个比特的例子，说明了如何使用散列数据进行数据完整性检查，块链可以提供更基础的列表结构所不能提供的安全性。
 
 Next time, we'll see how blockchains are being applied to great effect (and huge financial value) in the real world. Starting with the grand-daddy of cryptocurrencies, Bitcoin, we'll learn about proof-of-work and distributed ledgers to find out how you can make a functioning decentralised currency using a blockchain. Then, finally, I'll cover the basics of the even-more futuristic smart-contract blockchains emerging to generalise the concept to more than just currency, like Ethereum.
 
+下一次，我们将看看区块链如何在现实世界上产生巨大的效应（巨大的财务价值）。从加密货币始祖，比特币开始，我们将了解工作证明（proof-of-work）和分布式分类帐，以了解如何使用块链来实现功能分散的货币。接着，也是最后，我将介绍即将推出的更为未来的智能合约的基本概念，将概念概括为不仅仅是货币，如以太币。
+
 Thanks for reading!
+
+感谢你的阅读。
 
 > 译自 https://unwttng.com/what-is-a-blockchain
