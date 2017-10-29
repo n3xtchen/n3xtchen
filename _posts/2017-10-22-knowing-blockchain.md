@@ -111,16 +111,58 @@ We reached the 48b48...e76cb hash not by using the string data by itself, but by
 
 作为简单数据建构进行操作一样，所有这些构成了一个 **区块链** ！链接的区块都包含自己的数据，以及 **上一个区块** 的 **哈希**。
 
-
-
 **区块链** 的不同实现是通过使用大量的其他元数据，它们把所有数据都打包到它们区块中，这个是最基本的。在下一篇文章中，我们将进一步探讨如何通过在大型分布式网络中共享这些简单结构来解锁巨大的能力。
-
-For now though that's a lot to take in, so let's consolidate things by thinking a bit more about this simple blockchain we've put together. Specifically I want to take you through exactly how it is that including hashes in the chain makes it secure against tampering, as I mentioned above.
 
 目前，很多内容被引入的，因此，我们需要巩固下知识，让我们更多的思考一下我们把整合在一起的简单 **区块链**。 具体来说，正如我之前提到，我想要说明下如何正确地在链中包含的 **哈希** 值使得它能够防止篡改。
 
 ### 区块链安全
 
+让我们角色扮演下。我们在一个银行里工作，银行的作用就是把所有的消费记录都存储在 **区块链** 中。之所以这么决定是因为有人告诉他们 **区块链** 被验证出来，没有人不会因为淘气，可以篡改任意一条记录。人们有任何理由做这些事情 —— 把钱转到他们自己的账户上，犯罪目的欺诈别人。如果很容易办到，那就很糟糕了，
 
+我想要讲解清楚我们引入的 **区块链** 的数据结构如何帮助避免此类事情的发生。这里是我们之前使用的区块链，还是拿这个作为例子（从现在开始，为了节省空间，提升展示效率的，我把链表的指针去掉）：
+
+![去掉链表指针的区块链]()
+
+这些区块可能以某种分布式方式存储着 —— 一个区块一个文件，也就是说，你可以自信的认为一个潜在攻击者只能篡改链中的一个或者几个区块。具体实现没那么重要（如果这种自信有那么一点误导你，你就保持这种想法 —— 你迟早会适应密码币群体的）。
+
+你在银行中的工作就是偶尔验证这个交易记录日志，来确保它不会混乱。（或者写一个程序完成这个工作，如果你不想用笔和纸计算很多 **哈希** 的）现在看看具体的过程？
+
+Start at the beginning of the chain. For each block you come to, you're going to calculate the hash of all the data wrapped up in the previous block and compare it to the "previous hash" stored in the current block. If they match, great! Hashes are very fast to calculate so it's no skin off your back to make this check.
+
+从链条的开端开始。对于加入每一个区块，你需要计算前一个区块包含所有数据的 **哈希**，和当前存储的 **上一个哈希** 做对比。如果他们匹配，很好！**哈希** 计算很迅速的，因此对于你来说没有什么成本的。
+
+现在让我们幻想一种场景。我在银行中的工作就是罪犯，尝试盗窃金钱。我碰巧知道 Ingrid 的安脏的夫人，因为我们更新第二个区块，并据为己有。然而，我不能获取其他所有的区块，因此，我只能让他们保持原样。现在的链条看起来像：
+
+![恶意篡改后的区块链]()
+
+When you next come to validate the chain, what do you find? Block 1 checks out, as it always does. Block 2 checks out - it has the correct hash for block 1. That's weird, right? The bad block itself validates just fine. Block 3, however, very much does not check out. You work out the hash of block 2:
+
+当你的下一个验证链的时候，我怎么寻找？区块 1检出，每次都是这么做的。区块链 2 检出 —— 它对于区块 1 来说，是正确的。这很奇怪，对吧？坏的的区块自己可以验证。然而，区块 3 就不能坚持了。你算出了，区块链 2：
+
+```
+24fcdb44beb5678169a801f86000aafe8aa0ee3e58e0971ec36f006b8e784aa93Ingrid paid £1000 to JACK
+```
+
+![被篡改区块 2 的哈希]()
+
+Woah！区块 3 声称那不是他的 **上一个哈希**！实际上，这根本不行 —— 正常的哈希函数式不连续的。你现在知道链被篡改了。你需要，当你不知道，银行在这种情况下会怎么做 —— 从上一个备份还原链？
+
+我想很恐慌。
+
+How come it was so important to me earlier on that you understand that each block's "previous hash" is the hash of the entire previous block and not just its data string? To see, just go one step further into your validation process and look at block 4. If you've been good and recalculated block 3's "previous hash" to take account of block 2's changes, then you're going to find that block 4's "previous hash" now no longer matches the hash of block 3! This is because part of block 3 has changed - namely, the "previous hash" referring to block 2.
+
+See how the hash-chaining mechanism of a blockchain means that even a single corrupt or tampered-with block will invalidate the entire chain after it. Cool, right? If each block only had the hash of the previous block's content, but not its metadata too, then in our example block 3 would have told us something was amiss, but block 4 would have checked out as good again. A much weaker state of affairs, I hope you agree.
+
+Now...
+
+## Go take a break
+
+And so will I. To write the second half of this rundown.
+
+In this part, we've learned about hashes, and the structure of a basic blockchain. We've also taken a look at an only-a-bit-contrived example of how a blockchain can provide security that a more basic list structure can't, using the power of hashes for data integrity checks.
+
+Next time, we'll see how blockchains are being applied to great effect (and huge financial value) in the real world. Starting with the grand-daddy of cryptocurrencies, Bitcoin, we'll learn about proof-of-work and distributed ledgers to find out how you can make a functioning decentralised currency using a blockchain. Then, finally, I'll cover the basics of the even-more futuristic smart-contract blockchains emerging to generalise the concept to more than just currency, like Ethereum.
+
+Thanks for reading!
 
 > 译自 https://unwttng.com/what-is-a-blockchain
