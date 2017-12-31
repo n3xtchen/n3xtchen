@@ -21,7 +21,7 @@ Ah，**区块链**。
 
 第二个部分，应用你所学到的实现一个实际广泛的**区块链**应用，像强大的**分布式账本(distributed ledgers)**，加密算法（比如，**比特币**、**莱特币**或者像**以太坊**那样的**智能合约(Smart-Contact)**）。
 
-### 哈希(Hashes)
+## 哈希(Hashes)
 
 讲**区块链**之前，我们需要理解一个概念。对于了解他们的工作原理来说，这个概念是至关重要的，绝对不是在浪费时间。
 
@@ -75,7 +75,7 @@ bf38af8cb9725b09
 
 * **不连续**（discontinuity） ：要求算法对于类似的输入，应该产生差异很大的 **Hash**。当然也存在特定领域（例如，搜索相关的）的 **Hash** 算法要求连续的（与该原则相对立），但是大部分的 **Hash** 函数要求你尽可能不联系。‘abcdefh’ 和 ‘abcdefg’ 的 **Hash** 之间应该是完全不同，而不是仅仅一个或者几个字符不同。
 
-### 我的第一个区块链
+## 我的第一个区块链
 
 **区块链**是一种数据结构。
 
@@ -96,32 +96,35 @@ bf38af8cb9725b09
 
 我们还需要一些关于**区块**的元数据。它的格式取决于特定区块链的目的，至于我们的例子，在每一个区块中，再包含一个**区块**数字。第一个区块是数字 1，第二个是 2，以此类推。
 
-| 序号   | 内容         |
-| ---- | ---------- |
-| 1    | ”我是一个区块！“  |
-| 2    | “我是另一个区块！” |
-| 3    | ”我是第三个！“   |
-| ...  | ...        |
+{:.table-bordered}
+| 序号   | 内容      |
+| ---- | ------- |
+| 1    | 我是一个区块  |
+| 2    | 我是另一个区块 |
+| 3    | 我是第三个   |
+| ...  | ...     |
 
 在这一点上，一个典型的动态列表结构将会添加一些信息，将多个**区块**的逻辑连接成一个序列。通常采用**指针**的形式，指向存储器中前一项和下一个项的位置。 我们会继续借鉴这个想法：
 
-| 序号   | 内容         | 上一个序号 | 下一个序号 |
-| ---- | ---------- | ----- | ----- |
-| 1    | ”我是一个区块！“  | -     | 2     |
-| 2    | “我是另一个区块！” | 1     | 3     |
-| 3    | ”我是第三个！“   | 2     | 4     |
-| ...  | ...        | ...   | ...   |
+{:.table-bordered}
+| 序号   | 内容      | 上一个序号 | 下一个序号 |
+| ---- | ------- | ----- | ----- |
+| 1    | 我是一个区块  | -     | 2     |
+| 2    | 我是另一个区块 | 1     | 3     |
+| 3    | 我是第三个   | 2     | 4     |
+| ...  | ...     | ...   | ...   |
 
 我们现在有了完整功能的 [双链表](https://zh.wikipedia.org/zh-sg/%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8)，它将很好地服务于很多应用。
 
 然而，**区块链**：每一个**区块**还存储前一个**区块**的 **Hash**。不连续和随机离散的 **Hash** 非常适合检查数据的完整性，因为如果输入数据哪怕一位变化，它产生的 **Hash** 也将明显不同。现在填充我们的 **Hash**，完成一个简单但功能完备的**区块链**。
 
-| 序号   | 上一个区块的 Hash                              | 内容         | 上一个序号 | 下一个序号 |
-| ---- | ---------------------------------------- | ---------- | ----- | ----- |
-| 1    | 000000000000000<br />000000000000000<br />000000000000000<br />000000000000000 | ”我是一个区块！“  | -     | 2     |
-| 2    |                                          | “我是另一个区块！” | 1     | 3     |
-| 3    |                                          | ”我是第三个！“   | 2     | 4     |
-| ...  | ...                                      | ...        | ...   | ...   |
+{:.table-bordered}
+| 序号   | 上一个区块的 Hash                              | 内容      | 上一个序号 | 下一个序号 |
+| ---- | ---------------------------------------- | ------- | ----- | ----- |
+| 1    | 000000000000000<br />000000000000000<br />000000000000000<br />000000000000000 | 我是一个区块  | -     | 2     |
+| 2    | 54ffe690a43c1950<br />5ee598266fb9c7b4<br />ceca09d8ba19f4fc<br />a8b3ae4003d7b3ba | 我是另一个区块 | 1     | 3     |
+| 3    | 1cd6ec23adbf38de<br /> 034058d7fa10d8a5<br /> 4f0f01f2f791dbea<br />d24d4ee2df854c10 | 我是第三个   | 2     | 4     |
+| ...  | ...                                      | ...     | ...   | ...   |
 
 这里还有一些东西需要指出。首先，第一个区块链很特别。它的**“上一个区块” ** **Hash** 全部都是 **0**。那是因为不存在上一个**区块**，因此我们没有东西可以验证。第一个区块时长被叫做**创世纪块（Genesis Block ）**—— 如果你感兴趣的话，你可以看一下比特币的 [《创世纪区块》](https://blockchain.info/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f)。那里有很多可能对你来说可能不会有实际意义，但是你可以看到**“上一个区块”** **Hash** 全部为 **0**，就像我们的一样！
 
@@ -129,19 +132,22 @@ bf38af8cb9725b09
 
 为了证明这一点（我说过他很重要），看一下第二个**区块**。他的**上一个区块 Hash** 是 48b48…e76cb。花一点时间在之前的 **区块链** 寻找。
 
-然后，`SHA256(”I’m a block!")`不等于 48b48...e76cb
+然后，`SHA256(”我是一个区块")`不等于 54ffe...7b3ba
 
-![”I’m a block!" 的哈希]()
-
-We reached the 48b48...e76cb hash not by using the string data by itself, but by combining all of: the block number, the previous hash and the string data, in that order. That is, we hashed the string "1" + "00000000...00000000" + "I'm a block!", and in doing so we got the result you can see in the chain:
-
-为了生成 48b48…e76cb 这个 **哈希**，不仅需要字符数据本身，还需要按顺序组和所有的区块。 也就是说，我们把字符串 “1” + “00000000 ... 00000000” + “I’m a block!”，在这样做的时候，我们得到了你可以在链中看到的结果
+	a9c3e4fd6b4b7a11
+	5137a56d76cf6ed6
+	b23559b2c1bc28a6
+	b7b9e649919a77be
+为了生成 48b48…e76cb 这个 **哈希**，不仅需要字符数据本身，还需要按顺序组和所有的区块。 也就是说，我们把字符串 “1” + “00000000 ... 00000000” + “我是一个区块”，在这样做的时候，我们得到了你可以在链中看到的结果
 
 ```
-10000000000000000000000000000000000000000000000000000000000000000I'm a block!
+10000000000000000000000000000000000000000000000000000000000000000我是一个区块
 ```
 
-![上一个块哈希]()
+	54ffe690a43c1950
+	5ee598266fb9c7b4
+	ceca09d8ba19f4fc
+	a8b3ae4003d7b3ba
 
 作为简单数据建构进行操作一样，所有这些构成了一个 **区块链** ！链接的区块都包含自己的数据，以及 **上一个区块** 的 **哈希**。
 
@@ -149,35 +155,49 @@ We reached the 48b48...e76cb hash not by using the string data by itself, but by
 
 目前，很多内容被引入的，因此，我们需要巩固下知识，让我们更多的思考一下我们把整合在一起的简单 **区块链**。 具体来说，正如我之前提到，我想要说明下如何正确地在链中包含的 **哈希** 值使得它能够防止篡改。
 
-### 区块链安全
+## 区块链安全
 
 让我们角色扮演下。我们在一个银行里工作，银行的作用就是把所有的消费记录都存储在 **区块链** 中。之所以这么决定是因为有人告诉他们 **区块链** 被验证出来，没有人不会因为淘气，可以篡改任意一条记录。人们有任何理由做这些事情 —— 把钱转到他们自己的账户上，犯罪目的欺诈别人。如果很容易办到，那就很糟糕了，
 
 我想要讲解清楚我们引入的 **区块链** 的数据结构如何帮助避免此类事情的发生。这里是我们之前使用的区块链，还是拿这个作为例子（从现在开始，为了节省空间，提升展示效率的，我把链表的指针去掉）：
 
-![去掉链表指针的区块链]()
+{:.table-bordered}
+| 序号   | 上一个区块的 Hash                              | 内容                     | 上一个序号 | 下一个序号 |
+| ---- | ---------------------------------------- | ---------------------- | ----- | ----- |
+| 1    | 000000000000000<br />000000000000000<br />000000000000000<br />000000000000000 | 小明支付小红 ¥10             | -     | 2     |
+| 2    | 804ba5fc063af7c5<br />6aa6905352d0958a<br />a982bec4d8ff3541<br />6669beef18af65b3 | Evil 支付李雷 ¥7.5         | 1     | 3     |
+| 3    | ade381abcec55140<br />1dade0dd4de0ccc2<br />13b4c0108e35a9b6<br />69e3056f4a44ee8e | n3xtchen 支付 punk ¥1111 | 2     | 4     |
+| ...  | ...                                      | ...                    | ...   | ...   |
 
 这些区块可能以某种分布式方式存储着 —— 一个区块一个文件，也就是说，你可以自信的认为一个潜在攻击者只能篡改链中的一个或者几个区块。具体实现没那么重要（如果这种自信有那么一点误导你，你就保持这种想法 —— 你迟早会适应密码币群体的）。
 
 你在银行中的工作就是偶尔验证这个交易记录日志，来确保它不会混乱。（或者写一个程序完成这个工作，如果你不想用笔和纸计算很多 **哈希** 的）现在看看具体的过程？
 
-Start at the beginning of the chain. For each block you come to, you're going to calculate the hash of all the data wrapped up in the previous block and compare it to the "previous hash" stored in the current block. If they match, great! Hashes are very fast to calculate so it's no skin off your back to make this check.
-
 从链条的开端开始。对于加入每一个区块，你需要计算前一个区块包含所有数据的 **哈希**，和当前存储的 **上一个哈希** 做对比。如果他们匹配，很好！**哈希** 计算很迅速的，因此对于你来说没有什么成本的。
 
-现在让我们幻想一种场景。我在银行中的工作就是罪犯，尝试盗窃金钱。我碰巧知道 Ingrid 的安脏的夫人，因为我们更新第二个区块，并据为己有。然而，我不能获取其他所有的区块，因此，我只能让他们保持原样。现在的链条看起来像：
+现在让我们幻想一种场景。我在银行中的工作就是罪犯，尝试盗窃金钱。我碰巧知道 Evil 是一个土匪，因为我们更新第二个区块，并据为己有。然而，我不能获取其他所有的区块，因此，我只能让他们保持原样。现在的链条看起来像：
 
-![恶意篡改后的区块链]()
 
-When you next come to validate the chain, what do you find? Block 1 checks out, as it always does. Block 2 checks out - it has the correct hash for block 1. That's weird, right? The bad block itself validates just fine. Block 3, however, very much does not check out. You work out the hash of block 2:
+{:.table-bordered}
+| 序号   | 上一个区块的 Hash                              | 内容                                       | 上一个序号 | 下一个序号 |
+| ---- | ---------------------------------------- | ---------------------------------------- | ----- | ----- |
+| 1    | 000000000000000<br />000000000000000<br />000000000000000<br />000000000000000 | 小明支付小红 ¥10                               | -     | 2     |
+| 2    | 804ba5fc063af7c5<br />6aa6905352d0958a<br />a982bec4d8ff3541<br />6669beef18af65b3 | <span style="color:red">Evil 支付 Craker ¥70000000</span> | 1     | 3     |
+| 3    | ade381abcec55140<br />1dade0dd4de0ccc2<br />13b4c0108e35a9b6<br />69e3056f4a44ee8e | n3xtchen 支付 punk ¥1111                   | 2     | 4     |
+| ...  | ...                                      | ...                                      | ...   | ...   |
+
 
 当你的下一个验证链的时候，我怎么寻找？区块 1检出，每次都是这么做的。区块链 2 检出 —— 它对于区块 1 来说，是正确的。这很奇怪，对吧？坏的的区块自己可以验证。然而，区块 3 就不能坚持了。你算出了，区块链 2：
 
 ```
-24fcdb44beb5678169a801f86000aafe8aa0ee3e58e0971ec36f006b8e784aa93Ingrid paid £1000 to JACK
+2804ba5fc063af7c56aa6905352d0958aa982bec4d8ff35416669beef18af65b3Evil 支付 Craker ¥70000000
 ```
 
-![被篡改区块 2 的哈希]()
+	586e4ccd12a406b7
+	a72383d401f51557
+	0fa1ad6448a8b9bc
+	9173479d2cb51593
+
 
 Woah！区块 3 声称那不是他的 **上一个哈希**！实际上，这根本不行 —— 正常的哈希函数式不连续的。你现在知道链被篡改了。你需要，当你不知道，银行在这种情况下会怎么做 —— 从上一个备份还原链？
 
@@ -185,30 +205,14 @@ Woah！区块 3 声称那不是他的 **上一个哈希**！实际上，这根�
 
 对于我来说这是非常重要的，因为你明白每个块的 **“前一个哈希”** 是整个上一个块的**哈希**，而不仅仅是它的数据？为了证明这一点，只要进一步验证区块 4 就好了。如果你是好的，重新计算 区块 3 的 **“前一个哈希”** 来考虑 区块 2 的变化，你会发现 区块 4 的 **“前一个哈希”** 不能和 区块 3 匹配了！这似乎因为 区块 3 被改变了 —— **“前一个哈希”** 指的是 区块 2
 
-See how the hash-chaining mechanism of a blockchain means that even a single corrupt or tampered-with block will invalidate the entire chain after it. Cool, right? If each block only had the hash of the previous block's content, but not its metadata too, then in our example block 3 would have told us something was amiss, but block 4 would have checked out as good again. A much weaker state of affairs, I hope you agree.
-
 看看区块链的哈希机制如何让单一损害或者篡改的区块会导致整个链条失效的。很酷，对吧？如果每一个只有钱一个区块内容的 **哈希**, 也不是它的元数据，然后在我们的例子中，区块 3 将告诉我们有东西出错了，但是区块 3 将被检测出是好的。我希望你同意这是更弱的状态。
-
-Now...
 
 现在……
 
-## 休息一会
+## 来做个总结吧！
 
-And so will I. To write the second half of this rundown.
-
-我也一样。开始写，下半部分的概述。
-
-In this part, we've learned about hashes, and the structure of a basic blockchain. We've also taken a look at an only-a-bit-contrived example of how a blockchain can provide security that a more basic list structure can't, using the power of hashes for data integrity checks.
-
-在这个部分，我们将学习哈希，和基本的区块链结构。我们还看过一个只修改一个比特的例子，说明了如何使用散列数据进行数据完整性检查，块链可以提供更基础的列表结构所不能提供的安全性。
-
-Next time, we'll see how blockchains are being applied to great effect (and huge financial value) in the real world. Starting with the grand-daddy of cryptocurrencies, Bitcoin, we'll learn about proof-of-work and distributed ledgers to find out how you can make a functioning decentralised currency using a blockchain. Then, finally, I'll cover the basics of the even-more futuristic smart-contract blockchains emerging to generalise the concept to more than just currency, like Ethereum.
+在这个部分，我们已经学习了哈希（Hash）和区块链的基本结构；还展示了识别仅被修改一比特（only-a-bit-contrived ）区块链的例子，解释了区块链利用散列算法的完整性检查能力，拥有常规列表结构所不具备的安全性。
 
 下一次，我们将看看区块链如何在现实世界上产生巨大的效应（巨大的财务价值）。从加密货币始祖，比特币开始，我们将了解工作证明（proof-of-work）和分布式分类帐，以了解如何使用块链来实现功能分散的货币。接着，也是最后，我将介绍即将推出的更为未来的智能合约的基本概念，将概念概括为不仅仅是货币，如以太币。
 
-Thanks for reading!
-
 感谢你的阅读。
-
-> 译自 https://unwttng.com/what-is-a-blockchain
