@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Scala Spark DataFrame: dataFrame.select 传入可变参数的方法"
+title: "Scala Spark DataFrame: DataFrame.select 传入可变参数的方法"
 description: ""
 category: Scala
 tags: [Spark]
