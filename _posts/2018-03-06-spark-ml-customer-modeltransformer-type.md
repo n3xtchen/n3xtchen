@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Spark ML: 创建你自己的算法模型和管道"
+title: "Spark ML: 创建你自己的算法管道"
 description: ""
 category: Scala
 tags: [spark, ml]
@@ -13,11 +13,11 @@ tags: [spark, ml]
 
 > ##### 注意
 >
-> 直接使用 `PipelineStage` 将无法奏效，因为 `Pipeline` 内部使用的是反射，而它假定所有的阶段（Stages）不是 `Estimator`  就是 `Transformer`。
+> 直接使用 `PipelineStage` 将无法奏效，因为 `Pipeline` 内部采用的是反射，而它假定所有的阶段（Stages）不是 `Estimator`  就是 `Transformer`。
 
-除了 `transform` 和 `fit` 之外，所有的 **Pipeline Stage(管道阶段)** 还需要提供 `transformSchema` 和 `copy` 构造器或实现一个类（`copy` 用于给当前阶段制作副本，它会将新指定参数合并进来，也可以被叫做  `defaultCopy`，除非你的类有特殊的构造函数 ）
+除了典型的  `transform` 和  `fit` 方法外，所有的 **Pipeline Stage(管道阶段)** 还需要提供 `transformSchema` 和 `copy` 方法或实现一个类——`copy` 用于给当前阶段制作副本，它会将新指定参数合并进来，简单的调用  `defaultCopy` 方法，除非你的类有自定义的构造函数 ）
 
-在 **Pipeline Stage** 的开始或者副本委派阶段，`transformSchema` 必须根据任何参数集和输入模式产生你的 **Pipeline Stage** 所期待的输出。大部分 **Pipeline Stage** 简单的加入新的字段；除非需要，一般不会丢弃之前的字段，但是有时会导致比下游需要的包含更多数据，这样会导致性能问题。如果你发现在你的 **Pipeline** 这是个问题，你可以创建你自己的 **Stage** 来去除不必要的字段。
+在 **Pipeline Stage** 的开始或者副本委派阶段，`transformSchema` 必须根据任何参数集和输入模式产生你的 **Pipeline Stage** 所期待的输出。大部分 **Pipeline Stage** 简单的加入新的字段；除非需要，一般不会丢弃之前阶段的字段，但是有时会导致比下游需要的包含更多数据，这样会导致性能问题。如果你发现在你的 **Pipeline** 这是个问题，你可以创建你自己的 **Stage** 来去除不必要的字段。
 
 ```scala
 class HardCodedWordCountStage(override val uid: String) extends Transformer {
@@ -26,40 +26,41 @@ class HardCodedWordCountStage(override val uid: String) extends Transformer {
   def copy(extra: ParamMap): HardCodedWordCountStage = {
   	defaultCopy(extra)  
   }
+}
 ```
 
-除了生成输出的模式，`transformSchema` 函数应该验证输入模式是否符合这个 **Stage**（例如，输入的字段是否是预期类型）。
+除了生成输出的模式（**schema**），`transformSchema` 函数应该验证输入模式（**schema**）是否符合当前 **Stage**（例如，输入的字段是否是预期类型）。
 
-这里也是你执行 **Stage** 参数验证的地方。
+这里同样也是你执行 **Stage** 参数验证的地方。
 
-一个简单的 `transformSchema` ，输入字符串，输出向量，正如如下所示（字段名都是硬编码）：
+一个简单的 `transformSchema` ，输入字符串，输出向量，如下所示（字段名都是硬编码，大家不要太 care）：
 
 ```scala
 override def transformSchema(schema: StructType): StructType = {
-     // Check that the input type is a string
-    val idx = schema.fieldIndex("happy_pandas")
-    val field = schema.fields(idx)
-    if (field.dataType != StringType) {
-      throw new Exception(s"Input type ${field.dataType} did not match input type StringType")
-    }
-    // Add the return field
-    schema.add(StructField("happy_panda_counts", IntegerType, false))
+  // Check that the input type is a string
+  val idx = schema.fieldIndex("happy_pandas")
+  val field = schema.fields(idx)
+  if (field.dataType != StringType) {
+    throw new Exception(s"Input type ${field.dataType} did not match input type StringType")
   }
+  // Add the return field
+  schema.add(StructField("happy_panda_counts", IntegerType, false))
+}
 ```
 
-不需要训练的算法只要使用 `Transformer` 接口就可以轻易实现了。由于是一个简单的 **Pipeline Stage**，我们可以实现一个简单的转换器，输入字符串返回字数。
+不需要训练的算法只要使用 `Transformer` 接口就可以轻易实现了。由于是一个简单的 **Pipeline Stage**，我们可以实现一个简单的转换器（**transformer**），输入字符串，返回字数。
 
 ```scala
  def transform(df: Dataset[_]): DataFrame = {
-    val wordcount = udf { in: String => in.split(" ").size }
-    df.select(col("*"),
-      wordcount(df.col("happy_pandas")).as("happy_panda_counts"))
-  }
+   val wordcount = udf { in: String => in.split(" ").size }
+   df.select(col("*"),
+     wordcount(df.col("happy_pandas")).as("happy_panda_counts"))
+ }
 ```
 
-为了充分利用 **Pipeline** 接口，您需要使用 **params（参数）** 接口使您的管道阶段可配置。
+为了充分利用 **Pipeline** 接口，您需要使用 **params（参数）** 接口使您的 **Pipeline Stage** 可配置。
 
-**params** 接口都是公有的，然而不幸的是，**Spark** 内部常用的默认参数是私有的，因此你会得到一份很多重复代码。除了允许用户指定值之外，参数也可以包含一些基本的验证逻辑（e.g. 正则化参数必须是非负数）。最常用的两个常数就是输入字段和输出字段。
+**params** 接口都是公有（`public`）的，然而不幸的是，**Spark** 内部常用的默认参数是私有（`private`）的，因此你会得到一份很多重复的代码。除了允许用户指定值之外，参数也可以包含一些基本的验证逻辑（e.g. 正则化参数必须是非负数）。最常用的两个常数就是输入字段和输出字段。
 
 字符参数外，其他的类型也可以使用，包括停用词的字符串列表。
 
@@ -68,8 +69,7 @@ class ConfigurableWordCount(override val uid: String) extends Transformer {
   final val inputCol= new Param[String](this, "inputCol", "The input column")
   final val outputCol = new Param[String](this, "outputCol", "The output column")
 
- ; def setInputCol(value: String): this.type = set(inputCol, value)
-
+  def setInputCol(value: String): this.type = set(inputCol, value)
   def setOutputCol(value: String): this.type = set(outputCol, value)
 
   def this() = this(Identifiable.randomUID("configurablewordcount"))
@@ -165,13 +165,13 @@ class SimpleIndexerModel(
 }
 ```
 
-如果你实现一个迭代算法（iterative algorithm），你可能需要考虑自动缓存输入数据（如果它没有被缓存），或者允许用户指定持久化登记。
+如果你实现一个 **迭代算法（iterative algorithm）**，你可能需要考虑自动缓存输入数据（如果它没有被缓存），或者允许用户指定持久化等级。
 
- `Predictor` 接口添加三个最常用的参数（输入和输出字段）： **标签字段（Label）** 和**特征字段（Featuire）**和预测字段——为我们提供自动处理模式的转换器（schema transformation）。
+ `Predictor` 接口添加三个最常用的参数（输入和输出字段）： **标签字段（Label）**、 **特征字段（Featuire）**和预测字段——为我们提供自动处理模式的转换器（**schema transformation**）。
 
 `Classifier` 接口也做了同样的事情，除了他还添加了一个 `rawPredictionColumn` 字段和提供工具来侦测分类的个数，并将输入的 `DataFrame`  转化成 `LabeledPoint` 的 `RDD`（这使得封装遗留 **MLlib** 分类算法更加容易）。
 
-如果你要实现一个回归或者聚类接口，没有公有基础接口使用，因此你需要使用普通的 `Estimator` 接口。
+如果你要实现一个 **回归（regression）** 或者 **聚类（clustering）** 接口，没有公有基础接口使用，因此你需要使用普通的 `Estimator` 接口。
 
 ```scala
 // Simple Bernouli Naive Bayes classifier - no sanity checks for brevity
@@ -288,6 +288,6 @@ case class SimpleNaiveBayesModel(
 >
 > 如果你知识简单的修改现有的算法，你可以拓展它（伪装成 `org.apache.spark` 项目 ）。
 
-现在你已经学会如何拓展 **Spark ML Pipeline** 的 **API**。如果你迷失了，有一个好的参考就是 **Spark** 的算法实现。——虽然它有时使用内部的 **API**，但是大部分地方他们都是实现公有接口（如你想要的方式）。
+现在你已经学会如何拓展 **Spark ML Pipeline** 的 **API**。如果你忘记了，有一个好的参考就是 **Spark** 的算法实现。——虽然它有时使用内部的 **API**，但是大部分地方他们都是实现公有接口（如你想要的方式）。
 
 > * [Extend Spark ML for your own model/transformer types](https://www.oreilly.com/learning/extend-spark-ml-for-your-own-modeltransformer-types)
