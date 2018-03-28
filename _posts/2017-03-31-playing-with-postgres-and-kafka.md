@@ -156,11 +156,11 @@ kafkacat 使用的参数：
 
 下载并解压包 kafka：
 
-	ichexw$ wget -P path/to/dowload/directory http://packages.confluent.io/archive/3.2/confluent-oss-3.2.0-2.11.tar.gz
+	ichexw$ wget -P path/to/dowload/directory http://packages.confluent.io/archive/4.0/confluent-oss-4.0.0-2.11.tar.gz
 	# -P 下载文件存储的地址，我使用 /usr/loca/src/
 	ichexw$ cd path/to/dowload/directory
-	ichexw$ tar -xzvf confluent-oss-3.2.0-2.11.tar.gz
-	ichexw$ mv confluent-3.2.0 /path/to/install/directory/
+	ichexw$ tar -xzvf confluent-oss-4.0.0-2.11.tar.gz
+	ichexw$ mv confluent-4.0.0 /path/to/install/directory/
 	# /path/to/install/directory/: kafka 的安装目录，我使用的是 /usr/local/
 
 启动相关服务：
@@ -171,7 +171,7 @@ kafkacat 使用的参数：
 创建主题（Tipics）：
 
 	ichexw$ bin/kafka-topics --list --zookeeper localhost:2181
-	ichexw$ bin/kafka-topics --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic PGSHARD
+	ichexw$ bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic PGSHARD
 	# 创建名为 PGSHARD, 3 个分区, 一个副本的主题
 	ichexw$ bin/kafka-topics --delete  --zookeeper localhost:2181 --topic PGSHARD
 	# 删除分区
