@@ -111,9 +111,56 @@ tags: []
 
 但是仍然有一个问题没有解决。我没有找到一种好的应用从 Pocket 中提取数据，所以我只能自己来。
 
-#### 开发者思路
+#### 开发者方案
 
-我是一个码农，所以我可以更君 
+我是一个码农，所以我可以根据自己的需求从 Pocket 到处的 HTML 文件中提取自己想要的结果。我只是下载他们的文件，然后执行下面的代码：
 
-#### 非开发者思路
+```javascript
+var pocket = {"unread":1420,"unread_pct":4.79,"read":1020,"read_pct":1.18}
+var uls=document.body.getElementsByTagName("ul");unread=uls[0].children.length,pocket.unread_pct=+(100*(1-pocket.unread/unread)).toFixed(2),pocket.unread=unread,read=uls[1].children.length,pocket.read_pct=+(100*(1-pocket.read/read)).toFixed(2),pocket.read=uls[1].children.length,console.log(JSON.stringify(pocket));
+```
+
+第一行就是三个月的结果：
+
+```
+{"unread":1420,"unread_pct":4.79,"read":1020,"read_pct":1.18}
+```
+
+这里，我有 1446 篇文章未读以及读了 1050 文章。增加的百分比是未读  +1.8% 和 读了 + 2.86%。这一个月，我读了 30 篇，就是从这个月已读的总数减去上个月的已读综述
+
+#### 非开发者方案
+
+我在这篇文章的时候，这个方法对很多人来说不可实现。于是，我想了另一个非开发的方案。多亏了我们的编辑 Becky，我构建了一个 IFTTT + Pocket 的原型。
+
+我创建一个把 Pocket 管来呢到 Google Spreadsheets 的小应用。不幸的是，Pocket 没有提供完成时间的字段，因此，我使用标签来追踪我读文章所在的月份。这个展示结果如下：
+
+![](https://cdn-images-1.medium.com/max/2000/1*IuCZPj42pivCBECwMZglyw.png)
+
+D 列就是这个文章加入到 Pocket 的时间。我决定保留它，以及我可以看到我收藏和阅读的时间。我每次读一篇文章的时候都要添加标签，这样做很不优雅，但是它有效。
+
+现在，我们有一个表格，可以很方便地获取我们想要的数据。A 列就是我们月份标签，可以给文章排序和统计。我们还没有为这个数据添加图标，但是他们已经足够方便来跟踪我们的趋势。
+
+### 音乐
+
+我一般系统边听音乐，边工作。有时候，我使用它鼓励自己，有时让他帮助我集中精神。我使用 last.fm；它可以提供一个报表来展示我听过的音乐，以及听的时间。如果你想，你可以把歌和你高产时间进行关联。你可以手动，也可以使用像 Exist.io 这样的工具来进行自由数据聚合。
+
+Last.fm 也会给你发送年报，而且很有用：
+
+![](https://cdn-images-1.medium.com/max/2000/1*CXghgp0nlyjw2sSAxhKMRw.png)
+
+### Podcasts
+
+我经常在不需要高度集中精神的时候（如洗盘子，遛狗等等），听 Podcasat（或者 音频书）。我已经使用 Podcast Addict 这款 Android 应用很多年了。它是免费的，但是我通过捐赠来去除广告，顺便贡献使他能成为更好的应用。如果你没有 Android 设备，你可以尝试 Pocket Cast，但是你需要为此花费 9 刀。
+
+这两个应用都有提供统计功能。比如 Podcast Addict，你可以在 setting > stats 看到如下信息：
+
+![](https://cdn-images-1.medium.com/max/2000/1*4qzi-IICp6tgeNojmdFmyw.png)
+
+不幸的是，这些数据不好提取。我要做年复盘的时候，我必须通过手工方式。通常情况，了解你的内容消费量以及在你的个人发展中贡献量，这个已经足够了。
+
+### TV
+
+我尽量避免随意看电视（随意意味着无目的：坐下来，不断转台来找），但是我还是会追一些剧。我会事先找好我喜欢的剧目，找时间和家人一起看。它同样要花费一些时间，所以我想要追踪它（在这里，你也可以看出一些模式）。
+
+我使用 TV Time 来追踪我看过的电视节目。他仍然是需要手工处理——我必须记住打开应用，把它标记为看过——但是很快就形成习惯了。每当我看一集精彩的剧集时，我会在应用程序中看到有趣的梗，立即获得奖励。
 
