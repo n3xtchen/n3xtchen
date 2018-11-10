@@ -112,3 +112,7 @@ vgo 的两个文件：
 
     ichexw at ichexws-MBPR in ~/Dev/go/learning/vgo-demo  ○ go run main.go
     Hello, Go!
+
+新建库：
+
+    ichexw at ichexws-MBPR in ~/Dev/go/learning/vgo-demo  ○mkidr li
