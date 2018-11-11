@@ -54,12 +54,16 @@ vgo 的两个文件：
 
 我的版本是 go1.11.2
 
-    ichexw at ichexws-MBPR in ~/Dev/go/src/nExtHack  on master! → go version
+    ichexw in ~/Dev/go/learning → go version
     go version go1.11.2 darwin/amd64
-
+    ichexw in ~/Dev/go/learning → cho \$GOPATH
+    /Users/ichexw/Dev/go
+    ichexw in ~/Dev/go/learning → echo \$GOROT
+    /usr/local/Cellar/go/1.11.2/libexec/src/vgo-demo/lib
+    
 看看 go mod 的命令：
 
-	ichexw at ichexws-MBPR in ~/Dev/go/src/nExtHack  on master! → go help mod
+	ichexw in ~/Dev/go/learning → go help mod
 	Go mod provides access to operations on modules.
 	
 	Note that support for modules is built into all the go commands,
@@ -87,32 +91,52 @@ vgo 的两个文件：
 
 ### Go Mod 初始化
 
-	ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ mkdir vgo-demo
-	ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ cd vgo-dem
-	ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ go mod init .
-	go: creating new go.mod: module .
-	ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ ls
-	go.mod  vgo-demo
-    
-### 管理依赖
+	ichexw in ~/Dev/go/learning → mkdir vgo-demo
+	ichexw in ~/Dev/go/learning → cd vgo-dem
 
-创建文件：
+#### 一、创建自己的库：
 
-	ichexw at ichexws-MBPR in ~/Dev/go/learning/vgo-demo  ○ cat main.go
+	ichexw in ~/Dev/go/learning/vgo-demo > cat lib/hello.go
 	
-	package main
+	package lib
 	
 	import "fmt"
 	
-	func main() {
+	func Hello() {
 	    fmt.Print("Hello, Go!")
 	}
     
-执行 Demo
+### 二、创建 main.go 文件
 
-    ichexw at ichexws-MBPR in ~/Dev/go/learning/vgo-demo  ○ go run main.go
-    Hello, Go!
+    ichexw in ~/Dev/go/learning/vgo-demo  ○cat main.go
+    package main
 
-新建库：
+    import "vgo-demo/lib"
+    
+    func main() {
+        lib.Hello()
+    }
 
-    ichexw at ichexws-MBPR in ~/Dev/go/learning/vgo-demo  ○mkidr li
+### 三、执行程序
+
+    ichexw in ~/Dev/go/learning/vgo-demo > go run main.go
+    main.go:3:8: cannot find package "vgo-demo/lib" in any of:
+            /usr/local/Cellar/go/1.11.2/libexec/src/vgo-demo/lib (from \$GOROOT)
+            /Users/ichexw/Dev/go/src/vgo-demo/lib (from \$GOPATH)
+            
+报错了，我们来分析下，错误信息告诉我们：main.go 文件的第三行出现错误，无法导入 "vgo-demo/lib"；我们分析下：
+
+    # main.go
+    import "vgo-demo/lib"
+    
+Go 编译器包查找的路径（优先级从下到上）是:
+
+1. *$GOROOT/src*: 标准库所在的位置
+2. *$GOPATH/src*: 工作目录
+
+但是，我的项目并不在这两者之一；常规的做法，我把我的项目移到工作目录下：
+
+ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ cp -r vgo-de m $GOPATH/src/
+                                                               ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ cd\ $GOPATH/src/vgo-dem
+ichexw at ichexws-MBPR in ~/Dev/go/src/vgo-demo  ○ go run main.go
+Hello, Go!
