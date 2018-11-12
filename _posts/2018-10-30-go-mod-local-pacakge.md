@@ -96,7 +96,7 @@ vgo 的两个文件：
 
 #### 一、创建自己的库：
 
-	ichexw in ~/Dev/go/learning/vgo-demo > cat lib/hello.go
+	ichexw in ~/Dev/go/learning/vgo-demo → cat lib/hello.go
 	
 	package lib
 	
@@ -108,7 +108,7 @@ vgo 的两个文件：
     
 ### 二、创建 main.go 文件
 
-    ichexw in ~/Dev/go/learning/vgo-demo  ○cat main.go
+    ichexw in ~/Dev/go/learning/vgo-demo → cat main.go
     package main
 
     import "vgo-demo/lib"
@@ -136,7 +136,33 @@ Go 编译器包查找的路径（优先级从下到上）是:
 
 但是，我的项目并不在这两者之一；常规的做法，我把我的项目移到工作目录下：
 
-ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ cp -r vgo-de m $GOPATH/src/
-                                                               ichexw at ichexws-MBPR in ~/Dev/go/learning  ○ cd\ $GOPATH/src/vgo-dem
-ichexw at ichexws-MBPR in ~/Dev/go/src/vgo-demo  ○ go run main.go
-Hello, Go!
+	ichexw in ~/Dev/go/learning → cp -r vgo-de \$GOPATH/src/
+	ichexw in ~/Dev/go/learning → cd \$GOPATH/src/vgo-demo
+	ichexw in ~/Dev/go/src/vgo-demo → go run main.go
+	Hello, Go!
+    
+这不是我想要，开发程序更多是分项目，而不是语种
+
+	path/to/dev
+	├── proj1
+	│   ├── go
+	│   └── python
+	|   └── ...
+	├── proj2
+	│   ├── scala
+	│   └── go
+	|   └── ...
+	└── ..
+    
+
+这个时候，GOPATH 该怎么设置呢？是不是很为难，而且内部依赖只被所在的项目使用，不存在跨项目调用，我可以这么做：
+
+1. 开发某个项目的时候，手动设置 GOPATH 变量，但是这个也太挫了
+2. 把 path/to/dev 设置成 GOPATH，这个我就。。。
+  
+**个人认为的最佳实践**：
+
+- path/to/go/path/: 设置成 GOPATH，存取通用外部依赖的类库，以及自己开发的跨项目使用的通用类库
+- path/to/dev/projN/go: 
+  - 某个项目，自用的类库封装，通过 VGO 自行引用
+  - 项目依赖的外部类库：vender 下
