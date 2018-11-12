@@ -28,3 +28,5 @@ date:   2018-11-12 11:20:09 +0800
 	...
     
 然后，就不会出现上面这个问题。
+
+> 引用：[Stackoverflow-E: Repository 'http://dl.google.com/linux/chrome-remote-desktop/deb stable Release' changed its 'Origin' value from 'Google, Inc.' to 'Google LLC'](https://stackoverflow.com/questions/50942353/e-repository-http-dl-google-com-linux-chrome-remote-desktop-deb-stable-relea/50942354)
