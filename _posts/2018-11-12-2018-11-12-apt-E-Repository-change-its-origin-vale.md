@@ -1,7 +1,10 @@
 ---
 layout: post
-title:  E: Repository 'http://dl.google.com/linux/chrome-remote-desktop/deb stable Release' changed its 'Origin' value from 'Google, Inc.' to 'Google LLC'
+title:  "E: Repository 'http://dl.google.com/linux/chrome-remote-desktop/deb stable Release' changed its 'Origin' value from 'Google, Inc.' to 'Google LLC'"
+description: ""
 date:   2018-11-12 11:20:09 +0800
+category: Linux
+tags: [ubuntu]
 ---
 
 当你在 Ubuntu 使用 `apt-get update` 的时候，我获取如下信息：
