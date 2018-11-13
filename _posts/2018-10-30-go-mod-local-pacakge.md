@@ -166,3 +166,18 @@ Go 编译器包查找的路径（优先级从下到上）是:
 - path/to/dev/projN/go: 
   - 某个项目，自用的类库封装，通过 VGO 自行引用
   - 项目依赖的外部类库：vender 下
+
+目录格式如下：
+
+    path/to/gopath # 跨项目依赖类库/工具 
+	path/to/projgo/ # 我的 go 项目
+	├── main.go
+	├── locallib1 # 当前类库1
+	|   └── ...
+	├── locallib2 # 当前类库2
+	|   └── ...
+    ├── ... # 其他文件/本地类库
+	└── vender # 当前项目依赖的类库
+
+
+
