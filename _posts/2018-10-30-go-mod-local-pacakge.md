@@ -3,7 +3,7 @@ layout: post
 title: "Go module 解决本地库依赖问题(更新中。。。)"
 description: ""
 category: Go
-tags: []
+tags: [go]
 ---
 {% include JB/setup %}
 
@@ -178,6 +178,8 @@ Go 编译器包查找的路径（优先级从下到上）是:
 	|   └── ...
     ├── ... # 其他文件/本地类库
 	└── vender # 当前项目依赖的类库
+
+
 
 
 
