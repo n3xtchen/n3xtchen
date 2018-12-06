@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "入门: 神经网络（Neural Network）"
+title:  "入门: 神经网络（Neural Network）及 Python 实现"
 date:   2018-12-06 09:55:19 +0800
 category: algorithm
 tags: [NN]

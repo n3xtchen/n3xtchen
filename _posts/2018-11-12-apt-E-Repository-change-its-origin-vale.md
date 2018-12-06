@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "E: Repository 'http://dl.google.com/linux/chrome-remote-desktop/deb stable Release' changed its 'Origin' value from 'Google, Inc.' to 'Google LLC'"
+title:  "E: Repository 'http://url stable Release' changed its 'Origin' value from 'XX' to 'YY'"
 description: ""
 date:   2018-11-12 11:20:09 +0800
 category: Linux
