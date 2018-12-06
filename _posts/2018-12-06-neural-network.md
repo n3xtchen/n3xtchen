@@ -19,19 +19,39 @@ use_math: true
 
 所谓M-P模型，其实是按照生物神经元的结构和工作原理构造出来的一个抽象和简化了的模型。简单点说，它是对一个生物神经元的建模。它实际上是两位科学家的名字的合称，1943年心理学家W.McCulloch和数学家W.Pitts合作提出了这个模型，所以取了他们两个人的名字（McCulloch-Pitts）。
 
-![M-P](http://www.hahack.com/images/ann1/BGCSG.png){:width="800px"}
+先来看看神经元的简化示意图：
 
 ![生物神经元模型](http://www.hahack.com/images/ann1/gb1bJ.png "生物神经元模型"){:width="800px"}
 
-1. 每个神经元都是一个多输入单输出的信息处理单元；
-2. 神经元输入分兴奋性输入和抑制性输入两种类型；
+神经元在结构上由细胞体、树突（输入）、轴突（输出）和突触4部分组成。
+
+1. 每个神经元都是一个多输入单输出（轴突）的信息处理单元；
+2. 神经元输入（树突）分兴奋性输入和抑制性输入两种类型；
 3. 神经元具有空间整合特性和阈值特性（兴奋和抑制，超过阈值为兴奋，低于是抑制）；
 4. 神经元输入与输出间有固定的时滞，主要取决于突触延搁；
 
+我们可以把一个神经元想象成一个水桶，这个水桶侧边接着很多条水管（**神经末梢**），水管既可以将桶里的水输出去（**抑制性**），也可以将其他水桶的水输进来（**兴奋性**）。当桶里的水达到一个高度时，就会通过另一条管子（**轴突**）将水输送出去。由于水管的粗细不同，对桶里的水的影响程度（**权重**）也不同。水管对水桶里的水位的改变（**膜电位**）自然就是这些水管输水量的**累加**。当然，这样来理解并不是很完美，因为神经元中的信号是采用一个个脉冲串的离散形式，而这里的水则是连续的。
+
+关于权值的理解，还有人做出一个非常形象的比喻。比如现在我们要选一个餐厅吃饭，于是对于某一个餐厅，我们有好几种选择因素 e.g.口味、位置、装潢、价格等等，这些选择因素就是输入，而每一个因素占的比重往往不同，比如我们往往会把口味和价格放在更重要的位置，装潢和位置则稍微不那么重要。很多个候选餐厅的选择结果最终汇总之后，就可以得到最后的决策。
+
+按照生物神经元，我们建立M-P模型。下图，展示的就是 M-P 模型的示意图：
+
+![M-P](http://www.hahack.com/images/ann1/BGCSG.png){:width="800px"}
+
+那么接下来就好类比理解了。我们将这个模型和生物神经元的特性列表来比较：
+
 ![生物神经元与MP模型](http://www.hahack.com/images/ann1/vBksY.png){:width="800px"}
 
+结合M-P模型示意图来看，对于某一个神经元j，它可能接受同时接受了许多个输入信号，用χi表示。
 
+由于生物神经元具有不同的突触性质和突触强度，所以对神经元的影响不同，我们用权值 $$w_{ij}$$ 来表示，其大小则代表了突出的不同连接强度。
 
+$$ T_j $$ 表示为一个阈值，或称为偏置，超过阈值为兴奋，低于是抑制。
+
+由于累加性，我们对全部输入信号进行累加整合，相当于生物神经元中的膜电位（水的变化总量），其值就为：
+$$
+net_j'(t) = \sum_{i=1}^{n}{w_{ij}X_i(t)} - T_j 
+$$
 
 ### MLP：多层感知机（Multilayer Perceptron， 我们常说的神经网络 ）
 
@@ -151,11 +171,11 @@ class NeuralNetwork:
     
     def backprop(self):
         """反向反馈"""
-        # application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
+        # 计算出各层的导数
         d_weights2 = np.dot(self.layer1.T, (2*(self.y - self.output) * sigmoid_derivative(self.output)))
         d_weights1 = np.dot(self.input.T,  (np.dot(2*(self.y - self.output) * sigmoid_derivative(self.output), self.weights2.T) * sigmoid_derivative(self.layer1)))
 
-        # update the weights with the derivative (slope) of the loss function
+        # 使用导数来更新参数
         self.weights1 += d_weights1
         self.weights2 += d_weights2
 ```
