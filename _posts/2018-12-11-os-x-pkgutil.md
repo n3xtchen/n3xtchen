@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  OsX: 完全卸载攻略（pkg）
+title:  "OsX: 完全卸载攻略（pkg）"
 date:   2018-12-11 09:40:36 +0800
 category: osx
 tag: []
