@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  PostgreSQL: 匿名化（Anonymizer）工具
+title:  "PostgreSQL: 匿名化（Anonymizer）工具"
 date:   2018-12-29 10:17:41 +0800
 category: POSTGRESQL
 ---
