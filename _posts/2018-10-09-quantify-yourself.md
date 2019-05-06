@@ -77,11 +77,11 @@ tags: []
 
 通过使用 Goodreads，我可以生成这样的报告
 
-![](https://cdn-images-1.medium.com/max/2000/1*zD2GBw0T7wxzYV00jADRjQ.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_zD2GBw0T7wxzYV00jADRjQ.png)
 
 这个报告可以看出我实际的阅读量，它改变了我的阅读习惯。（我强力推荐你使用它）Goodreads 也提供按年分类。
 
-![](https://cdn-images-1.medium.com/max/2000/1*b5be3S4xTofQw6QFSfyOkQ.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_b5be3S4xTofQw6QFSfyOkQ.png)
 
 年度报告帮助你理解你是否挑对书了。如果你的评分都不高，你就需要改变挑书的方式了。
 
@@ -93,7 +93,7 @@ tags: []
 
 我的想法就是使用 todoist ——我任务管理的选择——追踪我的阅读清单。我尝试像这样：
 
-![](https://cdn-images-1.medium.com/max/2000/1*ueSBXdoIhXgfKv2l3doTUw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_ueSBXdoIhXgfKv2l3doTUw.png)
 
 它也可奏效，但是这个方法优三个缺陷：
 
@@ -103,11 +103,11 @@ tags: []
 
 我一个朋友推荐我使用 Pocket。它跨平台，可以作为稍后阅读的应用，解决的第二个问题。
 
-![](https://cdn-images-1.medium.com/max/2000/1*UkQ7MNfTJOLxq3jfivJ8zw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_UkQ7MNfTJOLxq3jfivJ8zw.png)
 
 我也可以从网页中提取内容，使用新的界面阅读，你就可以根据你自己的需求进行定制化，解决了第三个问题。
 
-![](https://cdn-images-1.medium.com/max/2000/1*lpnTYcsvq0krE78klyenqw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_lpnTYcsvq0krE78klyenqw.png)
 
 但是仍然有一个问题没有解决。我没有找到一种好的应用从 Pocket 中提取数据，所以我只能自己来。
 
@@ -134,7 +134,7 @@ var uls=document.body.getElementsByTagName("ul");unread=uls[0].children.length,p
 
 我创建一个把 Pocket 管来呢到 Google Spreadsheets 的小应用。不幸的是，Pocket 没有提供完成时间的字段，因此，我使用标签来追踪我读文章所在的月份。这个展示结果如下：
 
-![](https://cdn-images-1.medium.com/max/2000/1*IuCZPj42pivCBECwMZglyw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_IuCZPj42pivCBECwMZglyw.png)
 
 D 列就是这个文章加入到 Pocket 的时间。我决定保留它，以及我可以看到我收藏和阅读的时间。我每次读一篇文章的时候都要添加标签，这样做很不优雅，但是它有效。
 
@@ -146,7 +146,7 @@ D 列就是这个文章加入到 Pocket 的时间。我决定保留它，以及�
 
 Last.fm 也会给你发送年报，而且很有用：
 
-![](https://cdn-images-1.medium.com/max/2000/1*CXghgp0nlyjw2sSAxhKMRw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_CXghgp0nlyjw2sSAxhKMRw.png)
 
 ### Podcasts
 
@@ -154,7 +154,7 @@ Last.fm 也会给你发送年报，而且很有用：
 
 这两个应用都有提供统计功能。比如 Podcast Addict，你可以在 setting > stats 看到如下信息：
 
-![](https://cdn-images-1.medium.com/max/2000/1*4qzi-IICp6tgeNojmdFmyw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_4qzi-IICp6tgeNojmdFmyw.png)
 
 不幸的是，这些数据不好提取。我要做年复盘的时候，我必须通过手工方式。通常情况，了解你的内容消费量以及在你的个人发展中贡献量，这个已经足够了。
 
@@ -166,13 +166,13 @@ Last.fm 也会给你发送年报，而且很有用：
 
 当然，可以看到我的阅读/整体统计来看看我的长期奖励
 
-![](https://cdn-images-1.medium.com/max/2000/1*xhlQHGWL9hqu0wy5aPzOaA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_xhlQHGWL9hqu0wy5aPzOaA.png)
 
 追你喜欢的剧没问题，但是要记住，既然投入你的时间，要从中收获什么。问自己，值得吗？这取决于你的决定。妻子和我非常享受这些时间；当然所有的后期剧集分析和预测都很有趣。
 
 从 TV Time 中唯一缺失的特征是电影追踪。出于这个目的，我决定使用 trakt.tv 来追踪。
 
-![](https://cdn-images-1.medium.com/max/2000/1*SdEbKCrw9aVuuMYqJKWlvA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_SdEbKCrw9aVuuMYqJKWlvA.png)
 
 如果能有一个应用能整合 trait.tv 和 tvtime，就好了，但是实际并没有。TV Time 是一款很棒的 Android 应用，但是不知电影。Trakt.tv 支持电影，但是你必须使用其他社区开发的应用来追踪和发送你的统计。所以目前为止，我同时使用他们。
 
@@ -184,7 +184,7 @@ Last.fm 也会给你发送年报，而且很有用：
 
 我使用它来追踪很多应用。我什么都不用做就可以自动获取我一天的时间使用情况：
 
-![img](https://cdn-images-1.medium.com/max/2000/1*wL__oedxouzCEylYeSnqDQ.png)
+![img](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_wL__oedxouzCEylYeSnqDQ.png)
 
 我经常从这些报告中获取有价值的内容来帮助自己更好地利用时间。例如，我可以查看应用的分类，问自己是否合理地使用了这些时间。（我看过一本书《When: The Scientific Secrets of Perfect Timing》，书中让我懂得活动的时间那么重要）。随着时间的推移，我可以使用这些数据来优化我的日程，在我精力充沛的时候，安排尽可能多的事情。
 
@@ -218,7 +218,7 @@ Last.fm 也会给你发送年报，而且很有用：
 
 我 99.99% 的时间在远程工作。Toggl 追踪时间帮助我了解我是否停滞了或者有更多工作要做。我尝试 Doist 在工作日使用 8 个小时。追踪那些时间使用更有意识地计划我的一天，聪明地工作来确保我可以把每一个事情都完成。
 
-![](https://cdn-images-1.medium.com/max/1600/1*UPFxSrtTMFobaWOEQjNfhQ.png)
+![](https://cdn-images-1.medium.com/max/1600/1_UPFxSrtTMFobaWOEQjNfhQ.png)
 
 记住：手动追踪很费时费力，你不可能追踪每一个时间。尽可能追踪必要的事情！
 
@@ -228,7 +228,7 @@ Last.fm 也会给你发送年报，而且很有用：
 
 每个月，Google 会发送一条我地理位置的简报：
 
-![](https://cdn-images-1.medium.com/max/2000/1*AMiZ_jLT_88YCg2djotywg.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_AMiZ_jLT_88YCg2djotywg.png)
 
 在我还在上班的时候，在交通工具上花费的时间用来理解我的通勤时间也是极好的。远程工作之后，看到我在交通工具上使用时间也是不错的。
 
@@ -238,13 +238,13 @@ Last.fm 也会给你发送年报，而且很有用：
 
 虽然可能看起来有点偏颇，但在我的印象中，我几乎从一开始就是Todoist用户——准确说 2007年——10年后，我到 doist 工作。
 
-![](https://cdn-images-1.medium.com/max/2000/1*MZ9NPRUEzO1uFhrGOgVc1A.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_MZ9NPRUEzO1uFhrGOgVc1A.png)
 
 我申请 API 和整合开发工程的职务的原因，很多出于我喜欢这个产品，认同公司的价值。在过去十年中，我使用了很多任务列表应用，最终我决定回到 Todoist，因为它有我所有想要的功能。
 
 Todoist 有一个有效的视角，在那里， 你能看到你在某个时间点完成某些事情的高级统计报表。我不是坚持日常任务目标的超级粉丝。（虽然如果你愿意，你可以改变它们，让它更容易，或者如果你愿意，可以更多挑战自己），但是我真心喜欢在每个月看到周视角的大图：
 
-![](https://cdn-images-1.medium.com/max/2000/1*HTByqqMzNya4bYzqzjmrbQ.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_HTByqqMzNya4bYzqzjmrbQ.png)
 
 这个报告展示了我如何按找拆解我的任务。红色条状是我的私人任务，蓝色的是工作任务。在我的日常中，时常有很多细小的个人任务，我的工作任务则是很大块，需要深度工作。为了使这个视图更有用，你得为你要追踪的工作分类选择不同颜色，便于查看。
 
@@ -256,9 +256,9 @@ Todoist 有一个有效的视角，在那里， 你能看到你在某个时间�
 
 另外值得称道的是 Todoist 的年报（在每年的一月份发出，这么做不仅仅为了娱乐，其中也暗含一些有用的个人洞见）：
 
-![](https://cdn-images-1.medium.com/max/2000/1*w2uOlGefPYDevkMaMcRNgQ.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_w2uOlGefPYDevkMaMcRNgQ.png)
 
-![](https://cdn-images-1.medium.com/max/2000/1*RUuOKy3dxKxyqP0VTuV3sA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_RUuOKy3dxKxyqP0VTuV3sA.png)
 
 #### 身体和健康
 
@@ -270,7 +270,7 @@ Todoist 有一个有效的视角，在那里， 你能看到你在某个时间�
 
 Google Fit 追踪步数，距离以及猜测你正在进行体育运动类型（最后一项，现在看来不是很准确）。其实很简单；你只要安装它，然后随身携带你的手机即可（这不是废话吗？）。
 
-![](https://cdn-images-1.medium.com/max/2000/1*1hLF92nlP5pl8xqL3ajwSw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_1hLF92nlP5pl8xqL3ajwSw.png)
 
 以我为例，我使用 30 刀的腕带来帮助我追踪我的步数，它还可以追踪我的睡眠。
 
@@ -282,7 +282,7 @@ Google Fit 追踪步数，距离以及猜测你正在进行体育运动类型（
 
 下面的图就是我从 MiFit 获取的睡眠报告：
 
-![](https://cdn-images-1.medium.com/max/2000/1*h_7jFJJ0c7-o1B-SyQvplQ.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_h_7jFJJ0c7-o1B-SyQvplQ.png)
 
 这里可以看到按天、周、月维度看我的睡眠时间。上面的截图还是相当好用的，因为我不仅可以看到我的睡眠时间，还可以看出我的睡眠质量。深紫色就是展示我的深度睡眠。
 
@@ -292,11 +292,11 @@ Google Fit 追踪步数，距离以及猜测你正在进行体育运动类型（
 
 我发现用来追踪饮食和锻炼的最好应用是 MyFitnessPal。他们的饮食数据是无比的。我追踪我的日常摄入的食物和锻炼，但有时没有坚持做。我在节食过程中做过这种跟踪，体验非常出色。
 
-![](https://cdn-images-1.medium.com/max/2000/1*ZGbGhCCQSJBwDMJaaT8TjA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_ZGbGhCCQSJBwDMJaaT8TjA.png)
 
-![](https://cdn-images-1.medium.com/max/2000/1*lApGxBqSZFffzfZACIn78A.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_lApGxBqSZFffzfZACIn78A.png)
 
-![](https://cdn-images-1.medium.com/max/2000/1*t-39BCkCAirvmoQW8MY50A.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_t-39BCkCAirvmoQW8MY50A.png)
 
 追踪你摄入的食物是很难的，因为它一个纯手工的过程，但是如果你遵循某种饮食习惯，结果是很有价值的。但是，可以偶尔追踪下一周，提供一个数据点，看啊看你是否进行正确的饮食习惯，从种类上和量上。
 
@@ -308,11 +308,11 @@ Google Fit 追踪步数，距离以及猜测你正在进行体育运动类型（
 
 在这个应用中，我可以生成下面这张图，展示每一个类的占比（如娱乐，家庭，以及旅游等等。）：
 
-![](https://cdn-images-1.medium.com/max/2000/1*rgGzTNTs79VhiBzg9RQ_pw.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_rgGzTNTs79VhiBzg9RQ_pw.png)
 
 与其推荐一款大家都不能用应用，我建议大家使用 YNAB（你需要一个预算的简称）。它们有自己的一套独特财务管理哲学和系统，但是也包含了我要使用的特征：
 
-![](https://cdn-images-1.medium.com/max/2000/1*w8Aaioi9tPkqqGrAWT03NA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_w8Aaioi9tPkqqGrAWT03NA.png)
 
 YNAB 的最大问题是需要付费，因此，它是否值得你投资。Mint 和 Clarity Money 也是一个不错的免费备选方案，但是没有相关的使用经验。
 
@@ -324,11 +324,11 @@ YNAB 的最大问题是需要付费，因此，它是否值得你投资。Mint �
 
 Grammarly 每个月会发送一个简报，告诉你上一个月的统计数据：
 
-![](https://cdn-images-1.medium.com/max/2000/1*4aItbRCl8w77mumKJntOWg.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_4aItbRCl8w77mumKJntOWg.png)
 
 不幸的是，Grammarly 只提供的这个简报，于是我做了一些手动提取工作来创建一个表格：
 
-![](https://cdn-images-1.medium.com/max/2000/1*4NG8C1XZe7XiZEoZFYxoXA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_4NG8C1XZe7XiZEoZFYxoXA.png)
 
 能看出写作字数的增长，是不是很棒？
 
@@ -340,7 +340,7 @@ Grammarly 每个月会发送一个简报，告诉你上一个月的统计数据�
 
 我在我的 now 页面（基于 Derek Siver now page）使用它们内置的图表。我最喜欢的图表之一就是我的语言突破：
 
-![](https://cdn-images-1.medium.com/max/2000/1*JVPaQAsDrPSsHU4IzJ9vvQ.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_JVPaQAsDrPSsHU4IzJ9vvQ.png)
 
 为了让他奏效，你必须在你的 IDE/文本编辑器中安装它，但是这个没什么难度。
 
@@ -350,7 +350,7 @@ Grammarly 每个月会发送一个简报，告诉你上一个月的统计数据�
 
 下面的图就是我去年最终图表：
 
-![](https://cdn-images-1.medium.com/max/2000/1*1I95hRmvvDOeLvzyryq93A.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_1I95hRmvvDOeLvzyryq93A.png)
 
 我能够知道哪些地方和我的计划相关，将会是很棒的事情。你可以看到事情的转变，在四月的时候，我看到我在我计划内。
 
@@ -376,15 +376,15 @@ Grammarly 每个月会发送一个简报，告诉你上一个月的统计数据�
 
 你可以把它但做一种个人仪表盘，整合所有的数据，容易使用和分析。这款应用通过链接你的日常使用来引导你：
 
-![](https://cdn-images-1.medium.com/max/2000/1*pI--4OkhWmM69PBCO4CzPg.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_pI--4OkhWmM69PBCO4CzPg.png)
 
 你很快就能看到像下面这样的报表：
 
-![](https://cdn-images-1.medium.com/max/1600/1*K5z__v5HAohLhGfq8DGGcA.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_K5z__v5HAohLhGfq8DGGcA.png)
 
 为了以你的数据为中心，应用允许你为每一天添加自动标签，它会自动分拆出有趣的洞见——比如生产和锻炼的相关性，甚至体重和位置相关性。它也能根据现在的平均水平来设置个人目标，甚至内置情绪追踪（这个指引没有涵盖这个内容）。
 
-![](https://cdn-images-1.medium.com/max/2000/1*Nh41HMRPgbchPOPsuasG3w.png)
+![](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/quantify-yourself/1_Nh41HMRPgbchPOPsuasG3w.png)
 
 它一个很棒的服务，很棒的公司。
 
