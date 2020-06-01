@@ -49,15 +49,15 @@ tags: [cucumber,capybara]
 
 1. 对于 **Windows** 来说，安装 **Ruby** 最好的地方是 [http://rubyinstaller.org/downloads/](http://rubyinstaller.org/downloads/)。打开网站，下载最新的 32 位 **Ruby**。
 
-    ![Ruby 下载](http://p.aybe.me/blog/DingTalk20171010145948.png?x-oss-process=image/resize,w_300,h_400,limit_0)
+    ![Ruby 下载](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171010145948.png?x-oss-process=image/resize,w_300,h_400,limit_0)
 
 2. 在这里，我们将使用 **Ruby 2.4.2** 版本。下面是我勾选的安装选项，大家可以参考下。
 
-    ![Ruby 安装选项](http://p.aybe.me/blog/DingTalk20171013004705.png?x-oss-process=image/resize,w_500,h_350,limit_0)
+    ![Ruby 安装选项](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171013004705.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
     > 如果你习惯使用 **Window** 自带的命令行工具（**cmd.exe** 或 **PowerShell**），大家务必把 **Add Ruby executables to your PATH.** 这个选项选中；
 
-    ![Ruby 安装完成](http://p.aybe.me/blog/DingTalk20171013004849.png?x-oss-process=image/resize,w_500,h_350,limit_0)
+    ![Ruby 安装完成](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171013004849.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
     看到红色方框了没有？像 **Capybara** 和 **Cucumber** 这样的类库会依赖原生的 **C** 拓展，所以**必须安装**。
 
@@ -88,7 +88,7 @@ tags: [cucumber,capybara]
     
     安装过程中会弹出 MSYS2 安装向导，要你选择安装路径；这个路径要记住，环境变量的配置文件就存放在这里。在这里，我把 **MSYS2** 安装在 *C://msys2* 目录下面
     
-    ![MSYS2 安装路径](http://p.aybe.me/blog/DingTalk20171013005343.png?x-oss-process=image/resize,w_500,h_350,limit_0)
+    ![MSYS2 安装路径](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171013005343.png?x-oss-process=image/resize,w_500,h_350,limit_0)
     
     > 好久没倒腾 **Windows**，发现 **mingw** 居然自带了 **ArchLinux** 的包管理工具 **pacman**，好吃惊！
 
@@ -100,7 +100,7 @@ tags: [cucumber,capybara]
 
 > Note: 后续的步骤都在 **msys2** 中执行
 
-![MinGW 界面](http://p.aybe.me/blog/DingTalk20171013011136.png?x-oss-process=image/resize,w_500,h_350,limit_0)
+![MinGW 界面](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171013011136.png?x-oss-process=image/resize,w_500,h_350,limit_0)
 
 #### 接下来我们验证下环境是否可用
 
@@ -211,7 +211,7 @@ tags: [cucumber,capybara]
 
 我们还没有定义好测试步骤。因此，我们运行测试后会得到上述结果
 
-![无步骤定义的输出](http://p.aybe.me/blog/DingTalk20171014171445.png?x-oss-process=image/resize,w_500,h_600,limit_0)
+![无步骤定义的输出](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171014171445.png?x-oss-process=image/resize,w_500,h_600,limit_0)
 
 这个就是 **Cucumber** 人性化的一个体现，你直接测试说明，她会帮助你生成测试代码模版，这是你只需要填充的测试逻辑就好了。
 
@@ -221,7 +221,7 @@ tags: [cucumber,capybara]
 
 在执行一遍命令，查看下输出：
 
-![填充步骤定义的输出](http://p.aybe.me/blog/DingTalk20171014172141.png?x-oss-process=image/resize,w_500,h_300,limit_0)
+![填充步骤定义的输出](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171014172141.png?x-oss-process=image/resize,w_500,h_300,limit_0)
 
 看红色方框的部分，对比上一个输出，之前场景（**scenario**）和测试步骤（**steps**）时都是未定义（**undefined**），现在都是 **pending**（待定）和 **skipped** 状态。
 
@@ -275,7 +275,7 @@ tags: [cucumber,capybara]
 
 2. 经过上面的操作，我们已经到 *google.com.hk* 的页面上，我们要在搜索框中输入我们要查询的文本。如下所述，查询框的 `id` 是 `lst-ib`。
 
-	![查看工具栏的 id](http://p.aybe.me/blog/DingTalk20171017010602.png?x-oss-process=image/resize,w_600,h_600,limit_0)
+	![查看工具栏的 id](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171017010602.png?x-oss-process=image/resize,w_600,h_600,limit_0)
 
 	**Capybara** 提供一个方法叫 `fill_in`，用于文本填充操作。我们可以使用如下代码实现这个操作。在 **Selenium** 中，我们可以使用 `textElement.sendKeys(String)` 方法:
 
@@ -288,7 +288,7 @@ tags: [cucumber,capybara]
 
 4. 现在，该点击 **Next-Tech 博客** 链接了。如下图所示，链接文本就是 **Next-Tech 博客**：
 
-	![查看Next-Tech 博客超链接的文本](http://p.aybe.me/blog/DingTalk20171017010410.png?x-oss-process=image/resize,w_600,h_600,limit_0)
+	![查看Next-Tech 博客超链接的文本](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171017010410.png?x-oss-process=image/resize,w_600,h_600,limit_0)
 
 	在 **Capybara** 中，我们可以使用 `click_link` 来执行点击操作。在 **Selenium** 中，我们可以使用 `driver.findElement(By.linkText("Next-Tech 博客"))`:
 
@@ -333,13 +333,13 @@ tags: [cucumber,capybara]
 
 在运行时候，发现如下错误：
 
-![缺少geckodriver的报错信息](http://p.aybe.me/blog/DingTalk20171019005104.png?x-oss-process=image/resize,w_500,h_600,limit_0)
+![缺少geckodriver的报错信息](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171019005104.png?x-oss-process=image/resize,w_500,h_600,limit_0)
 
 这个错误（红色方框内）的主要意思就是 调用 **FireFox** 进行自动化测试时，**Selenium**  没找到相应的驱动来操纵浏览器，所以我们就按照错误中的提示，进行操作。
 
 下载 [geckodriver](https://github.com/mozilla/geckodriver/releases)（地址就是图中**绿色下划线**的部分，当前最新版本是 **0.19.0**），并解压到指定位置（我把它放到 *C://geckodriver-v0.19.0-win32* 中）：
 
-![下载指定geckdriver](http://p.aybe.me/blog/DingTalk20171018234341.png?x-oss-process=image/resize,w_400,h_300,limit_0)
+![下载指定geckdriver](https://n3xt-f0t0.oss-cn-shenzhen.aliyuncs.com/blog/DingTalk20171018234341.png?x-oss-process=image/resize,w_400,h_300,limit_0)
 
 把刚刚下载的程序添加到 **PATH** 中。于是，我们再次打开 *C:\msys32\home\Test.bash_rc* 文件，在该文件末尾追加如下命令：
 
