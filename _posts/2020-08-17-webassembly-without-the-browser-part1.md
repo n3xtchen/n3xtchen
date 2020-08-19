@@ -61,3 +61,51 @@ tags: [wasm]
         println!("FROM WASM: Sum is: {:?}, s);
         s
     }
+
+这个函数接受两个数字，相加，返回结果之前打印结果。**WebAssembly** 在模块载入之前，不需要定义默认函数，因此，你可以在主程序中通过他的签名来获取一个函数，然后执行它（这个类似 dlopen/dlsym 的工作机制）。
+
+我们使用 `[#no_mangle]` 和 `pub extern "C"` 把 `sum` 这个函数在 C 中可调用。如果你在浏览器教程中编译它，你可能会提示我们不在需要使用 `wasm-bindgen`。
+
+### 如何编译它呢？
+
+Rust 支持两种个目标平台（Target）：`wasm32-unknown-unknown` 和 `wasm32-wasi`。前者是标准的 **WebAssembly** 系统。你可以把它当作 **WebAssembly** 的 `#no-std`；它主要用于浏览器，它不假设任何系统调用都可用。
+
+后者，`wasm32-wasi` 假设 VM 暴露了 `WASI` 功能，允许标准库的不同实现可以被使用（这个实现的可用性依赖于 `WASI` 函数）。
+
+你可以看一下 Rust 标准库的可用实现：https://github.com/rust-lang/rust/tree/master/library/std/src/sys。这个是你在运行 **WebAssembly** VM 时，RUST 程序可用的 `WASI` 函数：https://github.com/rust-lang/rust/tree/master/library/std/src/sys/wasi。
+
+现在我们编译成 wasm32-wasi：
+
+    # Run this just once
+    rustup target add wasm32-wasi
+
+    # Compile for the wasm32-wasi target.
+    cargo build --target wasm32-wasi
+
+### 但是 `println!` 如何工作呢？
+
+你可能已经注意到我们调用 `print!` 时，期望程序可以工作，并且打印到终端中，但是 **WebAssembly** 程序如何知道怎么运行呢？
+
+这就是我们使用 wasm32-wasi 的原因。这个目标平台为 rust 标准库选择目标系统存在对应版本的函数。打印到终端意味着写到一个特殊的文件标识符中。包括 wasm32-wasi 在内，大部分的 VM 默认都允许，因此我们不需要做特殊的设置。
+
+如果你在 VSCode 安装了对应插件，你只需要右击选择 `target/wasm32-wasi/debug/wasm_example.wasm`，然后选择 `Show WebAssembly`，将会像下面一样，有一个新的文件被自动打开：
+
+    (module
+      ....
+      (type $t15 (func (param i64 i32 i32) (result i32)))
+      (import "wasi_snapshot_preview1" "fd_write" (func $_ZN4wasi13lib_generated22wasi_snapshot_preview18fd_write17h6ec13d25aa9fb6acE (type $t8)))
+     (import "wasi_snapshot_preview1" "proc_exit" (func $__wasi_proc_exit (type $t0)))
+      (import "wasi_snapshot_preview1" "environ_sizes_get" (func $__wasi_environ_sizes_get (type $t2)))
+      (import "wasi_snapshot_preview1" "environ_get" (func $__wasi_environ_get (type $t2)))
+      (func $_ZN4core3fmt9Arguments6new_v117hb11611244be67330E (type $t9) (param $p0 i32) (param $p1 i32) (param $p2 i32) (param $p3 i32) (param $p4 i32)
+        (local $l5 i32) (local $l6 i32) (local $l7 i32) (local $l8 i32) (local $l9 i32) (local $l10 i32)
+       global.get $g0
+        local.set $l5
+      ...
+
+这是一个 `wat` （全称是 WebAssembly text format）文件。它有点像反编译的 x64/ARM ASM 指引，丑陋难以理解。由于 **WebAssembly** 的创建者不能决定文本格式，所以他们只能用丑陋的 S-表达式 来展现。
+
+这个导入语句桃树我们 WASM 程序需要如下函数存在于 wasi_snapshot_preview1 命名孔家内 才能运行：proc_exit， fd_write，environ_get，environ_sizes_get。所有的导入或到处的函数需要一个命名空间。wasi_snapshot_preview1 是 WASI 的命名空间，因此你可以把它当作这些函数的预留命名空间。println！需要 wasi_snapshot_preview1::fd_write 来输出到标准输出。
+
+### 宿主程序
+
