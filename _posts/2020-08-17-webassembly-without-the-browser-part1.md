@@ -107,5 +107,91 @@ Rust 支持两种个目标平台（Target）：`wasm32-unknown-unknown` 和 `was
 
 这个导入语句桃树我们 WASM 程序需要如下函数存在于 wasi_snapshot_preview1 命名孔家内 才能运行：proc_exit， fd_write，environ_get，environ_sizes_get。所有的导入或到处的函数需要一个命名空间。wasi_snapshot_preview1 是 WASI 的命名空间，因此你可以把它当作这些函数的预留命名空间。println！需要 wasi_snapshot_preview1::fd_write 来输出到标准输出。
 
-### 宿主程序
+### 宿主（host）程序
 
+你可以选择任何包含 WASI 的 VM。为了展示如何 debug WebAssembly，我将使用 Wasmtime（这是唯一一个可以 debug 的 VM）。
+
+这个程序从路径 `examples/wasm_example.wasm` 载入 wasm 二进制文件。这个文件是你之前编译好的，你可以在 `wasm_example/target/wasm32-wasi/debug/wasm_example.wasm`。运行宿主层序的时候，请确保你把它已到正确的位置。
+
+这里是宿主程序（Rust）的完整代码，它包含初始化 WasmtimeVM，载入模块，链接 WASI，装载和执行从 WASM 模块带出的 `sum` 函数:
+
+use std::error::Error;
+use wasmtime::*;
+use wasmtime_wasi::{Wasi, WasiCtx};
+
+    fn main() -> Result<(), Box<dyn Error>> {
+        // A `Store` is a sort of "global object" in a sense, but for now it suffices
+        // to say that it's generally passed to most constructors.
+        // let store = Store::default();
+        let engine = Engine::new(Config::new().debug_info(true));
+        let store = Store::new(&engine);
+
+        // We start off by creating a `Module` which represents a compiled form
+        // of our input wasm module. In this case it'll be JIT-compiled after
+        // we parse the text format.
+        let module = Module::from_file(&engine, "examples/wasm_example.wasm")?;
+
+        // Link the WASI module to our VM. Wasmtime allows us to decide if WASI is present.
+        // So we need to load it here, as our module rquires certain functions to be present from the
+        // wasi_snapshot_preview1 namespace as seen above.
+        // This makes println!() from our WASM program to work. (it uses fd_write).
+        let wasi = Wasi::new(&store, WasiCtx::new(std::env::args())?);
+        let mut imports = Vec::new();
+        for import in module.imports() {
+            if import.module() == "wasi_snapshot_preview1" {
+                if let Some(export) = wasi.get_export(import.name()) {
+                    imports.push(Extern::from(export.clone()));
+                    continue;
+                }
+            }
+            panic!(
+                "couldn't find import for `{}::{}`",
+                import.module(),
+                import.name()
+            );
+        }
+        // After we have a compiled `Module` we can then instantiate it, creating
+        // an `Instance` which we can actually poke at functions on.
+        let instance = Instance::new(&store, &module, &imports)?;
+
+        // The `Instance` gives us access to various exported functions and items,
+        // which we access here to pull out our `answer` exported function and
+        // run it.
+        let main = instance.get_func("sum")
+            .expect("`main` was not an exported function");
+
+        // There's a few ways we can call the `main` `Func` value. The easiest
+        // is to statically assert its signature with `get2` (in this case asserting
+        // it takes 2 i32 arguments and returns one i32) and then call it.
+        let main = main.get2::<i32, i32, i32>()?;
+
+        // And finally we can call our function! Note that the error propagation
+        // with `?` is done to handle the case where the wasm function traps.
+        let result = main(5, 4)?;
+        println!("From host: Answer returned to the host VM: {:?}", result);
+        Ok(())
+    }
+
+这个项目需要的依赖：
+
+    [dependencies]
+    wasmtime = "0.19"
+    wasmtime-wasi = "0.19"
+    anyhow = "1.0.28"
+
+执行它，并且看到如下输出
+
+    $ cargo run
+    Compiling wasm_host v0.1.0 (wasm_host)
+    Finished dev [unoptimized + debuginfo] target(s) in 35.38s
+    Running `target\debug\wasm_host.exe`
+    From WASM: Sum is: 9
+    From host: Answer returned to the host VM: 9
+
+我们发现wasm 模块的 println! 可以正确地答应到终端，并且返回的结果就是预期的 9.
+
+### 结语
+
+在这个教程中，我们已经学会如何在浏览器之外编译 WebAsselbly 程序，配置一个宿主程序来自载入和运行你的 WASM 二进制代码，执行从 WASM 导出的函数。
+
+在下一个部分，我们将接触到 debugging，优化程序大小，从主程序VM暴露函数给 WASM 程序，以及两个 VM 间分享内存。
