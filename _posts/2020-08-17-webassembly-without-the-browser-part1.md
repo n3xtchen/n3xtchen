@@ -11,15 +11,15 @@ tags: [wasm]
 
 ### 什么是 WebAssembly？
 
-网页界的朋友总是爱给新生事物起名字，但是总是起的不好（web-gpu 是另一个例子）。**WebAssembly** 既不是网页（Web）也不是汇编器（Assembly），而是从 C++、 C#、Rust 之类的编程语言编译出来的字节码。简单来说，你可以写一些 Rust 代码，然后把它编译成 **WebAssembly** 字节码，最后在 **WebAssembly** 虚拟机中运行该代码。
+网页界的朋友总是爱给新生事物起名字，但是总是起的不好（web-gpu 是另一个例子）。**WebAssembly** 既不是网页（Web）也不是汇编器（Assembly），而是从 C++、C#、Rust 之类的编程语言编译出来的字节码。简单来说，你可以写一些 **Rust** 代码，然后把它编译成 **WebAssembly** 字节码，最后在 **WebAssembly** 虚拟机中运行该代码。
 
-它真正强大的原因是你不用再自己编写垃圾回收代码，而是将 Rust 或者 C++ 作为脚本语言来使用。因为它可以想 LUA/JavaScript 那样不在需要自行垃圾回收，**WebAssembly** 具有更可预测和更稳定的性能。
+它真正强大的原因是你不用再自己编写垃圾回收代码，而是将 **Rust** 或者 C++ 作为脚本语言来使用。因为它可以想 LUA/JavaScript 那样不在需要自行垃圾回收，**WebAssembly** 具有更可预测和更稳定的性能。
 
 它是相对较新的食物，所以还很粗糙，尤其在浏览器之外的场景。我的使用经验中，把这些最粗糙的点一一下来，这就是我写这些博客的原因。记录我的发现，希望能帮助到可能对这个项目感兴趣的人。
 
 ### 为什么我们要在浏览器之外运行 **WebAssembly**
 
-浏览器之外，它的主要优势就是可以用不用妥协安全的前提下提供系统级别的访问。它是通过 WASI完成的；Web Assembly System Interface（WASI 全称，大致意思就是 WebAssembly 系统接口）是一个类 C 的函数集，在安全的方式提供功能性的系统访问，如 fd_read，rand，fd_write，thread(WIP) 等等。
+浏览器之外，它的主要优势就是可以用不用妥协安全的前提下提供系统级别的访问。它是通过 WASI完成的；Web Assembly System Interface（WASI 全称，大致意思就是 **WebAssembly** 系统接口）是一个类 C 的函数集，在安全的方式提供功能性的系统访问，如 `fd_read`、`rand`、`fd_write`、线程(WIP) 等等。
 
 这里举出一些你可能使用的场景（当然是非浏览器场景）：
 
@@ -30,17 +30,17 @@ tags: [wasm]
 
 ### 前置要求
 
-为了保证本次探险的最佳体验，我建议使用 Visual Studio Code 作为你的 IDE，并且安装如下扩展：
+为了保证本次探险的最佳体验，我建议使用 **Visual Studio Code** 作为你的 **IDE**，并且安装如下扩展：
 
-- rust-analyzer：自动补齐和其他很棒的功能
-- Code-LLDB：使用 LLDB 进行 debug
-- WebAssembly by the WebAssembly foundation：允许你反编译和查看 .wasm 字节码
+- `rust-analyzer`：自动补齐和其他很棒的功能
+- `Code-LLDB`：使用 LLDB 进行代码调试
+- `WebAssembly by the WebAssembly foundation`：允许你反编译和查看 `.wasm` 字节码
 
 ### 选择一个虚拟机
 
-首先，你需要一个可以运行 **WebAssembly** 程序的虚拟机（VM）。这个 VM 可以被嵌入，因此你可以把它加到你的游戏引擎，或者在你的主程序中调用它。这些提供一些选择：WASM3，Wasmtime，WARM 等等。他们的特性各不相同，比如支持 JIT，使用尽可能少的内存等等；你需要选择其中一个来匹配你的目标平台和场景。
+首先，你需要一个可以运行 **WebAssembly** 程序的虚拟机（VM）。这个虚拟机（VM）可以被嵌入，因此你可以把它加到你的游戏引擎，或者在你的主程序中调用它。这些提供一些选择：**WASM3**，**Wasmtime**，**WARM** 等等。他们的特性各不相同，比如支持 JIT，使用尽可能少的内存等等；你需要选择其中一个来匹配你的目标平台和场景。
 
-选择 VM 时你仅需关注运行属性和 debug的异常。支持无缝衔接的 debug 经验的 VM 只有 Wasmtime（这是另一个毛刺）。所以即使你由于某种限制，不打算把它部署在你的程序，我也建议你使用它作为 debug VM。无论何时你想要 debug 一些 WASM 代码，那你可以在 Wasmtime 载入它。
+选择虚拟机（VM）时你仅需关注运行属性和调试异常。支持无缝衔接的调试模式的虚拟机（VM）只有 **Wasmtime**。所以即使你由于某种限制，不打算把它部署在你的程序，我也建议你使用它作为调试虚拟机（VM）。无论何时你想要代码调试 WASM 代码，你都可以在 **Wasmtime** 载入它。
 
 ### 编写你的第一个 WebAssembly 程序
 
@@ -62,33 +62,33 @@ tags: [wasm]
         s
     }
 
-这个函数接受两个数字，相加，返回结果之前打印结果。**WebAssembly** 在模块载入之前，不需要定义默认函数，因此，你可以在主程序中通过他的签名来获取一个函数，然后执行它（这个类似 dlopen/dlsym 的工作机制）。
+这个函数接受两个数字，相加，返回结果之前打印结果。**WebAssembly** 在模块载入之前，不需要定义默认函数，因此，你可以在主程序中通过它的签名来获取一个函数，然后执行它（这个类似 `dlopen`/`dlsym` 的工作机制）。
 
-我们使用 `[#no_mangle]` 和 `pub extern "C"` 把 `sum` 这个函数在 C 中可调用。如果你在浏览器教程中编译它，你可能会提示我们不在需要使用 `wasm-bindgen`。
+我们使用 `[#no_mangle]` 和 `pub extern "C"` 把 `sum` 这个函数在 **C** 中可调用。如果你在浏览器教程中编译它，你可能会提示我们不在需要使用 `wasm-bindgen`。
 
 ### 如何编译它呢？
 
-Rust 支持两种个目标平台（Target）：`wasm32-unknown-unknown` 和 `wasm32-wasi`。前者是标准的 **WebAssembly** 系统。你可以把它当作 **WebAssembly** 的 `#no-std`；它主要用于浏览器，它不假设任何系统调用都可用。
+Rust 支持两种个目标平台（Target）：
+- `wasm32-unknown-unknown`：标准的 **WebAssembly** 系统。你可以把它当作 **WebAssembly** 的 `#no-std`；它主要用于浏览器，它假设任何系统调用都不可用
+- `wasm32-wasi`：假设虚拟机（VM）暴露了 `WASI` 功能，允许标准库的不同实现可以被使用（这个实现的可用性依赖于 `WASI` 函数）。
 
-后者，`wasm32-wasi` 假设 VM 暴露了 `WASI` 功能，允许标准库的不同实现可以被使用（这个实现的可用性依赖于 `WASI` 函数）。
+你可以看一下 **Rust** 标准库的可用实现：https://github.com/rust-lang/rust/tree/master/library/std/src/sys。这个是你在运行 **WebAssembly** VM 时，**Rust** 程序可用的 `WASI` 函数：https://github.com/rust-lang/rust/tree/master/library/std/src/sys/wasi。
 
-你可以看一下 Rust 标准库的可用实现：https://github.com/rust-lang/rust/tree/master/library/std/src/sys。这个是你在运行 **WebAssembly** VM 时，RUST 程序可用的 `WASI` 函数：https://github.com/rust-lang/rust/tree/master/library/std/src/sys/wasi。
+现在我们编译成 `wasm32-wasi`：
 
-现在我们编译成 wasm32-wasi：
-
-    # Run this just once
-    rustup target add wasm32-wasi
+    # 只要执行一次
+    $ rustup target add wasm32-wasi
 
     # Compile for the wasm32-wasi target.
-    cargo build --target wasm32-wasi
+    $ cargo build --target wasm32-wasi
 
 ### 但是 `println!` 如何工作呢？
 
 你可能已经注意到我们调用 `print!` 时，期望程序可以工作，并且打印到终端中，但是 **WebAssembly** 程序如何知道怎么运行呢？
 
-这就是我们使用 wasm32-wasi 的原因。这个目标平台为 rust 标准库选择目标系统存在对应版本的函数。打印到终端意味着写到一个特殊的文件标识符中。包括 wasm32-wasi 在内，大部分的 VM 默认都允许，因此我们不需要做特殊的设置。
+这就是我们使用 `wasm32-wasi` 的原因。这个目标平台为 **Rust** 标准库选择目标系统存在对应版本的函数。打印到终端意味着写到一个特殊的文件标识符中。包括 `wasm32-wasi` 在内，大部分的虚拟机（VM）默认都允许，因此我们不需要做特殊的设置。
 
-如果你在 VSCode 安装了对应插件，你只需要右击选择 `target/wasm32-wasi/debug/wasm_example.wasm`，然后选择 `Show WebAssembly`，将会像下面一样，有一个新的文件被自动打开：
+如果你在 **VSCode** 安装了对应插件，你只需要右击选择 `target/wasm32-wasi/debug/wasm_example.wasm`，然后选择 `Show WebAssembly`，将会像下面一样，有一个新的文件被自动打开：
 
     (module
       ....
@@ -105,36 +105,31 @@ Rust 支持两种个目标平台（Target）：`wasm32-unknown-unknown` 和 `was
 
 这是一个 `wat` （全称是 WebAssembly text format）文件。它有点像反编译的 x64/ARM ASM 指引，丑陋难以理解。由于 **WebAssembly** 的创建者不能决定文本格式，所以他们只能用丑陋的 S-表达式 来展现。
 
-这个导入语句桃树我们 WASM 程序需要如下函数存在于 wasi_snapshot_preview1 命名孔家内 才能运行：proc_exit， fd_write，environ_get，environ_sizes_get。所有的导入或到处的函数需要一个命名空间。wasi_snapshot_preview1 是 WASI 的命名空间，因此你可以把它当作这些函数的预留命名空间。println！需要 wasi_snapshot_preview1::fd_write 来输出到标准输出。
+这个导入语句桃树我们 WASM 程序需要如下函数存在于 `wasi_snapshot_preview1` 命名孔家内 才能运行：`proc_exit`、`fd_write`、`environ_get`、`environ_sizes_get`。所有的导入或到处的函数需要一个命名空间。`wasi_snapshot_preview1` 是 `WASI` 的命名空间，因此你可以把它当作这些函数的预留命名空间。`println!` 需要 `wasi_snapshot_preview1::fd_write` 来输出到标准输出。
 
 ### 宿主（host）程序
 
-你可以选择任何包含 WASI 的 VM。为了展示如何 debug WebAssembly，我将使用 Wasmtime（这是唯一一个可以 debug 的 VM）。
+你可以选择任何包含 `WASI` 的虚拟机（VM）。为了展示如何调试 **WebAssembly**，我将使用 **Wasmtime**（这是唯一一个支持调试的虚拟机（VM））。
 
-这个程序从路径 `examples/wasm_example.wasm` 载入 wasm 二进制文件。这个文件是你之前编译好的，你可以在 `wasm_example/target/wasm32-wasi/debug/wasm_example.wasm`。运行宿主层序的时候，请确保你把它已到正确的位置。
+这个程序从路径 `examples/wasm_example.wasm` 载入 wasm 二进制文件。这个文件是你之前编译好的，你可以在 `wasm_example/target/wasm32-wasi/debug/wasm_example.wasm`。**运行宿主程序的时候，请确保它的放置位置正常。**
 
-这里是宿主程序（Rust）的完整代码，它包含初始化 WasmtimeVM，载入模块，链接 WASI，装载和执行从 WASM 模块带出的 `sum` 函数:
+这里是宿主程序（**Rust**）的完整代码，它包含初始化 **Wasmtime** 虚拟机（VM），载入模块，链接 `WASI`，装载和执行从 WASM 模块带出的 `sum` 函数:
 
-use std::error::Error;
-use wasmtime::*;
-use wasmtime_wasi::{Wasi, WasiCtx};
+    use std::error::Error;
+    use wasmtime::*;
+    use wasmtime_wasi::{Wasi, WasiCtx};
 
     fn main() -> Result<(), Box<dyn Error>> {
-        // A `Store` is a sort of "global object" in a sense, but for now it suffices
-        // to say that it's generally passed to most constructors.
-        // let store = Store::default();
+        // Store 在某种场景下是一种全局对象，常用更多方式就是传递给大部分构造函数
         let engine = Engine::new(Config::new().debug_info(true));
         let store = Store::new(&engine);
 
-        // We start off by creating a `Module` which represents a compiled form
-        // of our input wasm module. In this case it'll be JIT-compiled after
-        // we parse the text format.
+        // 从文件载入模块
         let module = Module::from_file(&engine, "examples/wasm_example.wasm")?;
 
-        // Link the WASI module to our VM. Wasmtime allows us to decide if WASI is present.
-        // So we need to load it here, as our module rquires certain functions to be present from the
-        // wasi_snapshot_preview1 namespace as seen above.
-        // This makes println!() from our WASM program to work. (it uses fd_write).
+        // 链接 WASI 模块到我们的虚拟机。Wasmtime 我们决定 WASI 是否可见
+        // 因此我们需要在这里载入它， 我们的模块需要某个函数在 wasi_snapshot_preview1 命名空间里可见
+        // 这个操作使得 println! 可用。（它使用的是 fd_write）
         let wasi = Wasi::new(&store, WasiCtx::new(std::env::args())?);
         let mut imports = Vec::new();
         for import in module.imports() {
@@ -150,23 +145,16 @@ use wasmtime_wasi::{Wasi, WasiCtx};
                 import.name()
             );
         }
-        // After we have a compiled `Module` we can then instantiate it, creating
-        // an `Instance` which we can actually poke at functions on.
+        // 获取模块后，我们需要初始化它
         let instance = Instance::new(&store, &module, &imports)?;
 
-        // The `Instance` gives us access to various exported functions and items,
-        // which we access here to pull out our `answer` exported function and
-        // run it.
+        // 通过 instance 获取 sum 签名
         let main = instance.get_func("sum")
             .expect("`main` was not an exported function");
 
-        // There's a few ways we can call the `main` `Func` value. The easiest
-        // is to statically assert its signature with `get2` (in this case asserting
-        // it takes 2 i32 arguments and returns one i32) and then call it.
+        // 将签名转化成可调用的函数
         let main = main.get2::<i32, i32, i32>()?;
 
-        // And finally we can call our function! Note that the error propagation
-        // with `?` is done to handle the case where the wasm function traps.
         let result = main(5, 4)?;
         println!("From host: Answer returned to the host VM: {:?}", result);
         Ok(())
@@ -179,7 +167,7 @@ use wasmtime_wasi::{Wasi, WasiCtx};
     wasmtime-wasi = "0.19"
     anyhow = "1.0.28"
 
-执行它，并且看到如下输出
+执行它，并且看到如下输出：
 
     $ cargo run
     Compiling wasm_host v0.1.0 (wasm_host)
@@ -188,10 +176,8 @@ use wasmtime_wasi::{Wasi, WasiCtx};
     From WASM: Sum is: 9
     From host: Answer returned to the host VM: 9
 
-我们发现wasm 模块的 println! 可以正确地答应到终端，并且返回的结果就是预期的 9.
+我们发现 `wasm` 模块的 `println!` 可以正确地答应到终端，并且返回的结果就是预期的 `9`.
 
 ### 结语
 
-在这个教程中，我们已经学会如何在浏览器之外编译 WebAsselbly 程序，配置一个宿主程序来自载入和运行你的 WASM 二进制代码，执行从 WASM 导出的函数。
-
-在下一个部分，我们将接触到 debugging，优化程序大小，从主程序VM暴露函数给 WASM 程序，以及两个 VM 间分享内存。
+在这个教程中，我们已经学会如何在浏览器之外编译 **WebAssembly** 程序，配置一个宿主程序，载入入和运行你的 WASM 二进制代码，执行从 WASM 导出的函数。在下一个部分，我们将接触到代码调试，优化程序大小，从主程序虚拟机（VM）暴露函数给 WASM 程序，以及两个虚拟机（VM）间的内存共享。
