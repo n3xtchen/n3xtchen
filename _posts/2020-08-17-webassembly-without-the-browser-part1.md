@@ -1,25 +1,25 @@
 ---
 layout: post
-title: "浏览器之外的 WebAssembly —— 第一部分"
+title: "面向非浏览器领域的 WebAssembly"
 description: ""
 category: Rust
 tags: [wasm]
 ---
 {% include JB/setup %}
 
-你现在找到的大部分 **WebAssembly** 教程和例子都是聚焦在浏览器之中，比如如何加速网页或者网页应用各种各样的功能。无论如何，**WebAssembly** 真正强大的领域但是被提及的很少：在浏览器之外的场景；也是我们接下来系列关注的点。
+你现在找到的大部分 **WebAssembly** 教程和例子都是聚焦在浏览器之中，比如如何加速网页或者网页应用各种各样的功能。无论如何，**WebAssembly** 真正强大的领域但是被提及的很少：浏览器之外的领域；也是我们接下来系列关注的点。
 
 ### 什么是 WebAssembly？
 
 网页界的朋友总是爱给新生事物起名字，但是总是起的不好（web-gpu 是另一个例子）。**WebAssembly** 既不是网页（Web）也不是汇编器（Assembly），而是从 C++、C#、Rust 之类的编程语言编译出来的字节码。简单来说，你可以写一些 **Rust** 代码，然后把它编译成 **WebAssembly** 字节码，最后在 **WebAssembly** 虚拟机中运行该代码。
 
-它真正强大的原因是你不用再自己编写垃圾回收代码，而是将 **Rust** 或者 C++ 作为脚本语言来使用。因为它可以想 LUA/JavaScript 那样不在需要自行垃圾回收，**WebAssembly** 具有更可预测和更稳定的性能。
+它真正强大的原因是你不用再自己编写垃圾回收代码，而是将 **Rust** 或者 C++ 作为脚本语言来使用。因为它可以像 LUA/JavaScript 那样不在需要自行垃圾回收，**WebAssembly** 具有更可预测和更稳定的性能。
 
 它是相对较新的食物，所以还很粗糙，尤其在浏览器之外的场景。我的使用经验中，把这些最粗糙的点一一下来，这就是我写这些博客的原因。记录我的发现，希望能帮助到可能对这个项目感兴趣的人。
 
 ### 为什么我们要在浏览器之外运行 **WebAssembly**
 
-浏览器之外，它的主要优势就是可以用不用妥协安全的前提下提供系统级别的访问。它是通过 WASI完成的；Web Assembly System Interface（WASI 全称，大致意思就是 **WebAssembly** 系统接口）是一个类 C 的函数集，在安全的方式提供功能性的系统访问，如 `fd_read`、`rand`、`fd_write`、线程(WIP) 等等。
+浏览器之外，它的主要优势就是可以用不用妥协安全的前提下提供系统级别的访问。它是通过 `WASI` 完成的；Web Assembly System Interface（WASI 全称，大致意思就是 **WebAssembly** 系统接口）是一个类 C 的函数集，在安全的方式提供功能性的系统访问，如 `fd_read`、`rand`、`fd_write`、线程(WIP) 等等。
 
 这里举出一些你可能使用的场景（当然是非浏览器场景）：
 
@@ -105,7 +105,7 @@ Rust 支持两种个目标平台（Target）：
 
 这是一个 `wat` （全称是 WebAssembly text format）文件。它有点像反编译的 x64/ARM ASM 指引，丑陋难以理解。由于 **WebAssembly** 的创建者不能决定文本格式，所以他们只能用丑陋的 S-表达式 来展现。
 
-这个导入语句桃树我们 WASM 程序需要如下函数存在于 `wasi_snapshot_preview1` 命名孔家内 才能运行：`proc_exit`、`fd_write`、`environ_get`、`environ_sizes_get`。所有的导入或到处的函数需要一个命名空间。`wasi_snapshot_preview1` 是 `WASI` 的命名空间，因此你可以把它当作这些函数的预留命名空间。`println!` 需要 `wasi_snapshot_preview1::fd_write` 来输出到标准输出。
+这个导入语句告诉我们 WASM 程序需要如下函数存在于 `wasi_snapshot_preview1` 命名空间内才能运行：`proc_exit`、`fd_write`、`environ_get`、`environ_sizes_get`。所有的导入或到处的函数需要一个命名空间。`wasi_snapshot_preview1` 是 `WASI` 的命名空间，因此你可以把它当作这些函数的预留命名空间。`println!` 需要 `wasi_snapshot_preview1::fd_write` 来输出到标准输出。
 
 ### 宿主（host）程序
 
