@@ -51,5 +51,53 @@ tags: [IOT]
     [dependencies.arduino-uno]
     git = "https://github.com/Rahix/avr-hal"
 
-`avr-hal` 
+`avr-hal` 是一个包（Cargo）空间，包含一堆各种芯片的驱动包（Crate），`arduino-uno` 就是其中之一。感谢 Rahix 把它们整合在一起。
+
+我们需要为 avr 平台添加编译元数据。我们将在项目根目录下创建一个文件 `arv-atmega328.json`，包含的内容如下：
+
+    {
+      "llvm-target": "avr-unknown-unknown",
+      "cpu": "atmega328p",
+      "target-endian": "little",
+      "target-pointer-width": "16",
+      "target-c-int-width": "16",
+      "os": "unknown",
+      "target-env": "",
+      "target-vendor": "unknown",
+      "arch": "avr",
+      "data-layout": "e-P1-p:16:8-i8:8-i16:8-i32:8-i64:8-f32:8-f64:8-n8-a:8",
+    
+      "executables": true,
+    
+      "linker": "avr-gcc",
+      "linker-flavor": "gcc",
+      "pre-link-args": {
+        "gcc": ["-Os", "-mmcu=atmega328p"]
+      },
+      "exe-suffix": ".elf",
+      "post-link-args": {
+        "gcc": ["-Wl,--gc-sections"]
+      },
+    
+      "singlethread": false,
+      "no-builtins": false,
+    
+      "no-default-libraries": false,
+    
+      "eh-frame-header": false
+    }
+
+并且在 `.cargo/config.toml` 索引它：
+
+    [build]
+    target = "avr-atmega328p.json"
+    
+    [unstable]
+    build-std = ["core"]
+
+这样子，我们的构建配置算完成了。
+
+### 让我们写一些代码
+
+
 
