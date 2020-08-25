@@ -168,4 +168,20 @@ tags: [IOT]
 
 首先，我们创建了一个叫 `Peripherals` 的实例，它是 uno 外围设备列表。Peripherals 是连接你的芯片和外部设备、传感器等等的桥梁，比如计时器、计数器、串口等等。嵌入式处理器和外围设备是通过一系列控制器和状态寄存器进行沟通的。
 
-我们同作传递外围设备实例提供的端口，创建了一个新的 `Pin` 实例。然后定义一个 led 变量保存 LED 连接的引脚号。
+我们同作传递外围设备实例提供的端口，创建了一个新的 `Pin` 实例。然后定义一个 led 变量保存 LED 连接的引脚号。传递 ddr 寄存器给 `d13` 的 `into_ouput` 方法来配置引脚 13。
+
+DDR 集群器可以指定端口的引脚为输入或者输出。DDR 是一个 8 位寄存器，一位代表 I/O 端口的一个引脚。举个例子，DDRB 的第一位（bit 0）将决定 PB0 是一个输入或者输出，最后一位（bit 7）将决定 PB7 是一个输入或者输出。为了深入理解 DDR 寄存器，我仍然需要做更多的阅读。
+
+接下来，通过调用 `stutter_blink` 函数来决定灯闪烁的次数。
+
+这里是 `stutter_blink` 的定义：
+
+    fn stutter_blink(led: &mut PB5<Output>, times: usize) {
+        (0..times).map(|i| i * 10).for_each(|i| {
+            led.toggle().void_unwrap();
+            arduino_uno::delay_ms(i as u16);
+        });
+    }
+
+`stutter_blink` 所做的一切就是
+
