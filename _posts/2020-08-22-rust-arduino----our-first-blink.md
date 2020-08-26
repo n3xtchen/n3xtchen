@@ -183,5 +183,86 @@ DDR 集群器可以指定端口的引脚为输入或者输出。DDR 是一个 8 
         });
     }
 
-`stutter_blink` 所做的一切就是
+`stutter_blink` 函数的功能就是通过一个毫秒延迟（`delay_ms`）调用来开关 `led`。这些在一个迭代器内完成。
+我通过 `0..times` 来指定一个范围，map 放大倍数，来产生渐变延迟的效果。我们当然可以使用 `for` 循环完成这些，并且可读性更好，但是我想要演示 Rust 中更多高级接口和抽象。我们可以 0 成本在嵌入式系统使用函数式编程。据我所知，这一方面 Rust 才有。
+
+这里是完整的代码：
+
+    // main.rs
+    
+    #![no_std]
+    #![no_main]
+    
+    extern crate panic_halt;
+    use arduino_uno::prelude::*;
+    use arduino_uno::hal::port::portb::PB5;
+    use arduino_uno::hal::port::mode::Output;
+    
+    fn stutter_blink(led: &mut PB5<Output>, times: usize) {
+        (0..times).map(|i| i * 10).for_each(|i| {
+            led.toggle().void_unwrap();
+            arduino_uno::delay_ms(i as u16);
+        });
+    }
+    
+    #[arduino_uno::entry]
+    fn main() -> ! {
+        let peripherals = arduino_uno::Peripherals::take().unwrap();
+    
+        let mut pins = arduino_uno::Pins::new(
+            peripherals.PORTB,
+            peripherals.PORTC,
+            peripherals.PORTD,
+        );
+    
+        let mut led = pins.d13.into_output(&mut pins.ddr);
+        
+        loop {
+            stutter_blink(&mut led, 25);
+        }
+    }
+
+让我尝试完整编译他：
+
+    cargo build
+
+如果一切都安好，你将会看到 `target/avr-atmega328p/debug/` 目录下生成了一个 elf 文件 `rust-arduino-blink.elf`。
+这就是我们要写入 uno 中的二进制文件。为了刷 elf 文件，我们需要使用 avrdude 工具。让我们在根目录创建一个名为 `falsh.sh` 的脚本文件，构建完之后将它刷到 uno 固件中：
+
+
+    #! /usr/bin/zsh
+    
+    set -e
+    
+    if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+        echo "usage: $0 <path-to-binary.elf>" >&2
+        exit 1
+    fi
+    
+    if [ "$#" -lt 1 ]; then
+        echo "$0: Expecting a .elf file" >&2
+        exit 1
+    fi
+    
+    sudo -u creativcoder cargo build
+    avrdude -q -C/etc/avrdude.conf -patmega328p -carduino -P/dev/ttyACM0 -D "-Uflash:w:$1:e"
+
+有了它，我们现在就可以执行了（确保你的 Uno 已经连接到的 USB了）：
+
+    ./flash.sh target/avr-atmega328p/debug/rust-arduino-blink.elf
+
+我们的第一个运行 Rust 程序的 Arduino 程序完成了！
+
+如果你在访问 `/dev/ttyAC0`，收到权限拒绝的错误。你可能需要把你的用户加到可以访问 Linux 串口的用户组中。
+
+首先，我们需要找出这个用户组：
+
+    $ ls -l /dev/ttyACM0
+    crw-rw---- 1 root uucp 166, 0 Aug 19 03:29 /dev/ttyACM0
+
+然后，将你的用户寄到 `uucp` 组中：
+
+    sudo usermod -a -G uucp creativcoder
+
+就到这里了，期待下次再见。
 
