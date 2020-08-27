@@ -1,33 +1,41 @@
 ---
 layout: post
-title: "如何在 Arduino Uno 中运行 Rust：让你的 Led 灯闪起来"
+title: "如何在 Arduino Uno 中运行 Rust：让你的 LED 灯闪起来"
 description: ""
 category: Rust
 tags: [IOT]
 ---
 {% include JB/setup %}
 
-在写这片文章之前，大概一个月前，我们的 rust-avr 分支已经合并到主分支了。你可以在 `.cargo/config.toml` 指定平台目标为 `avr-unknonw-unknonw,unknonw`， 执行 `cargo +nightly build` 在 avr 微控面板上编译 Rust 程序了。
+在写这片文章之前，大概一个月前，我们的 `rust-avr` 分支已经合并到主分支了。你现在只要完成以下两步就可以为 **AVR** 微控面板编译 Rust 程序：
 
-我痴迷于使用代码控制现实物件的想法。后续将会有更多关于 Arduino/ESP8266 的 Rust 冒险之旅的文章。 
+1. 在 `.cargo/config.toml` 将平台（Target）指定为 `avr-unknonw-unknonw,unknonw`
+2. 执行 `cargo +nightly build` 。
 
-- 目标受众：针对使用 Rust 进行嵌入式开发的新手。如果可以看完全文，建议也可以阅读下 《embedded rust book》的基础章节。
+是不是很惊喜？^_^
+
+本人对硬件和 Rust 都有较为浓厚的兴趣，为何不一起搞。所以后续将会有更多关于 **Arduino**/**ESP8266** 的 Rust 的文章。
+
+在动手之前，我们先了解一些背景，我们文章针对使用 Rust 进行嵌入式开发的新手。如果可以看完全文，建议也可以阅读下 《embedded rust book》的基础章节。
+
+下面是我的软硬件环境：
+
 - 编译环境是
-    - Arch Linux
+    - macOS Catalina(MBPR 16，在 Ubuntu 和 Arch 下也可以正常编译) 
     - `rustc 1.47.0-nightly (22ee68dc5 2020-08-05)`
-- Arduino Uno: 在业余爱好者群体中，最为流行的嵌入式解决方案；它是基于 ATmega328P 架构的 AVR 单片机
+- **Arduino Uno**: 在业余爱好者群体中，最为流行的嵌入式解决方案；它是基于 **ATmega328P** 架构的 **AVR** 单片机
 
-> AVR 单片机简史: 1997 年由 ATMEL 公司研发出的增强型内置 Flash 的RISC(Reduced Instruction Set Computer) 精简指令集高速 8 位单片机。随着 2016 年，Atmel 被 Microchip 收购，AVR 随即成为Microchip的主力8位单片机产品之一。
+> **AVR** 单片机简史: 1997 年由 **ATMEL** 公司研发出的增强型内置 **Flash** 的 **RISC**(Reduced Instruction Set Computer) 精简指令集高速 8 位单片机。随着 2016 年，**Atmel** 被 **Microchip** 收购， **AVR** 随即成为 **Microchip** 的主力 8 位单片机产品之一。
 
-接下来，我们将借用 Arduio 届的 Hello Word（即控制 Led 灯闪烁） 来阐述整个开发过程。 虽然很简单，但是对于新手的话，还有很多知识点。
+接下来，我们将借用 **Arduino** 界的 `Hello Word`（即控制 LED 灯闪烁）程序来讲解整个开发过程。 虽然很简单，但是对于新手的话，还有有很多要关注的点。
 
 ### 设置你的项目
 
-首先创建一个 cargo 项目：
+首先创建一个 Rust 项目：
 
     $ cargo new rust-arduino-blink
 
-我们需要针对 AVR 平台交叉编译我们的项目（平台三重标示：`avr-unknonw-unknonw`）。为了完成这个操作，我们需要使用 nightly 版的编译工具链，因为我们的项目需要依赖一些不稳定的特性：
+我们需要针对 **AVR** 平台交叉编译我们的项目（平台标识：`avr-unknonw-unknonw`）。为了完成这个操作，我们需要使用 nightly 版的编译工具链，因为我们的项目需要依赖一些不稳定的特性：
 
     $ rustup override set nightly
 
@@ -35,12 +43,16 @@ tags: [IOT]
 
 然后，我们需要安装一些包：
 
-- `arv-gcc`：作为编译连接器
-- `arduino-avr-core`：我们要使用其中的工具包，如 avrdude 用来上传代码到芯片 
+- `avr-gcc`：作为编译连接器
+- `arduino-avr-core`：我们要使用其中的工具包，如 `avrdude` 用来上传代码到芯片 
 
-安装命令如下：
+在 macOS 下，你需要先执行：
 
-    $ pacman -S avr-gcc arduino-avr-core
+    $ brew tap osx-cross/avr
+
+然后执行安装命令安装指定的依赖：
+
+    $ brew install avr-gcc arduino-avr-core
 
 接下来，在 `cargo.toml` 中添加依赖包：
 
@@ -53,7 +65,7 @@ tags: [IOT]
 
 `avr-hal` 是一个包（Cargo）空间，包含一堆各种芯片的驱动包（Crate），`arduino-uno` 就是其中之一。感谢 Rahix 把它们整合在一起。
 
-我们需要为 avr 平台添加编译元数据。我们将在项目根目录下创建一个文件 `arv-atmega328.json`，包含的内容如下：
+我们需要为 **AVR** 平台添加编译元数据。我们将在项目根目录下创建一个文件 `arv-atmega328.json`，包含的内容如下：
 
     {
       "llvm-target": "avr-unknown-unknown",
@@ -129,13 +141,13 @@ tags: [IOT]
 
 我们给我们的 main 函数加上了 `entry` 的注解，表示这个函数作为程序的入口。`!` 在 Rust 中称作 Never 类型，意味程序不会返回任何东西，类似 C 语言的 `void`。
 
-我们只需要加入几行代码，设置相关 pin 端口高低压，就能让 Led 灯闪烁。现在，我们看一下 ATmega328P 芯片的引脚图：
+我们只需要加入几行代码，设置相关 pin 端口高低压，就能让 LED 灯闪烁。现在，我们看一下 **ATmega328P** 芯片的引脚图：
 
 [ATmega328P 芯片的引脚图](https://components101.com/sites/default/files/inline-images/ATMega328P-Arduino-Uno-Pin-Mapping.png)
 
 在上图中，你可以看到芯片中各种各样引脚。大部分微控制器允许设备对引脚进行读写。他们中一些被分类为 I/O 端口。一个端口代表标准接口的一组引脚。这些端口受相应端口寄存器控制，可以被代码变更的一类字节变量。
 
-在 ATmega328P 的例子中，我们有三个端口寄存器：
+在 **ATmega328P** 的例子中，我们有三个端口寄存器：
 
 - C - 模拟引脚 0 到 5
 - D - 数字引脚 0 到 7
@@ -224,7 +236,7 @@ DDR 集群器可以指定端口的引脚为输入或者输出。DDR 是一个 8 
 
 让我尝试完整编译他：
 
-    cargo build
+    $ cargo build
 
 如果一切都安好，你将会看到 `target/avr-atmega328p/debug/` 目录下生成了一个 elf 文件 `rust-arduino-blink.elf`。
 这就是我们要写入 uno 中的二进制文件。为了刷 elf 文件，我们需要使用 avrdude 工具。让我们在根目录创建一个名为 `falsh.sh` 的脚本文件，构建完之后将它刷到 uno 固件中：
@@ -247,11 +259,11 @@ DDR 集群器可以指定端口的引脚为输入或者输出。DDR 是一个 8 
     sudo -u creativcoder cargo build
     avrdude -q -C/etc/avrdude.conf -patmega328p -carduino -P/dev/ttyACM0 -D "-Uflash:w:$1:e"
 
-有了它，我们现在就可以执行了（确保你的 Uno 已经连接到的 USB了）：
+有了它，我们现在就可以执行了（确保你的 **Uno** 已经连接到的 USB了）：
 
     ./flash.sh target/avr-atmega328p/debug/rust-arduino-blink.elf
 
-我们的第一个运行 Rust 程序的 Arduino 程序完成了！
+我们的第一个运行 Rust 程序的 **Arduino** 程序完成了！
 
 如果你在访问 `/dev/ttyAC0`，收到权限拒绝的错误。你可能需要把你的用户加到可以访问 Linux 串口的用户组中。
 
