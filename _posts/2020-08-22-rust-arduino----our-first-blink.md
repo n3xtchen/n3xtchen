@@ -43,8 +43,8 @@ tags: [IOT]
 
 然后，我们需要安装一些包：
 
-- `avr-gcc`：作为编译连接器
-- `arduino-avr-core`：我们要使用其中的工具包，如 `avrdude` 用来上传代码到芯片 
+- `avr-gcc`：链接接器
+- `avrdude`：用来上传固件到芯片
 
 在 macOS 下，你需要先执行：
 
@@ -52,7 +52,7 @@ tags: [IOT]
 
 然后执行安装命令安装指定的依赖：
 
-    $ brew install avr-gcc arduino-avr-core
+    $ brew install avr-gcc avrdude
 
 接下来，在 `cargo.toml` 中添加依赖包：
 
@@ -63,7 +63,7 @@ tags: [IOT]
     [dependencies.arduino-uno]
     git = "https://github.com/Rahix/avr-hal"
 
-`avr-hal` 是一个包（Cargo）空间，包含一堆各种芯片的驱动包（Crate），`arduino-uno` 就是其中之一。感谢 Rahix 把它们整合在一起。
+`avr-hal` 是一个 Rust 包组合（Cargo Workspace），包含各种各样芯片的驱动包（Crate），`arduino-uno` 就是其中之一。感谢 **Rahix** 把它们整合在一起。
 
 我们需要为 **AVR** 平台添加编译元数据。我们将在项目根目录下创建一个文件 `arv-atmega328.json`，包含的内容如下：
 
@@ -99,7 +99,7 @@ tags: [IOT]
       "eh-frame-header": false
     }
 
-并且在 `.cargo/config.toml` 索引它：
+并且在 `.cargo/config.toml` 引用它：
 
     [build]
     target = "avr-atmega328p.json"
@@ -107,9 +107,9 @@ tags: [IOT]
     [unstable]
     build-std = ["core"]
 
-这样子，我们的构建配置算完成了。
+这样子，我们的构建配置就算完成了。
 
-### 让我们写一些代码
+### 让我们开始写一些代码
 
 现在我们把依赖放一边，让我们加一点代码到 `main.rs` 中，后续将逐步完善它：
 
