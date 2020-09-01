@@ -20,9 +20,22 @@ tags: [IOT]
 
 下面是我的软硬件环境：
 
-- 编译环境是
-    - macOS Catalina(MBPR 16，在 Ubuntu 和 Arch 下也可以正常编译) 
-    - `rustc 1.47.0-nightly (22ee68dc5 2020-08-05)`
+- macOS Catalina(MBPR 16，在 Ubuntu 和 Arch 下也可以正常编译) 
+- `rustc 1.48.0-nightly (d006f5734 2020-08-28)`：如果还没有安装，可以使用下面的命令进行安装：
+
+        $ brew install rustup
+        $ rustup-init
+        $ rustup install nightly
+        $ rustup component add rust-src
+        $ rustc --version --verbose
+        rustc 1.48.0-nightly (d006f5734 2020-08-28)
+        binary: rustc
+        commit-hash: d006f5734f49625c34d6fc33bf6b9967243abca8
+        commit-date: 2020-08-28
+        host: x86_64-apple-darwin
+        release: 1.48.0-nightly
+        LLVM version: 11.0
+
 - **Arduino Uno**: 在业余爱好者群体中，最为流行的嵌入式解决方案；它是基于 **ATmega328P** 架构的 **AVR** 单片机
 
 > **AVR** 单片机简史: 1997 年由 **ATMEL** 公司研发出的增强型内置 **Flash** 的 **RISC**(Reduced Instruction Set Computer) 精简指令集高速 8 位单片机。随着 2016 年，**Atmel** 被 **Microchip** 收购， **AVR** 随即成为 **Microchip** 的主力 8 位单片机产品之一。
@@ -62,6 +75,18 @@ tags: [IOT]
     
     [dependencies.arduino-uno]
     git = "https://github.com/Rahix/avr-hal"
+
+    [profile.dev]
+    panic = "abort"
+    lto = true
+    opt-level = "s"
+
+    [profile.release]
+    panic = "abort"
+    codegen-units = 1
+    debug = true
+    lto = true
+    opt-level = "s"
 
 `avr-hal` 是一个 Rust 包组合（Cargo Workspace），包含各种各样芯片的驱动包（Crate），`arduino-uno` 就是其中之一。感谢 **Rahix** 把它们整合在一起。
 
