@@ -7,7 +7,7 @@ tags: [IOT]
 ---
 {% include JB/setup %}
 
-在写这片文章之前，大概一个月前，我们的 `rust-avr` 分支已经合并到主分支了。你现在只要完成以下两步就可以为 **AVR** 微控面板编译 Rust 程序了：
+在写这篇文章之前，大概一个月前，我们的 `rust-avr` 分支已经合并到主分支了。你现在只要完成以下两步就可以为 **AVR** 微控面板编译 Rust 程序了：
 
 1. 在 `.cargo/config.toml` 将平台（Target）指定为 `avr-unknonw-unknonw,unknonw`
 2. 执行 `cargo +nightly build` 。
