@@ -181,3 +181,5 @@ Rust 支持两种个目标平台（Target）：
 ### 结语
 
 在这个教程中，我们已经学会如何在浏览器之外编译 **WebAssembly** 程序，配置一个宿主程序，载入入和运行你的 WASM 二进制代码，执行从 WASM 导出的函数。在下一个部分，我们将接触到代码调试，优化程序大小，从主程序虚拟机（VM）暴露函数给 WASM 程序，以及两个虚拟机（VM）间的内存共享。
+
+> 引用自：[Webassembly Without The Browser Part 1](https://alexene.dev/2020/08/17/webassembly-without-the-browser-part-1.html)
