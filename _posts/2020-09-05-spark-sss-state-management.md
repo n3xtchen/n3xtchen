@@ -17,7 +17,7 @@ tags: []
 
 ### 流计算的状态
 
-状态
+状态（State）在流计算是一个宽泛概念的词汇；继续之前，我们先明确下个定义。状态（State）字面意思就是“中间信息（Intermediate Information）”。
 
 
 > 引用自：[State Management in Spark Structured Streaming](https://medium.com/@chandanbaranwal/state-management-in-spark-structured-streaming-aaa87b6c9d31)
