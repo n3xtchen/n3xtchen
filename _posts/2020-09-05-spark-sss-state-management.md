@@ -19,5 +19,11 @@ tags: []
 
 状态（State）在流计算是一个宽泛概念的词汇；继续之前，我们先明确下个定义。状态（State）字面意思就是“中间信息（Intermediate Information）”。
 
+在流计算中，有两种中间状态（State）：
+
+1. 过程状态：它是流计算的元数据（metadata）；追踪历史至今被处理的数据。在流的世界中，我称之为打点（checkpoint）或者保存数据的偏移（offset）。为了防止重启，升级或者任务失败，它需要容错（fault tolerance）。这个信息是任何高可靠流处理的基本，同时被无状态和状态处理需要。
+2. 数据状态（正在被处理的）：这些中间数据源自数据（目前为止处理过的），它需要在记录之间维护。这个只在状态模式下，需要处理。
+
+在流中，当我们谈论状态（State）的时候，它一般指的是数据的状态（即第二个，除非明确提到偏移或者过程状态）。
 
 > 引用自：[State Management in Spark Structured Streaming](https://medium.com/@chandanbaranwal/state-management-in-spark-structured-streaming-aaa87b6c9d31)
