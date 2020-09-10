@@ -26,4 +26,17 @@ tags: []
 
 在流中，当我们谈论状态（State）的时候，它一般指的是数据的状态（即第二个，除非明确提到偏移或者过程状态）。
 
+### 状态储存
+
+为了维护状态流处理中的状态，我们需要状态存储器。它可以是内存（如 HashMap） 、文件系统（如 hdfs）、分布式数据库（如 Cassandra）亦或是嵌入式存储（如 RocksDb）。
+状态存储的目的是为引擎读写提供可靠的地方。
+
+稳重，我们将深度了解 Structured Streaming 中状态存储的内部实现机制。得益于这个实现，才能在驱动器或者执行器失败的情况下，Spark 可以可靠地将流恢复到失败之前的点。
+
+虽然我们尽可能让它读起来简单易懂，一些 Spark 的基础支持还是需要了解。
+
+### DStream/Spark Streaming 的状态管理
+
+我们生活在一个不断进化的世界中。因为旧的东西不够好，导致有新的东西不断涌现。
+
 > 引用自：[State Management in Spark Structured Streaming](https://medium.com/@chandanbaranwal/state-management-in-spark-structured-streaming-aaa87b6c9d31)
