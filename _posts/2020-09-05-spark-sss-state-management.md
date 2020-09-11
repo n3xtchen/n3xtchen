@@ -39,4 +39,7 @@ tags: []
 
 我们生活在一个不断进化的世界中。因为旧的东西不够好，导致有新的东西不断涌现。
 
+### Structured Streaming 的状态管理
+
+
 > 引用自：[State Management in Spark Structured Streaming](https://medium.com/@chandanbaranwal/state-management-in-spark-structured-streaming-aaa87b6c9d31)
