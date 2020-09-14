@@ -53,11 +53,28 @@ tags: []
 
 Structured Streaming （Spark 的第二代基于 SQL 的流计算）的出现除了带来更多的新特性，同时解决了上代遗留下来的坑（状态管理就是其中之一）。
 
-状态管理从元数据打点（checkpoint）中解藕出来，不在是 tasks/jobs 的一部分；并且是异步的，同时支持增量持久化。（哈哈哈，真香，有木有？^_^）
+状态管理从元数据打点（checkpoint）中解藕出来，不在是 tasks/jobs 的一部分；并且是异步的，同时支持增量持久化。（哈哈哈，真香，有木有？）
 
 让我们深入了解下  Spark 2 的状态管理机制。
 
 Structured Streaming 只提供了一种状态存储的实现：基于 HDFS 的状态管理（其实，Databrick（商业）、Quole（开源）已经提供了基于 RocksDB 的实现，大家可以了解下）。
+
+- 每一个聚合的 RDD 在各自 executor 内存中会有一个版本化键值存储结构（内存中的 HashMaop），它是以键值字典的方式存储状态数据的。这个存储是唯一的：checkpointPath + operatorId + partitionId
+    - checkpointPath：流查询的打点路径
+    - operatorId：流查询中的每一个聚合操作（如 groupBy）内部会被分配一个整型值
+    - partitionId：聚合操作之后会生成聚合 RDD 分区 ID
+- 版本基本等同于批次 ID，它的值就是批次 ID；
+- 第一个之外的每一个微批，一个分区会有一个从预处理器的 HashMap （同一分区的最后一个微批次）中拷贝的新的 HashMap。新的更新会作用在当前最新批次/版本上。微批处理结束后更新的 HashMap 将作为下一个微批的基础，这样不断重复的执行下去；
+- 同样，一个微批处理的一个分区，会有一个文件来记录微批处理的变更。这个文件称之为版本化的 delta 文件。它只包含相关分区的特定批次的状态变更。因此会有很每个批次和分区相同数量的 delta 文件。它已唯一的路径创建：checkpoint路径/state/operatorId/partitionId/${版本}.delta
+- 分区任务计划在 executor 上执行，在该执行程序中存在与以前的 microBatch 相同的分区的 HashMap。这个是有 Driver 决定的，在 executor 上保存有关于状态存储的足量数据；
+- 在微批处理的任务中，键的变更异步执行的，并且具有事务，同时会输出版本化的 delta 文件；
+- 关于状态管理的其他操作（如快照，清楚、删除，文件的管理等等）在 executor 的隔离守护线程（称之为 MaintenanceTask）中异步完成的。一个 executor 一个线程；
+- 如果任务成功了，输出流将会关闭，版本 Delta 文件将会提交并持久化到文件系统（如HDFS）中。内存中版本化的 HashMap会被加到提交过 HashMap 列表中，该分区的版本号会加1。新的版本ID将会在该分区的下一个批次中使用；
+- 如果分区任务失败了，相关内存中 HashMap 会被抛弃，delta 文件输出流会被切削。这样，不会有任何的变化会在内存或者文件中被记录。整个任务将会重试；
+- 就像之前说的，每一个 executor 都有一个独立线程（MaintanenceTask），他会在等间隔时长（默认 60 秒）执行，为每个分区完成的状态进行异步地快照，将最新的版本 HashMap 持久化到磁盘中（文件名：version.snapshot，路径:checkpointLocation/state/operatorId/partitionId/${version}.snapshot）。
+一次没几个批次，就有一个分区的快照文件被这个线程创建，代表该版本的完整状态。这个线程会删掉比这个版本旧的 delta和快照文件；
+- 注意：相同的 executor 不会有多线程来把状态写到delta文件中。但是在特定场景（如果推测执行）下可以有多个 execuotrs 同时将同一个状态载入到内存中。这个意味着只能有一个线程写内存中的 HashMap，但是可以有不同 executor 的多个线程写到同一个delta文件中。
+
 
 
 > 引用自：[State Management in Spark Structured Streaming](https://medium.com/@chandanbaranwal/state-management-in-spark-structured-streaming-aaa87b6c9d31)
