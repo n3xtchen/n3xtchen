@@ -57,21 +57,20 @@ tags: []
 
 **Structured Streaming** 有且只有提供了一种默认的状态存储：基于 HDFS 的状态管理（其实，**Databrick**（商业）、**Quole**（开源）已经提供了基于 RocksDB 的实现，大家可以了解下）。
 
-- 每一个聚合的 **RDD** 在各自执行器（Executor）的内存中维护一个版本化键值存储结构（内存中的 **HashMap**）。这个存储是唯一的：checkpointPath + operatorId + partitionId
-    - checkpointPath：流查询的 *Checkpoint** 路径
-    - operatorId：流查询中的每一个聚合操作（如 groupBy）内部会被分配一个整型值
-    - partitionId：聚合操作之后会生成聚合 RDD 分区 ID
-- 版本基本等同于批次 ID，它的值就是批次 ID；
-- 第一个之外的每一个微批，一个分区会有一个从预处理器的 HashMap （同一分区的最后一个微批次）中拷贝的新的 HashMap。新的更新会作用在当前最新批次/版本上。微批处理结束后更新的 HashMap 将作为下一个微批的基础，这样不断重复的执行下去；
-- 同样，一个微批处理的一个分区，会有一个文件来记录微批处理的变更。这个文件称之为版本化的 delta 文件。它只包含相关分区的特定批次的状态变更。因此会有很每个批次和分区相同数量的 delta 文件。它已唯一的路径创建：checkpoint路径/state/operatorId/partitionId/${版本}.delta
-- 分区任务计划在 执行器（Executor） 上执行，在该执行程序中存在与以前的 microBatch 相同的分区的 HashMap。这个是有 Driver 决定的，在 执行器（Executor） 上保存有关于状态存储的足量数据；
-- 在微批处理的任务中，键的变更异步执行的，并且具有事务，同时会输出版本化的 delta 文件；
+- 每一个聚合的 **RDD** 在各自执行器（Executor）的内存中维护一个版本化键值存储结构（内存中的 **HashMap**）。这个存储是唯一的：*checkpointPath + operatorId + partitionId*
+    - *checkpointPath*：流查询的 *Checkpoint** 路径
+    - *operatorId*：流查询中的每一个聚合操作（如 groupBy）内部会被分配一个整型值
+    - *partitionId*：聚合操作之后会生成聚合 **RDD** 分区 ID
+- 版本的值就是批次 ID；
+- 第一个之外的每一个微批，一个分区会有一个从预处理器的 **HashMap** （同一分区的最后一个微批次）中拷贝的新的 **HashMap**。新的更新会作用在当前最新批次/版本上。微批处理结束后更新的 **HashMap** 将作为下一个微批的基础，这样不断重复的执行下去；
+- 同样，一个微批处理的一个分区，会有一个文件来记录微批处理的变更。这个文件称之为版本化的增量文件。它只包含相关分区的特定批次的状态变更。因此会有很每个批次和分区相同数量的增量文件。它已唯一的路径创建：*checkpointPath/state/operatorId/partitionId/${版本}.delta*
+- 分区任务计划在执行器（Executor） 上执行，在该执行程序中存在与以前的 microBatch 相同的分区的 **HashMap**。这个是由 **Driver** 决定的，在执行器（Executor）上保存有关于状态存储的足量数据；
+- 在微批处理的任务中，键的变更异步执行的，并且具有事务，同时会输出版本化的增量文件；
 - 关于状态管理的其他操作（如快照，清楚、删除，文件的管理等等）在 执行器（Executor） 的隔离守护线程（称之为 MaintenanceTask）中异步完成的。一个 执行器（Executor） 一个线程；
-- 如果任务成功了，输出流将会关闭，版本 Delta 文件将会提交并持久化到文件系统（如HDFS）中。内存中版本化的 HashMap会被加到提交过 HashMap 列表中，该分区的版本号会加1。新的版本ID将会在该分区的下一个批次中使用；
-- 如果分区任务失败了，相关内存中 HashMap 会被抛弃，delta 文件输出流会被切削。这样，不会有任何的变化会在内存或者文件中被记录。整个任务将会重试；
-- 就像之前说的，每一个 执行器（Executor） 都有一个独立线程（MaintanenceTask），他会在等间隔时长（默认 60 秒）执行，为每个分区完成的状态进行异步地快照，将最新的版本 HashMap 持久化到磁盘中（文件名：version.snapshot，路径:checkpointLocation/state/operatorId/partitionId/${version}.snapshot）。
-一次没几个批次，就有一个分区的快照文件被这个线程创建，代表该版本的完整状态。这个线程会删掉比这个版本旧的 delta和快照文件；
-- 注意：相同的 执行器（Executor） 不会有多线程来把状态写到delta文件中。但是在特定场景（如果推测执行）下可以有多个执行器（Executor）同时将同一个状态载入到内存中。这个意味着只能有一个线程写内存中的 HashMap，但是可以有不同 执行器（Executor） 的多个线程写到同一个delta文件中。
+- 如果任务成功了，输出流将会关闭，版本增量文件将会提交并持久化到文件系统（如HDFS）中。内存中版本化的 **HashMap** 会被加到提交过 **HashMap** 列表中，该分区的版本号会加1。新的版本ID将会在该分区的下一个批次中使用；
+- 如果分区任务失败了，相关内存中 **HashMap** 会被抛弃，增量文件输出流会被切削。这样，不会有任何的变化会在内存或者文件中被记录。整个任务将会重试；
+- 就像之前说的，每一个 执行器（Executor） 都有一个独立线程（MaintanenceTask），他会在等间隔时长（默认 60 秒）执行，为每个分区完成的状态进行异步地快照，将最新的版本 **HashMap** 持久化到磁盘中（文件名：version.snapshot，路径:*checkpointLocation/state/operatorId/partitionId/${version}.snapshot*）。一次没几个批次，就有一个分区的快照文件被这个线程创建，代表该版本的完整状态。这个线程会删掉比这个版本旧的增量和快照文件；
+- 注意：相同的执行器（Executor）不会有多线程来把状态写到增量文件中。但是在特定场景（如果推测执行）下可以有多个执行器（Executor）同时将同一个状态载入到内存中。这个意味着只能有一个线程写内存中的 **HashMap**，但是可以有不同 执行器（Executor） 的多个线程写到同一个增量文件中。
 
 ### 当前实现的优点和缺点
 
@@ -100,8 +99,5 @@ tags: []
 ### 结语
 
 对比旧的 **DStream** 实现，**Structured Streaming** 当前状态管理的实现已经有很大的进步。他解决的早期的问题，是一个很成熟的设计。为了和其他流系统一较高下，就需要一个稳定的状态存储的实现。
-
-
-
 
 > 引用自：[State Management in Spark Structured Streaming](https://medium.com/@chandanbaranwal/state-management-in-spark-structured-streaming-aaa87b6c9d31)
