@@ -8,6 +8,8 @@ tags: ["arduino"]
 {% include JB/setup %}
 
 
+土壤湿度监测代码如下：
+
 
     #![no_std]
     #![no_main]
