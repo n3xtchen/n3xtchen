@@ -125,3 +125,28 @@ total 368852
 -rw-rw-r-- 1 ubuntu ubuntu    754176 Sep 29 09:02 pause.tar
 
 
+
+
+- kube-system:Dns
+    - coredns-86f78bb79c-rm629
+        - k8s.gcr.io/pause:3.1
+- kube-system:Dashboard
+    - metrics-server
+        - k8s.gcr.io/metrics-server-amd64:v0.3.6
+    - heapster-v1.5.2
+        - k8s.gcr.io/heapster-amd64:v1.5.2
+    - dashboard-metrics-scraper
+    - kubernetes-dashboard
+        - k8s.gcr.io/pause:3.1
+    - monitoring-influxdb-grafana
+        - k8s.gcr.io/heapster-grafana-amd64:v4.4.3
+        - k8s.gcr.io/heapster-influxdb-amd64:v1.3.3
+        - 
+- kube-system:Storage
+    - hostpath-provisioner
+- metallb-system:Metallb
+    - speaker
+    - controller
+- ingresss:Ingress
+    - nginx-ingress-microk8s-controller
+
