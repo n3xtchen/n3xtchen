@@ -150,3 +150,15 @@ total 368852
 - ingresss:Ingress
     - nginx-ingress-microk8s-controller
 
+###
+
+    microk8s kubectl delete namespace kubeflow
+    microk8s juju destroy-controller --destroy-all-models --destroy-storage uk8s
+
+
+### 导出景象
+
+    microk8s ctr i ls | grep kubeflow-charmers | awk '{print $1;}'  | sed -E "s/.*charmers\/(.*)\/.*/sudo microk8s ctr i export \1.tar \0/g" | xargs -I{} sh -c "{}"
+
+
+    
