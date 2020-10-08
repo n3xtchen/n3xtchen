@@ -125,8 +125,6 @@ total 368852
 -rw-rw-r-- 1 ubuntu ubuntu    754176 Sep 29 09:02 pause.tar
 
 
-
-
 - kube-system:Dns
     - coredns-86f78bb79c-rm629
         - k8s.gcr.io/pause:3.1
@@ -150,15 +148,20 @@ total 368852
 - ingresss:Ingress
     - nginx-ingress-microk8s-controller
 
-###
+### 
 
     microk8s kubectl delete namespace kubeflow
     microk8s juju destroy-controller --destroy-all-models --destroy-storage uk8s
 
 
-### 导出景象
+### ContainerD 的镜像操作
+
+镜像导出：
 
     microk8s ctr i ls | grep kubeflow-charmers | awk '{print $1;}'  | sed -E "s/.*charmers\/(.*)\/.*/sudo microk8s ctr i export \1.tar \0/g" | xargs -I{} sh -c "{}"
 
+镜像导入：
+
+    ls *.tar | xargs -I{} microk8s ctr —namespace k8s.io image import {}
 
     
