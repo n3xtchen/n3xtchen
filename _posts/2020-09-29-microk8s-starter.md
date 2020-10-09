@@ -164,4 +164,10 @@ total 368852
 
     ls *.tar | xargs -I{} microk8s ctr —namespace k8s.io image import {}
 
+
+### Dashboard 端口转发
+
+    microk8s.kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0
+
+
     
