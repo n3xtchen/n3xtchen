@@ -148,11 +148,10 @@ total 368852
 - ingresss:Ingress
     - nginx-ingress-microk8s-controller
 
-### 
+### kubeflow is enabled kubeflow failure enabled
 
     microk8s kubectl delete namespace kubeflow
     microk8s juju destroy-controller --destroy-all-models --destroy-storage uk8s
-
 
 ### ContainerD 的镜像操作
 
