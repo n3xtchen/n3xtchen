@@ -157,7 +157,7 @@ total 368852
 
 镜像导出：
 
-    microk8s ctr i ls | grep kubeflow-charmers | awk '{print $1;}'  | sed -E "s/.*charmers\/(.*)\/.*/sudo microk8s ctr i export \1.tar \0/g" | xargs -I{} sh -c "{}"
+    microk8s ctr i ls | grep kubeflow-charmers | awk '{print $1;}'  | sed -E "s/.*charmers\/(.*)\/(.*)-image@.*/sudo microk8s ctr i export \1-\2.tar \0/g" | xargs -I{} sh -c "{}"
 
 镜像导入：
 
