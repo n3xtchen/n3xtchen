@@ -7,7 +7,7 @@ tags: [Spark]
 ---
 {% include JB/setup %}
 
-**Jupyter** 和 **Apache Zeppelin*** 是一个数据处理体验比较好的地方。不幸的是，notebooks 的特点决定了他不擅长组织代码，包括去耦合（decomposition）和可读性。我们要将代码复制到 IDE 上，然后编译成 JAR，但是效果不是很好。接下来，我们将会讲如何在 IDE 中编写可读性更高的代码。
+**Jupyter** 和 **Apache Zeppelin** 是一个数据处理体验比较好的地方。不幸的是，notebooks 的特点决定了他不擅长组织代码，包括去耦合（decomposition）和可读性。我们要将代码复制到 IDE 上，然后编译成 JAR，但是效果不是很好。接下来，我们将会讲如何在 IDE 中编写可读性更高的代码。
 
 ### 1. 编写基础代码
 
@@ -17,6 +17,7 @@ tags: [Spark]
 1. 格式化名称
 1. 统计每一个水果的数量
 
+看看代码实现：
 
     val spark = SparkSession
         .builder
