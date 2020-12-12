@@ -17,6 +17,7 @@ tags: [Spark]
 1. 格式化名称
 1. 统计每一个水果的数量
 
+
     val spark = SparkSession
         .builder
         .appName("MyAwesomeApp")
