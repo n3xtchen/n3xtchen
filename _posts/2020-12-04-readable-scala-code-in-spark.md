@@ -23,7 +23,7 @@ tags: [Spark]
         .master("local[*]")
         .getOrCreate()
 
-        import spark.implicits._
+    import spark.implicits._
 
     val groceries = spark.read
         .option("inferSchema", "true")
