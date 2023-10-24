@@ -3,8 +3,8 @@
 # https://blowfish.page/docs/getting-started/
 
 # theme = "blowfish"
-baseURL = "https://n3xtchen.github.io/n3xtchen"
-defaultContentLanguage = "en"
+baseURL = "https://n3xtchen.github.io"
+defaultContentLanguage = "zh-CN"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
@@ -16,19 +16,6 @@ buildDrafts = false
 buildFuture = false
 
 googleAnalytics = "G-EMLJCHXBFD"
-
-[author]
-name = "n3xtchen"
-image = "/images/author.jpg"
-headline = "Sharing Funny Tech With You!"
-bio = "Sharing Funny Tech With You"
-links = [
-  { twitter = "https://twitter.com/mN3XT" },
-  { github = "https://githhub.com/n3xtchen" }
-  ]
-
-[permalinks]
-posts = "/:year/:month/:day/:filename/"
 
 [imaging]
   anchor = 'Center'
@@ -76,3 +63,6 @@ posts = "/:year/:month/:day/:filename/"
       name = 'fragmentrefs'
       type = 'fragments'
       weight = 10
+
+[permalinks]
+posts = "/:year/:month/:day/:filename/"

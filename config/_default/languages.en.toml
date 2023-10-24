@@ -1,7 +1,18 @@
 languageCode = "en"
 languageName = "English"
 weight = 1
-title = "Blowfish"
+title = "N3xtChen's Blog"
+disabled = true
+
+[author]
+name = "n3xtchen"
+image = "/images/author.jpg"
+headline = "Sharing Funny Tech With You!"
+bio = "Sharing Funny Tech With You"
+links = [
+  { twitter = "https://twitter.com/mN3XT" },
+  { github = "https://githhub.com/n3xtchen" }
+]
 
 [params]
   displayName = "EN"

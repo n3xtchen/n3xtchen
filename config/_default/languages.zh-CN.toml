@@ -1,0 +1,20 @@
+languageCode = "zh-CN"
+languageName = "Simplified Chinese (China)"
+weight = 1
+title = "N3xtChen 的博客"
+
+[author]
+name = "n3xtchen"
+image = "/images/author.jpg"
+headline = "和你分享有趣的技术！"
+bio = "Sharing Funny Tech With You"
+links = [
+  { twitter = "https://twitter.com/mN3XT" },
+  { github = "https://githhub.com/n3xtchen" }
+]
+
+[params]
+  displayName = "CN"
+  isoCode = "zh-cn"
+  rtl = false
+  dateFormat = "2006-01-02"
