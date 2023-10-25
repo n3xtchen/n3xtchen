@@ -64,5 +64,8 @@ googleAnalytics = "G-EMLJCHXBFD"
       type = 'fragments'
       weight = 10
 
+[frontmatter]
+  date = [':filename', ':default']
+
 [permalinks]
-posts = "/:year/:month/:day/:filename/"
+  posts = '/:year/:month/:day/:filename/'
