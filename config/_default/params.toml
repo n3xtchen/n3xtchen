@@ -24,6 +24,8 @@ disableImageOptimization = true
 # smartTOC = true
 # smartTOCHideUnfocusedChildren = true
 
+mathjax = true 
+
 [header]
   layout = "basic" # valid options: basic, fixed, fixed-fill, fixed-fill-blur
 
