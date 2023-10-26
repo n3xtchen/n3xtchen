@@ -1,0 +1,454 @@
+<!doctype html><html lang=zh-cn dir=ltr class=scroll-smooth data-default-appearance=light data-auto-appearance=true><head><meta charset=utf-8><meta http-equiv=content-language content="zh-CN"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><title>Pyramid - 一个文件实现 Todo 应用 &#183; N3xtChen 的博客</title><meta name=title content="Pyramid - 一个文件实现 Todo 应用 &#183; N3xtChen 的博客"><meta name=keywords content="python,pyramid,microframework,"><link rel=canonical href=https://n3xtchen.github.io/n3xtchen/2015/01/11/pyramid---todo-simple/><link type=text/css rel=stylesheet href=/n3xtchen/css/main.bundle.min.5775579083e26679417a451dd3d7c3e540c7be85426fba5a47019603552ac89b95e12dddb64138e0aa488d68bc318ec4b0820255a5859b4da3f1b45f140abf11.css integrity="sha512-V3VXkIPiZnlBekUd09fD5UDHvoVCb7paRwGWA1UqyJuV4S3dtkE44KpIjWi8MY7EsIICVaWFm02j8bRfFAq/EQ=="><script type=text/javascript src=/n3xtchen/js/appearance.min.516a16745bea5a9bd011138d254cc0fd3973cd55ce6e15f3dec763e7c7c2c7448f8fe7b54cca811cb821b0c7e12cd161caace1dd794ac3d34d40937cbcc9ee12.js integrity="sha512-UWoWdFvqWpvQERONJUzA/TlzzVXObhXz3sdj58fCx0SPj+e1TMqBHLghsMfhLNFhyqzh3XlKw9NNQJN8vMnuEg=="></script>
+<script defer type=text/javascript id=script-bundle src=/n3xtchen/js/main.bundle.min.41e474f5d66052b313c33b8f56008afac498015b7472d0f2ab78e22c187405fdff125b6735973309e4743b6924ca8c575db297f464c42da8e30ef9daed3b050c.js integrity="sha512-QeR09dZgUrMTwzuPVgCK+sSYAVt0ctDyq3jiLBh0Bf3/EltnNZczCeR0O2kkyoxXXbKX9GTELajjDvna7TsFDA==" data-copy data-copied></script>
+<script src=/n3xtchen/js/zoom.min.js></script>
+<link rel=icon href=/n3xtchen/favicon.png pe=image/png><meta property="og:title" content="Pyramid - 一个文件实现 Todo 应用"><meta property="og:description" content="此教程为你展示 Pyramid 开发 Web 应用的基本步骤。文章很短，使用尽可能少的代码实现一个待办事务（todo）应用。为了简洁，这里采用 Pyramid 的单文件应用模式来开发。"><meta property="og:type" content="article"><meta property="og:url" content="https://n3xtchen.github.io/n3xtchen/2015/01/11/pyramid---todo-simple/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-01-11T00:00:00+00:00"><meta property="article:modified_time" content="2015-01-11T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Pyramid - 一个文件实现 Todo 应用"><meta name=twitter:description content="此教程为你展示 Pyramid 开发 Web 应用的基本步骤。文章很短，使用尽可能少的代码实现一个待办事务（todo）应用。为了简洁，这里采用 Pyramid 的单文件应用模式来开发。"><script type=application/ld+json>[{"@context":"https://schema.org","@type":"Article","articleSection":"时间线","name":"Pyramid - 一个文件实现 Todo 应用","headline":"Pyramid - 一个文件实现 Todo 应用","abstract":"此教程为你展示 Pyramid 开发 Web 应用的基本步骤。文章很短，使用尽可能少的代码实现一个待办事务（todo）应用。为了简洁，这里采用 Pyramid 的单文件应用模式来开发。","inLanguage":"zh-CN","url":"https:\/\/n3xtchen.github.io\/n3xtchen\/2015\/01\/11\/pyramid---todo-simple\/","author":{"@type":"Person","name":"n3xtchen"},"copyrightYear":"2015","dateCreated":"2015-01-11T00:00:00\u002b00:00","datePublished":"2015-01-11T00:00:00\u002b00:00","dateModified":"2015-01-11T00:00:00\u002b00:00","keywords":["python","pyramid","microframework"],"mainEntityOfPage":"true","wordCount":"1343"}]</script><meta name=author content="n3xtchen"><link href=https://twitter.com/mN3XT rel=me><link href=https://githhub.com/n3xtchen rel=me><script src=/n3xtchen/lib/jquery/jquery.slim.min.js integrity></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EMLJCHXBFD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EMLJCHXBFD")</script><meta name=theme-color><style>code.has-jax{-webkit-font-smoothing:antialiased;background:inherit!important;border:none!important;font-size:100%}</style><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:["script","noscript","style","textarea","pre"]}},window.addEventListener("load",e=>{document.querySelectorAll("mjx-container").forEach(function(e){e.parentElement.classList+="has-jax"})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></head><body class="flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32"><div id=the-top class="absolute flex self-center"><a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600" href=#main-content><span class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span></a></div><div style=padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start space-x-3"><div class="flex flex-1 items-center justify-between"><nav class="flex space-x-3"><a href=/n3xtchen class="text-base font-medium text-gray-500 hover:text-gray-900">N3xtChen 的博客</a></nav><nav class="hidden md:flex items-center space-x-5 md:ml-12 h-12"><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=分类页>分类</p></a><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=Tags>标签</p></a><button id=search-button aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400 h-12" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button><div class="ltr:mr-14 rtl:ml-14 cursor-pointer text-sm text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"><button id=appearance-switcher aria-label="Dark mode switcher" type=button><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></nav><div class="flex md:hidden items-center space-x-5 md:ml-12"><span></span>
+<button id=search-button-mobile aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button>
+<button id=appearance-switcher-mobile aria-label="Dark mode switcher" type=button style=margin-right:5px><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></div><div class="-my-2 -mr-2 md:hidden"><label id=menu-button for=menu-controller class=block><input type=checkbox id=menu-controller class=hidden><div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentcolor" d="M0 96C0 78.33 14.33 64 32 64H416c17.7.0 32 14.33 32 32 0 17.7-14.3 32-32 32H32C14.33 128 0 113.7.0 96zM0 256c0-17.7 14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32H32c-17.67.0-32-14.3-32-32zM416 448H32c-17.67.0-32-14.3-32-32s14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32z"/></svg></span></div><div id=menu-wrapper style=padding-top:5px class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50"><ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl"><li><span class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></span></li><li class=mt-1><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a></li><li class=mt-1><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=分类页>分类</p></a></li><li class=mt-1><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=Tags>标签</p></a></li></ul></div></label></div></div><div class="relative flex flex-col grow"><main id=main-content class=grow><article><header id=single_header class="mt-5 max-w-prose"><h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">Pyramid - 一个文件实现 Todo 应用</h1><div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden"><div class="flex flex-row flex-wrap items-center"><time datetime="2015-01-11 00:00:00 +0000 UTC">2015-01-11</time><span class="px-2 text-primary-500">&#183;</span><span>1343 字</span><span class="px-2 text-primary-500">&#183;</span><span title=预计阅读>7 分钟</span></div><div class="flex flex-row flex-wrap items-center"><span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/categories/python/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">Python</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/python/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">python</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/pyramid/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">pyramid</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/microframework/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">microframework</span></span></span></div></div><div class=flex><img class="!mt-0 !mb-0 h-24 w-24 rounded-full ltr:mr-4 rtl:ml-4" width=96 height=96 alt=n3xtchen src=/n3xtchen/images/author.jpg><div class=place-self-center><div class="text-[0.6rem] uppercase leading-3 text-neutral-500 dark:text-neutral-400">作者</div><div class="font-semibold leading-6 text-neutral-800 dark:text-neutral-300">n3xtchen</div><div class="text-sm text-neutral-700 dark:text-neutral-400">Sharing Funny Tech With You</div><div class="text-2xl sm:text-lg"><div class="flex flex-wrap text-neutral-400 dark:text-neutral-500"><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://twitter.com/mN3XT target=_blank aria-label=Twitter rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645.0 138.72-105.583 298.558-298.558 298.558-59.452.0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055.0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421.0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391.0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04.0-57.828 46.782-104.934 104.934-104.934 30.213.0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></span></span></a><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://githhub.com/n3xtchen target=_blank aria-label=Github rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentcolor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6.0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6.0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3.0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1.0-6.2-.3-40.4-.3-61.4.0.0-70 15-84.7-29.8.0.0-11.4-29.1-27.8-36.6.0.0-22.9-15.7 1.6-15.4.0.0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5.0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9.0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4.0 33.7-.3 75.4-.3 83.6.0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6.0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9.0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span></span></a></div></div></div></div><div class=mb-5></div></header><section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row"><div class="order-first sm:max-w-prose lg:ml-auto px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8"><div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky lg:top-10"><details open class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 hidden lg:block"><summary class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="min-w-[220px] py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#准备工作>准备工作</a></li><li><a href=#第一步---组织你的应用结构>第一步 - 组织你的应用结构</a></li><li><a href=#第二步---配置你的应用>第二步 - 配置你的应用</a></li><li><a href=#第三步---数据库设计和应用初始化>第三步 - 数据库设计和应用初始化</a><ul><li><a href=#pyramid-事件机制>Pyramid 事件机制</a></li></ul></li><li><a href=#第四步---view-函数的基本-web-操作>第四步 - View 函数的基本 Web 操作</a><ul><li><a href=#任务列表>任务列表</a></li><li><a href=#新增任务>新增任务</a><ul><li><a href=#request-对象>request 对象</a></li><li><a href=#flash-messages信息>Flash Messages（信息）</a></li></ul></li><li><a href=#关闭任务>关闭任务</a></li><li><a href=#notfound-视图>NotFound 视图</a></li><li><a href=#添加路由>添加路由</a></li></ul></li><li><a href=#第五步---视图模版>第五步 - 视图模版</a><ul><li><a href=#layoutmako>layout.mako</a></li><li><a href=#listmako>list.mako</a></li><li><a href=#newmako>new.mako</a></li><li><a href=#notfoundmako>notfound.mako</a></li><li><a href=#配置模版路径>配置模版路径</a></li></ul></li><li><a href=#第六步--添加样式>第六步 － 添加样式</a></li><li><a href=#第七步---运行你的应用>第七步 - 运行你的应用</a></li><li><a href=#结语>结语</a></li></ul></nav></div></details><details class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 lg:hidden"><summary class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#准备工作>准备工作</a></li><li><a href=#第一步---组织你的应用结构>第一步 - 组织你的应用结构</a></li><li><a href=#第二步---配置你的应用>第二步 - 配置你的应用</a></li><li><a href=#第三步---数据库设计和应用初始化>第三步 - 数据库设计和应用初始化</a><ul><li><a href=#pyramid-事件机制>Pyramid 事件机制</a></li></ul></li><li><a href=#第四步---view-函数的基本-web-操作>第四步 - View 函数的基本 Web 操作</a><ul><li><a href=#任务列表>任务列表</a></li><li><a href=#新增任务>新增任务</a><ul><li><a href=#request-对象>request 对象</a></li><li><a href=#flash-messages信息>Flash Messages（信息）</a></li></ul></li><li><a href=#关闭任务>关闭任务</a></li><li><a href=#notfound-视图>NotFound 视图</a></li><li><a href=#添加路由>添加路由</a></li></ul></li><li><a href=#第五步---视图模版>第五步 - 视图模版</a><ul><li><a href=#layoutmako>layout.mako</a></li><li><a href=#listmako>list.mako</a></li><li><a href=#newmako>new.mako</a></li><li><a href=#notfoundmako>notfound.mako</a></li><li><a href=#配置模版路径>配置模版路径</a></li></ul></li><li><a href=#第六步--添加样式>第六步 － 添加样式</a></li><li><a href=#第七步---运行你的应用>第七步 - 运行你的应用</a></li><li><a href=#结语>结语</a></li></ul></nav></div></details></div></div><div class="min-w-0 min-h-0 max-w-fit"><div class="max-w-prose mb-20"><p>此教程为你展示 <strong>Pyramid</strong> 开发 Web 应用的基本步骤。文章很短，使用尽可能少的代码实现一个待办事务（todo）应用。为了简洁，这里采用 <strong>Pyramid</strong> 的单文件应用模式来开发。</p><p>todo 应用将具有如下几个特点：</p><ul><li>提供任务列表，插入和关闭任务界面</li><li>使用路由模式来映射 URLs 到对应的视图函数</li><li>使用 <strong>Mako</strong> 模版来渲染你的视图</li><li>使用 <strong>SQLite</strong> 作为你的后端数据库</li></ul><div id=准备工作 class=anchor></div><h2 class="relative group">准备工作
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%87%86%e5%a4%87%e5%b7%a5%e4%bd%9c aria-label=锚点>#</a></span></h2><p>你需要的如下包：</p><ul><li><strong>Pyramid</strong> 框架</li><li><strong>mako</strong> 模版扩展（add-on）</li></ul><p>如果你没有，你可以通过 <a href=http://pip.readthedocs.org/en/latest/installing.html target=_blank><strong>pip</strong></a> 命令进行安装：</p><pre><code>pip install pyramid pyramid_mako
+</code></pre><div id=第一步---组织你的应用结构 class=anchor></div><h2 class="relative group">第一步 - 组织你的应用结构
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e4%b8%80%e6%ad%a5---%e7%bb%84%e7%bb%87%e4%bd%a0%e7%9a%84%e5%ba%94%e7%94%a8%e7%bb%93%e6%9e%84 aria-label=锚点>#</a></span></h2><p>我们将为我们的应用创建如下目录结构：</p><pre><code>tasks/
+├── static
+└── templates
+</code></pre><div id=第二步---配置你的应用 class=anchor></div><h2 class="relative group">第二步 - 配置你的应用
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e4%ba%8c%e6%ad%a5---%e9%85%8d%e7%bd%ae%e4%bd%a0%e7%9a%84%e5%ba%94%e7%94%a8 aria-label=锚点>#</a></span></h2><p>首先，我们将在 <em>tasks</em> 目录下创建一个 <em>tasks.py</em> 文件，并添加如下代码：</p><pre><code>import os
+import logging
+
+from pyramid.config import Configurator
+from pyramid.session import UnencryptedCookieSessionFactoryConfig
+
+from wsgiref.simple_server import make_server
+</code></pre><p>然后，我们配置日志记录方式，并把当前目录设置项目根目录：</p><pre><code>logging.basicConfig()
+log = logging.getLogger(__file__)
+
+here = os.path.dirname(os.path.abspath(__file__))
+</code></pre><p>最后，开始编写我们的应用主体（<code>__main__</code>）； 传递配置选项（<code>settings</code>）和会话工厂（<code>session_factory</code>）给 <strong>Pyramid</strong>，并创建和运行 <strong>WSGI</strong> 应用：</p><pre><code>if __name__ == '__main__':
+    # 配置选项设置
+    settings = {}
+    settings['reload_all'] = True
+    settings['debug_all'] = True
+    # 会话配置
+    session_factory = UnencryptedCookieSessionFactoryConfig('itsaseekreet')
+    # 配置
+    config = Configurator(settings=settings, session_factory=session_factory)
+    # 启动应用
+    app    = config.make_wsgi_app()
+    server = make_server('0.0.0.0', 8080, app)
+    server.serve_forever()	
+</code></pre><blockquote><p>关于 <strong>Session</strong>，详见<a href=http://docs.pylonsproject.org/docs/pyramid/en/latest/narr/sessions.html#using-the-default-session-factory target=_blank>
+会话配置</a></p></blockquote><p>现在，我们就有一个可以运行我们应用的基础项目架构，但我们还需要加入数据库，路由，视图和模版的支持。</p><div id=第三步---数据库设计和应用初始化 class=anchor></div><h2 class="relative group">第三步 - 数据库设计和应用初始化
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e4%b8%89%e6%ad%a5---%e6%95%b0%e6%8d%ae%e5%ba%93%e8%ae%be%e8%ae%a1%e5%92%8c%e5%ba%94%e7%94%a8%e5%88%9d%e5%a7%8b%e5%8c%96 aria-label=锚点>#</a></span></h2><p>为了让事情简单点，我们将使用 <strong>SQLite</strong> 数据库（因为它在大部分操作系统中都默认安装）。</p><p>我们任务的数据结构很简单：</p><ol><li><code>id</code>：记录的唯一标识</li><li><code>name</code>：不超过 100 个字符的任务名</li><li><code>close</code>：任务是否关闭</li></ol><p>在 <em>tasks</em> 目录下添加一个文件，命名为 schema.sql，内容如下：</p><pre><code>/**
+  建表和初始化数据
+  */
+create table if not exists tasks (
+    id integer primary key autoincrement,
+    name char(100) not null,
+    closed bool not null
+);
+
+insert or ignore into tasks (id, name, closed) values (0, '开始 Pyramid', 0);
+insert or ignore into tasks (id, name, closed) values (1, '快速入门', 0);
+insert or ignore into tasks (id, name, closed) values (2, '来杯咖啡吧!', 0);
+</code></pre><p>在上一步创建的 <em>tasks.py</em> 文件顶部引入库，内容如下：</p><pre><code>import sqlite3
+from pyramid.events import subscriber, \
+	NewRequest, ApplicationCreated
+</code></pre><p>为了让创建数据库的过程稍微简单点，我们将 <strong>subscribe</strong> 一个 <strong>Pyramid</strong> 事件来完成执行数据库创建和初始化。把该函数挂载到 <code>ApplicationCreated</code> 事件，每一次我们启动应用的时候，我们将会触发该函数。因此，我们数据库将会在应用启动之后被创建，必要时会被更新。</p><pre><code>@subscriber(ApplicationCreated)
+def application_created_subscriber(event):
+    log.warn('Initializing database...')
+    with open(os.path.join(here, 'schema.sql')) as f:
+        stmt = f.read()
+        settings = event.app.registry.settings
+        db = sqlite3.connect(settings['db'])
+        db.executescript(stmt)
+</code></pre><p>我们还需要为我们应用设置数据库连接串。我们将提供一个连接对象作为应用请求的属性。关联 <code>NewRequest</code> 事件，当 <strong>Pyramid</strong> 请求开始的时候，我们将会初始化数据连接。你可以通过 <code>request.db</code> 来访问创建的数据库连接。在请求周期的最后使用 <code>request.add_finished_callback</code> 方法，来关闭数据库连接。</p><pre><code>@subscriber(NewRequest)
+def new_request_subscriber(event):
+    request = event.request
+    settings = request.registry.settings
+    request.db = sqlite3.connect(settings['db'])
+    request.add_finished_callback(close_db_connection)
+
+def close_db_connection(request):
+    request.db.close() 	
+</code></pre><p>为了使这些代码可用，我们将要在配置中指定数据的位置和使用 <code>config.scan()</code> 确保我们的 <code>@subscriber</code> 装饰器在应用运行时被扫描到。</p><pre><code>if __name__ == '__main__':
+    ...
+    settings['db'] = os.path.join(here, 'tasks.db')
+    ...
+    config.scan()
+    ...
+</code></pre><p>目前为止，我们已经为我们的应用添加了创建和访问数据机制。</p><blockquote><div id=pyramid-事件机制 class=anchor></div><h3 class="relative group">Pyramid 事件机制
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#pyramid-%e4%ba%8b%e4%bb%b6%e6%9c%ba%e5%88%b6 aria-label=锚点>#</a></span></h3><p>事件（event ）存在于 <strong>Pyramid</strong> 应用的整个生命周期。大部分 <strong>Pyramid</strong> 应用不需要应用，但是它在某些场景下将很有用（就像我们这个例子一样，在应用启动的时候，初始化数据库）。
+事件函数结构：</p><pre><code>  def mysubscriber(event):
+       print(event)
+</code></pre><p>然后添加到配置中：</p><pre><code>  config.add_subscriber(mysubscriber, NewRequest) 
+  # 将 `mysubscriber` 挂载到 `NewRequest` 事件中。
+</code></pre><p>而本文使用的是装饰器进行挂载，使用如下事件：</p><ul><li>ApplicationCreated：应用创建时触发</li><li>NewRequest：新请求进入时触发</li></ul><p>注意：使用装饰器，需要使用 <code>config.scan()</code> 来扫描挂载事件的函数。
+详见：http://docs.pylonsproject.org/docs/pyramid/en/latest/narr/events.html</p></blockquote><div id=第四步---view-函数的基本-web-操作 class=anchor></div><h2 class="relative group">第四步 - View 函数的基本 Web 操作
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e5%9b%9b%e6%ad%a5---view-%e5%87%bd%e6%95%b0%e7%9a%84%e5%9f%ba%e6%9c%ac-web-%e6%93%8d%e4%bd%9c aria-label=锚点>#</a></span></h2><p>开始这个步骤之前，我们需要了解关于 View 的尝试。为了实现一个 View，我们需要完成如下步骤：</p><ol><li>编写 View 函数</li><li>将 View 函数登记到应用配置中</li><li>使用路由（Route）将指定的 Url 模式映射到 View 函数中</li><li>根据配置生成 wsgi 应用</li></ol><p>看看，一个例子：</p><pre><code>from pyramid.response import Response
+from pyramid.view     import view_config
+from pyramid.config   import Configurator
+
+# 1. 编写 View 函数，route_name 用于路由匹配 URL 的（add_route） 
+@view_config(route_name='hello')
+def hello():
+	return Response('&lt;body&gt;Visit &lt;a href=&quot;/howdy&quot;&gt;hello&lt;/a&gt;&lt;/body&gt;')
+
+...	# 此处省略基础配置	
+config = Configurator(settings=settings)
+config.add_route('hello', '/')	# 3. 使用路由（Route）将指定的 Url 模式映射到 View 函数中
+config.scan()					# 2. 将 View 函数登记到应用配置中
+config.make_wsgi_app()			# 4. 根据配置生成 wsgi 应用
+</code></pre><blockquote><p>详见 <a href=http://docs.pylonsproject.org/docs/pyramid/en/latest/narr/viewconfig.html target=_blank>http://docs.pylonsproject.org/docs/pyramid/en/latest/narr/viewconfig.html</a></p></blockquote><p>现在，继续我们的应用。首先，我们先导入一些需要的库。</p><pre><code>...
+from pyramid.exceptions     import NotFound
+from pyramid.httpexceptions import HTTPFound
+from pyramid.view           import view_config
+...	
+</code></pre><p>我们现在开始实现任务列表和任务的添加与关闭。</p><div id=任务列表 class=anchor></div><h3 class="relative group">任务列表
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e4%bb%bb%e5%8a%a1%e5%88%97%e8%a1%a8 aria-label=锚点>#</a></span></h3><p>使用这个视图用来展示所有未完成的任务实体。<code>view_config</code> 的可选参数 <code>renderder</code> 告诉视图返回的数据字典使用指定的模版文件来渲染。视图函数的返回值必须是字典。任务列表的视图从数据库中查询处未完成的任务，使用字典返回数据，提供给 <em>list.mako</em> 模版文件：</p><pre><code>@view_config(route_name='list', renderer='list.mako')
+def list_view(request):
+    rs = request.db.execute(&quot;select id, name from tasks where closed = 0&quot;)
+    tasks = [dict(id=row[0], name=row[1]) for row in rs.fetchall()]
+    return {'tasks': tasks}
+</code></pre><div id=新增任务 class=anchor></div><h3 class="relative group">新增任务
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%96%b0%e5%a2%9e%e4%bb%bb%e5%8a%a1 aria-label=锚点>#</a></span></h3><p>这个视图让用户创建新的任务。如果在表单中提供了一个 <code>name</code>，一个任务就创建。然后生成一个信息在接下来的请求中显示，用户的浏览器将被从定向到 <code>list_view</code> 中。如果没东西提供，将会产生一条提醒消息，在 <code>new_view</code> 中显示。</p><pre><code>@view_config(route_name='new', renderer='new.mako')
+def new_view(request):
+    if request.method == 'POST':		＃ 是否是 POST 请求
+        if request.POST.get('name'):	＃ Post 请求过来的 name 字段是否存在
+            request.db.execute(
+                'insert into tasks (name, closed) values (?, ?)',
+                [request.POST['name'], 0])
+            request.db.commit()
+            request.session.flash('New task was successfully added!')
+            # 重定向到 list 页面
+            return HTTPFound(location=request.route_url('list'))
+        else:
+            request.session.flash('Please enter a name for the task!')
+    return {}
+</code></pre><div id=request-对象 class=anchor></div><h4 class="relative group">request 对象
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#request-%e5%af%b9%e8%b1%a1 aria-label=锚点>#</a></span></h4><p>这里 view 函数 <code>new_view</code> 接受一个参数 <code>request</code>。<code>request</code> 对象是 WSGI 环境变量字典对象的 <strong>Pyramid</strong> 封装。下面是 <code>request</code> 一些常见的属性：</p><ol><li><p><code>req.method</code></p><p>请求方法, e.g., &lsquo;GET&rsquo;, &lsquo;POST&rsquo;</p></li><li><p><code>req.GET</code></p><p>查询字符串的字典</p></li><li><p><code>req.POST</code></p><p>请求体（request body）的字典。只有在请求方法是 <code>POST</code> 获取表单提交的时候可用。</p></li><li><p><code>req.params</code></p><p>融合 <code>req.GET</code> 和 <code>req.POST</code> 字典。</p></li><li><p><code>req.body</code></p><p>请求体的内容。它包含所有请求内容，以字符形式存储。当一个 POST 请求不是表单提交或者一个 PUT 请求时，它就变的很有用。你还可以通过 <code>req.body_file</code> 获取，它以文件形式存储。</p></li><li><p><code>req.cookies</code></p><p>cookie 字典。</p></li><li><p><code>req.headers</code></p><p>所有头信息的字典，大小写敏感。</p></li><li><p><code>req.session</code>
+如果会话工厂被配置（回顾下第二部的会话配置，<code>session_factory</code>），这个属性就会返回当前用户的 session 对象；否则被调用的时候会抛出 <code>pyramid.exceptions.ConfigurationError</code> 异常。</p></li></ol><p>另外我们还使用一个 <code>request</code> 的方法：</p><p><code>route_url</code>：它根据 <strong>Pyramid</strong> 的路由生成与之对应的全路径 URL。先来看个例子：</p><pre><code>@view_config(route_name='hello')
+def hello():
+	return Response('&lt;body&gt;Visit &lt;a href=&quot;/howdy&quot;&gt;hello&lt;/a&gt;&lt;/body&gt;')
+
+@view_config(route_name='use_route_url')
+def use_route_url(request):
+	return HTTPFound(location=**request.route_url('hello')**)
+
+...	
+config.add_route('hello', '/he/ll/o')
+</code></pre><p>看看 <code>request.route_url('hello')</code>，这是实际上 <code>request.route_url</code> 根据 <code>config</code> 中路由中查找路由名为 <code>hello</code> 的 view 函数，然后找到它匹配的 url（<code>/he/ll/o</code>）并返回，这是它返回的是 <em><a href=http://your.domain.com/he/ll/o target=_blank>http://your.domain.com/he/ll/o</a></em>（<em><a href=http://your.domain.com target=_blank>
+http://your.domain.com</a></em> 你应用所属的域名）</p><blockquote><p>详见 <a href=http://docs.pylonsproject.org/projects/pyramid/en/1.0-branch/narr/webob.html target=_blank>http://docs.pylonsproject.org/projects/pyramid/en/1.0-branch/narr/webob.html</a></p></blockquote><div id=flash-messages信息 class=anchor></div><h4 class="relative group">Flash Messages（信息）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#flash-messages%e4%bf%a1%e6%81%af aria-label=锚点>#</a></span></h4><p>闪存信息是一个简单的存储在会话中的消息队列。</p><p>闪存信息有两个主要用途：</p><ol><li>内部跳转后只显示一次状态信息</li><li>使用通用代码来为单次显示记录日志，而不用定向到一个 HTML 模版。</li></ol><p>用法如下：</p><pre><code>&gt;&gt;&gt; request.session.flash('info message')
+&gt;&gt;&gt; request.session.pop_flash()		# 我们将在模版文件中使用
+['info message']
+&gt;&gt;&gt; request.session.pop_flash()
+[]	
+</code></pre><blockquote><p>详见 <a href=http://docs.pylonsproject.org/docs/pyramid/en/latest/narr/sessions.html#using-the-default-session-factory target=_blank>http://docs.pylonsproject.org/docs/pyramid/en/latest/narr/sessions.html#using-the-default-session-factory</a></p></blockquote><div id=关闭任务 class=anchor></div><h3 class="relative group">关闭任务
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%85%b3%e9%97%ad%e4%bb%bb%e5%8a%a1 aria-label=锚点>#</a></span></h3><pre><code>@view_config(route_name='close')
+def close_view(request):
+    task_id = int(request.matchdict['id'])
+    request.db.execute(&quot;update tasks set closed = ? where id = ?&quot;,
+                       (1, task_id))
+    request.db.commit()
+    request.session.flash('Task was successfully closed!')
+    return HTTPFound(location=request.route_url('list'))
+</code></pre><div id=notfound-视图 class=anchor></div><h3 class="relative group">NotFound 视图
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#notfound-%e8%a7%86%e5%9b%be aria-label=锚点>#</a></span></h3><p>使用自己的模版自定义默认的 NotFound 页面。当一个 URL 找不到映射的 View 函数的时候，将会被定向到 NotFound 页面。这里，我们通过自己编写的 View 函数来覆盖框架自带的 404 页面。</p><pre><code>@view_config(context='pyramid.exceptions.NotFound', renderer='notfound.mako')
+def notfound_view(request):
+    request.response.status = '404 Not Found'	
+</code></pre><div id=添加路由 class=anchor></div><h3 class="relative group">添加路由
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%b7%bb%e5%8a%a0%e8%b7%af%e7%94%b1 aria-label=锚点>#</a></span></h3><p>我们最后需要添加一些路由配置到应用高配置中，用来映射视图函数和 URL 之间的关系。</p><pre><code>    # routes setup
+    config.add_route('list', '/')
+    config.add_route('new', '/new')
+    config.add_route('close', '/close/{id}')
+</code></pre><div id=第五步---视图模版 class=anchor></div><h2 class="relative group">第五步 - 视图模版
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e4%ba%94%e6%ad%a5---%e8%a7%86%e5%9b%be%e6%a8%a1%e7%89%88 aria-label=锚点>#</a></span></h2><p>视图可以工作，但是他们需要渲染成浏览器可以理解的语言：<strong>HTML</strong>。我们已经看到在我们的视图配置中接受一个 <code>renderer</code> 参数。我们将使用 <strong>Pyramid</strong> 框架常见模版引擎之一：<strong>Mako Templates</strong>。</p><p>我们夜间个使用 <strong>Mako</strong> 模版的继承机制。模版继承使得多个模版共用一套模版，易于前端布局的维护和保持一致。</p><p>我发现不错的 <strong>Mako</strong> 入门译文，看完它，你几乎可以掌握 Mako，<a href=http://www.yeolar.com/note/2012/08/28/mako-syntax/ target=_blank>
+Python模板库Mako的语法</a>，这里不展开讲了。</p><div id=layoutmako class=anchor></div><h3 class="relative group">layout.mako
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#layoutmako aria-label=锚点>#</a></span></h3><p>这个模版包含与其他模版共享的基本布局结构。在 <code>body</code> 标签中，我们定义一个块来显示应用发送的提醒信息，另一个用来显示使用 <strong>Mako</strong> 命令 <code>${next.body}</code> 继承这个主布局的页面内容。</p><pre><code># -*- coding: utf-8 -*- 
+&lt;!DOCTYPE html&gt;  
+&lt;html&gt;
+&lt;head&gt;
+	
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;title&gt;Pyramid Task's List Tutorial&lt;/title&gt;
+  &lt;meta name=&quot;author&quot; content=&quot;Pylons Project&quot;&gt;
+  &lt;link rel=&quot;shortcut icon&quot; href=&quot;/static/favicon.ico&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;/static/style.css&quot;&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+  % if request.session.peek_flash():
+  &lt;div id=&quot;flash&quot;&gt;
+    &lt;% flash = request.session.pop_flash() %&gt;
+	% for message in flash:
+	${message}&lt;br&gt;
+	% endfor
+  &lt;/div&gt;
+  % endif
+
+  &lt;div id=&quot;page&quot;&gt;
+    
+    ${next.body()}
+
+  &lt;/div&gt;
+  
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><div id=listmako class=anchor></div><h3 class="relative group">list.mako
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#listmako aria-label=锚点>#</a></span></h3><pre><code># -*- coding: utf-8 -*- 
+&lt;%inherit file=&quot;layout.mako&quot;/&gt;
+
+&lt;h1&gt;Task's List&lt;/h1&gt;
+
+&lt;ul id=&quot;tasks&quot;&gt;
+% if tasks:
+  % for task in tasks:
+  &lt;li&gt;
+    &lt;span class=&quot;name&quot;&gt;${task['name']}&lt;/span&gt;
+    &lt;span class=&quot;actions&quot;&gt;
+      [ &lt;a href=&quot;${request.route_url('close', id=task['id'])}&quot;&gt;close&lt;/a&gt; ]
+    &lt;/span&gt;
+  &lt;/li&gt;
+  % endfor
+% else:
+  &lt;li&gt;There are no open tasks&lt;/li&gt;
+% endif
+  &lt;li class=&quot;last&quot;&gt;
+    &lt;a href=&quot;${request.route_url('new')}&quot;&gt;Add a new task&lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre><div id=newmako class=anchor></div><h3 class="relative group">new.mako
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#newmako aria-label=锚点>#</a></span></h3><pre><code># -*- coding: utf-8 -*- 
+&lt;%inherit file=&quot;layout.mako&quot;/&gt;
+
+&lt;h1&gt;Add a new task&lt;/h1&gt;
+
+&lt;form action=&quot;${request.route_url('new')}&quot; method=&quot;post&quot;&gt;
+  &lt;input type=&quot;text&quot; maxlength=&quot;100&quot; name=&quot;name&quot;&gt;
+  &lt;input type=&quot;submit&quot; name=&quot;add&quot; value=&quot;ADD&quot; class=&quot;button&quot;&gt;
+&lt;/form&gt;
+</code></pre><div id=notfoundmako class=anchor></div><h3 class="relative group">notfound.mako
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#notfoundmako aria-label=锚点>#</a></span></h3><pre><code># -*- coding: utf-8 -*- 
+&lt;%inherit file=&quot;layout.mako&quot;/&gt;
+
+&lt;div id=&quot;notfound&quot;&gt;
+  &lt;h1&gt;404 - PAGE NOT FOUND&lt;/h1&gt;
+  The page you're looking for isn't here.
+&lt;/div&gt;
+</code></pre><div id=配置模版路径 class=anchor></div><h3 class="relative group">配置模版路径
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e9%85%8d%e7%bd%ae%e6%a8%a1%e7%89%88%e8%b7%af%e5%be%84 aria-label=锚点>#</a></span></h3><p>为了视图可以通过模版名来找到相应的模版，我们现在需要指定模版的位置：</p><pre><code>...
+settings['mako.directories'] = os.path.join(here, 'templates')
+...
+# add mako templating
+config.include('pyramid_mako')
+...
+</code></pre><div id=第六步--添加样式 class=anchor></div><h2 class="relative group">第六步 － 添加样式
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e5%85%ad%e6%ad%a5--%e6%b7%bb%e5%8a%a0%e6%a0%b7%e5%bc%8f aria-label=锚点>#</a></span></h2><p>现在是时候为你的应用添加样式了。我们在 <em>static</em> 中新建一个名为 <em>style.css</em> 的文件，内容如下：</p><pre><code>body {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #3e4349;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Georgia;
+  color: #373839;
+}
+
+a {
+  color: #1b61d6;
+  text-decoration: none;
+}
+
+input {
+  font-size: 14px;
+  width: 400px;
+  border: 1px solid #bbbbbb;
+  padding: 5px;
+}
+
+.button {
+  font-size: 14px;
+  font-weight: bold;
+  width: auto;
+  background: #eeeeee;
+  padding: 5px 20px 5px 20px;
+  border: 1px solid #bbbbbb;
+  border-left: none;
+  border-right: none;
+}
+
+#flash, #notfound {
+  font-size: 16px;
+  width: 500px;
+  text-align: center;
+  background-color: #e1ecfe;
+  border-top: 2px solid #7a9eec;
+  border-bottom: 2px solid #7a9eec;
+  padding: 10px 20px 10px 20px;
+}
+
+#notfound {
+  background-color: #fbe3e4;
+  border-top: 2px solid #fbc2c4;
+  border-bottom: 2px solid #fbc2c4;
+  padding: 0 20px 30px 20px;
+}
+
+#tasks {
+  width: 500px;
+}
+
+#tasks li {
+  padding: 5px 0 5px 0;
+  border-bottom: 1px solid #bbbbbb;
+}
+
+#tasks li.last {
+  border-bottom: none;
+}
+
+#tasks .name {
+  width: 400px;
+  text-align: left;
+  display: inline-block;
+}
+
+#tasks .actions {
+  width: 80px;
+  text-align: right;
+  display: inline-block;
+}
+</code></pre><p>为了让你的静态文件可以被使用，我们修添加一个 “static view” 到你的应用配置中：</p><pre><code>...
+config.add_static_view('static', os.path.join(here, 'static'))
+...
+</code></pre><div id=第七步---运行你的应用 class=anchor></div><h2 class="relative group">第七步 - 运行你的应用
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ac%ac%e4%b8%83%e6%ad%a5---%e8%bf%90%e8%a1%8c%e4%bd%a0%e7%9a%84%e5%ba%94%e7%94%a8 aria-label=锚点>#</a></span></h2><p>我们已经完成全部的步骤。运行它之前，我们先预览一遍我们的主程序 <em>tasks.py</em>：</p><pre><code>import os
+import logging
+import sqlite3
+
+from pyramid.config import Configurator
+from pyramid.events import NewRequest
+from pyramid.events import subscriber
+from pyramid.events import ApplicationCreated
+from pyramid.httpexceptions import HTTPFound
+from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.view import view_config
+
+from wsgiref.simple_server import make_server
+
+
+logging.basicConfig()
+log = logging.getLogger(__file__)
+
+here = os.path.dirname(os.path.abspath(__file__))
+
+
+# views
+@view_config(route_name='list', renderer='list.mako')
+def list_view(request):
+    rs = request.db.execute(&quot;select id, name from tasks where closed = 0&quot;)
+    tasks = [dict(id=row[0], name=row[1]) for row in rs.fetchall()]
+    return {'tasks': tasks}
+
+
+@view_config(route_name='new', renderer='new.mako')
+def new_view(request):
+    if request.method == 'POST':
+        if request.POST.get('name'):
+            request.db.execute(
+                'insert into tasks (name, closed) values (?, ?)',
+                [request.POST['name'], 0])
+            request.db.commit()
+            request.session.flash('New task was successfully added!')
+            return HTTPFound(location=request.route_url('list'))
+        else:
+            request.session.flash('Please enter a name for the task!')
+    return {}
+
+
+@view_config(route_name='close')
+def close_view(request):
+    task_id = int(request.matchdict['id'])
+    request.db.execute(&quot;update tasks set closed = ? where id = ?&quot;,
+                       (1, task_id))
+    request.db.commit()
+    request.session.flash('Task was successfully closed!')
+    return HTTPFound(location=request.route_url('list'))
+
+
+@view_config(context='pyramid.exceptions.NotFound', renderer='notfound.mako')
+def notfound_view(request):
+    request.response.status = '404 Not Found'
+    return {}
+
+
+# subscribers
+@subscriber(NewRequest)
+def new_request_subscriber(event):
+    request = event.request
+    settings = request.registry.settings
+    request.db = sqlite3.connect(settings['db'])
+    request.add_finished_callback(close_db_connection)
+
+def close_db_connection(request):
+    request.db.close()
+
+
+@subscriber(ApplicationCreated)
+def application_created_subscriber(event):
+    log.warn('Initializing database...')
+    with open(os.path.join(here, 'schema.sql')) as f:
+        stmt = f.read()
+        settings = event.app.registry.settings
+        db = sqlite3.connect(settings['db'])
+        db.executescript(stmt)
+        db.commit()
+
+
+if __name__ == '__main__':
+    # configuration settings
+    settings = {}
+    settings['reload_all'] = True
+    settings['debug_all'] = True
+    settings['mako.directories'] = os.path.join(here, 'templates')
+    settings['db'] = os.path.join(here, 'tasks.db')
+    # session factory
+    session_factory = UnencryptedCookieSessionFactoryConfig('itsaseekreet')
+    # configuration setup
+    config = Configurator(settings=settings, session_factory=session_factory)
+    # add mako templating
+    config.include('pyramid_mako')
+    # routes setup
+    config.add_route('list', '/')
+    config.add_route('new', '/new')
+    config.add_route('close', '/close/{id}')
+    # static view setup
+    config.add_static_view('static', os.path.join(here, 'static'))
+    # scan for @view_config and @subscriber decorators
+    config.scan()
+    # serve app
+    app = config.make_wsgi_app()
+    server = make_server('0.0.0.0', 8080, app)
+    server.serve_forever()
+</code></pre><p>我们执行它把：</p><pre><code>$ python tasks.py
+WARNING:tasks.py:Initializing database...
+</code></pre><p>它默认监听 8080 端口</p><div id=结语 class=anchor></div><h2 class="relative group">结语
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%bb%93%e8%af%ad aria-label=锚点>#</a></span></h2><p>本来只想翻译一下文章，突然发现过于介绍的简单，所以又加入了不少的东西。关于 <strong>Pyramid</strong> 的文章真的太少，中文的就更少了！本文跟着作者的思路，难以下笔，只能忍痛把它结掉，如果有任何问题或者建议，请赐教。下一篇将以完全我的视角来为大家介绍 <strong>Pyramid</strong> 的迷人特性。</p><blockquote><p>参考 <a href=http://docs.pylonsproject.org/projects/pyramid-tutorials/en/latest/single_file_tasks/single_file_tasks.html target=_blank>http://docs.pylonsproject.org/projects/pyramid-tutorials/en/latest/single_file_tasks/single_file_tasks.html</a></p></blockquote></div></div><script>var oid="views_posts/2015-01-11-pyramid---todo-simple.md",oid_likes="likes_posts/2015-01-11-pyramid---todo-simple.md"</script><script type=text/javascript src=/n3xtchen/js/page.min.0e49973b4ad0a382c7c6012d8bff8226316642daabc4f8a20477bd08674f3da6e2fa993bc20ad4f51e7c5bb68e6f913a207a7c4fe37ea0e7b806894afce0a64e.js integrity="sha512-DkmXO0rQo4LHxgEti/+CJjFmQtqrxPiiBHe9CGdPPabi+pk7wgrU9R58W7aOb5E6IHp8T+N+oOe4BolK/OCmTg=="></script></section><footer class="pt-8 max-w-prose print:hidden"><div class=pt-8><hr class="border-dotted border-neutral-300 dark:border-neutral-600"><div class="flex justify-between pt-3"><span><a class="flex group mr-3" href=/n3xtchen/2015/01/06/ruby---why-rbenv/><span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&larr;</span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">Ruby - Why rbenv?</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2015-01-06 00:00:00 +0000 UTC">2015-01-06</time></span></span></a></span>
+<span><a class="flex text-right group ml-3" href=/n3xtchen/2015/02/15/wordpress-n-composer/><span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">使用 composer 管理 wordpress 应用包依赖</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2015-02-15 00:00:00 +0000 UTC">2015-02-15</time></span></span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&larr;</span></a></span></div></div></footer></article><div id=top-scroller class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0 rtl:left-0"><a href=#the-top class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 backdrop-blur hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400" aria-label title>&uarr;</a></div></main><footer id=site-footer class="py-10 print:hidden"><div class="flex items-center justify-between"><p class="text-sm text-neutral-500 dark:text-neutral-400">&copy;
+2023
+n3xtchen</p><p class="text-xs text-neutral-500 dark:text-neutral-400">由 <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a> & <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://blowfish.page/ target=_blank rel="noopener noreferrer">Blowfish</a> 强力驱动</p></div><script>mediumZoom(document.querySelectorAll("img:not(.nozoom)"),{margin:24,background:"rgba(0,0,0,0.5)",scrollOffset:0})</script><script type=text/javascript src=/n3xtchen/js/process.min.35c1113bcc16c5a59bf031082f9e63822aa95280423881a7847a7ff33a16e6299ce6a840d9ef4e10d947e030a18f3f20359afb2ec0f35967484b9a9360ac3145.js integrity="sha512-NcERO8wWxaWb8DEIL55jgiqpUoBCOIGnhHp/8zoW5imc5qhA2e9OENlH4DChjz8gNZr7LsDzWWdIS5qTYKwxRQ=="></script></footer><div id=search-wrapper class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh]" data-url=https://n3xtchen.github.io/n3xtchen style=z-index:500><div id=search-modal class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800"><header class="relative z-10 flex items-center justify-between flex-none px-2"><form class="flex items-center flex-auto min-w-0"><div class="flex items-center justify-center w-8 h-8 text-neutral-400"><span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></div><input type=search id=search-query class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent" placeholder tabindex=0></form><button id=close-search-button class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></button></header><section class="flex-auto px-2 overflow-auto"><ul id=search-results></ul></section></div></div></div></body></html>

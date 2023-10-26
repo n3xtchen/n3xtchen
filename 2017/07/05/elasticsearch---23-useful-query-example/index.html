@@ -1,0 +1,1104 @@
+<!doctype html><html lang=zh-cn dir=ltr class=scroll-smooth data-default-appearance=light data-auto-appearance=true><head><meta charset=utf-8><meta http-equiv=content-language content="zh-CN"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><title>19 个很有用的 ElasticSearch 查询语句 &#183; N3xtChen 的博客</title><meta name=title content="19 个很有用的 ElasticSearch 查询语句 &#183; N3xtChen 的博客"><meta name=keywords content="elasticsearch,"><link rel=canonical href=https://n3xtchen.github.io/n3xtchen/2017/07/05/elasticsearch---23-useful-query-example/><link type=text/css rel=stylesheet href=/n3xtchen/css/main.bundle.min.5775579083e26679417a451dd3d7c3e540c7be85426fba5a47019603552ac89b95e12dddb64138e0aa488d68bc318ec4b0820255a5859b4da3f1b45f140abf11.css integrity="sha512-V3VXkIPiZnlBekUd09fD5UDHvoVCb7paRwGWA1UqyJuV4S3dtkE44KpIjWi8MY7EsIICVaWFm02j8bRfFAq/EQ=="><script type=text/javascript src=/n3xtchen/js/appearance.min.516a16745bea5a9bd011138d254cc0fd3973cd55ce6e15f3dec763e7c7c2c7448f8fe7b54cca811cb821b0c7e12cd161caace1dd794ac3d34d40937cbcc9ee12.js integrity="sha512-UWoWdFvqWpvQERONJUzA/TlzzVXObhXz3sdj58fCx0SPj+e1TMqBHLghsMfhLNFhyqzh3XlKw9NNQJN8vMnuEg=="></script>
+<script defer type=text/javascript id=script-bundle src=/n3xtchen/js/main.bundle.min.41e474f5d66052b313c33b8f56008afac498015b7472d0f2ab78e22c187405fdff125b6735973309e4743b6924ca8c575db297f464c42da8e30ef9daed3b050c.js integrity="sha512-QeR09dZgUrMTwzuPVgCK+sSYAVt0ctDyq3jiLBh0Bf3/EltnNZczCeR0O2kkyoxXXbKX9GTELajjDvna7TsFDA==" data-copy data-copied></script>
+<script src=/n3xtchen/js/zoom.min.js></script>
+<link rel=icon href=/n3xtchen/favicon.png pe=image/png><meta property="og:title" content="19 个很有用的 ElasticSearch 查询语句"><meta property="og:description" content="为了演示不同类型的 ElasticSearch 的查询，我们将使用书文档信息的集合（有以下字段：title（标题）, authors（作者）, summary（摘要）, publish_date（发布日期）和 num_reviews（浏览数））。"><meta property="og:type" content="article"><meta property="og:url" content="https://n3xtchen.github.io/n3xtchen/2017/07/05/elasticsearch---23-useful-query-example/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-07-05T00:00:00+00:00"><meta property="article:modified_time" content="2017-07-05T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="19 个很有用的 ElasticSearch 查询语句"><meta name=twitter:description content="为了演示不同类型的 ElasticSearch 的查询，我们将使用书文档信息的集合（有以下字段：title（标题）, authors（作者）, summary（摘要）, publish_date（发布日期）和 num_reviews（浏览数））。"><script type=application/ld+json>[{"@context":"https://schema.org","@type":"Article","articleSection":"时间线","name":"19 个很有用的 ElasticSearch 查询语句","headline":"19 个很有用的 ElasticSearch 查询语句","abstract":"为了演示不同类型的 ElasticSearch 的查询，我们将使用书文档信息的集合（有以下字段：title（标题）, authors（作者）, summary（摘要）, publish_date（发布日期）和 num_reviews（浏览数））。","inLanguage":"zh-CN","url":"https:\/\/n3xtchen.github.io\/n3xtchen\/2017\/07\/05\/elasticsearch---23-useful-query-example\/","author":{"@type":"Person","name":"n3xtchen"},"copyrightYear":"2017","dateCreated":"2017-07-05T00:00:00\u002b00:00","datePublished":"2017-07-05T00:00:00\u002b00:00","dateModified":"2017-07-05T00:00:00\u002b00:00","keywords":["elasticsearch"],"mainEntityOfPage":"true","wordCount":"2996"}]</script><meta name=author content="n3xtchen"><link href=https://twitter.com/mN3XT rel=me><link href=https://githhub.com/n3xtchen rel=me><script src=/n3xtchen/lib/jquery/jquery.slim.min.js integrity></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EMLJCHXBFD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EMLJCHXBFD")</script><meta name=theme-color><style>code.has-jax{-webkit-font-smoothing:antialiased;background:inherit!important;border:none!important;font-size:100%}</style><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:["script","noscript","style","textarea","pre"]}},window.addEventListener("load",e=>{document.querySelectorAll("mjx-container").forEach(function(e){e.parentElement.classList+="has-jax"})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></head><body class="flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32"><div id=the-top class="absolute flex self-center"><a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600" href=#main-content><span class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span></a></div><div style=padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start space-x-3"><div class="flex flex-1 items-center justify-between"><nav class="flex space-x-3"><a href=/n3xtchen class="text-base font-medium text-gray-500 hover:text-gray-900">N3xtChen 的博客</a></nav><nav class="hidden md:flex items-center space-x-5 md:ml-12 h-12"><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=分类页>分类</p></a><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=Tags>标签</p></a><button id=search-button aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400 h-12" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button><div class="ltr:mr-14 rtl:ml-14 cursor-pointer text-sm text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"><button id=appearance-switcher aria-label="Dark mode switcher" type=button><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></nav><div class="flex md:hidden items-center space-x-5 md:ml-12"><span></span>
+<button id=search-button-mobile aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button>
+<button id=appearance-switcher-mobile aria-label="Dark mode switcher" type=button style=margin-right:5px><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></div><div class="-my-2 -mr-2 md:hidden"><label id=menu-button for=menu-controller class=block><input type=checkbox id=menu-controller class=hidden><div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentcolor" d="M0 96C0 78.33 14.33 64 32 64H416c17.7.0 32 14.33 32 32 0 17.7-14.3 32-32 32H32C14.33 128 0 113.7.0 96zM0 256c0-17.7 14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32H32c-17.67.0-32-14.3-32-32zM416 448H32c-17.67.0-32-14.3-32-32s14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32z"/></svg></span></div><div id=menu-wrapper style=padding-top:5px class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50"><ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl"><li><span class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></span></li><li class=mt-1><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a></li><li class=mt-1><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=分类页>分类</p></a></li><li class=mt-1><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=Tags>标签</p></a></li></ul></div></label></div></div><div class="relative flex flex-col grow"><main id=main-content class=grow><article><header id=single_header class="mt-5 max-w-prose"><h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">19 个很有用的 ElasticSearch 查询语句</h1><div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden"><div class="flex flex-row flex-wrap items-center"><time datetime="2017-07-05 00:00:00 +0000 UTC">2017-07-05</time><span class="px-2 text-primary-500">&#183;</span><span>2996 字</span><span class="px-2 text-primary-500">&#183;</span><span title=预计阅读>15 分钟</span></div><div class="flex flex-row flex-wrap items-center"><span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/categories/elasticsearch/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">elasticsearch</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/elasticsearch/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">elasticsearch</span></span></span></div></div><div class=flex><img class="!mt-0 !mb-0 h-24 w-24 rounded-full ltr:mr-4 rtl:ml-4" width=96 height=96 alt=n3xtchen src=/n3xtchen/images/author.jpg><div class=place-self-center><div class="text-[0.6rem] uppercase leading-3 text-neutral-500 dark:text-neutral-400">作者</div><div class="font-semibold leading-6 text-neutral-800 dark:text-neutral-300">n3xtchen</div><div class="text-sm text-neutral-700 dark:text-neutral-400">Sharing Funny Tech With You</div><div class="text-2xl sm:text-lg"><div class="flex flex-wrap text-neutral-400 dark:text-neutral-500"><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://twitter.com/mN3XT target=_blank aria-label=Twitter rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645.0 138.72-105.583 298.558-298.558 298.558-59.452.0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055.0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421.0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391.0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04.0-57.828 46.782-104.934 104.934-104.934 30.213.0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></span></span></a><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://githhub.com/n3xtchen target=_blank aria-label=Github rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentcolor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6.0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6.0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3.0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1.0-6.2-.3-40.4-.3-61.4.0.0-70 15-84.7-29.8.0.0-11.4-29.1-27.8-36.6.0.0-22.9-15.7 1.6-15.4.0.0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5.0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9.0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4.0 33.7-.3 75.4-.3 83.6.0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6.0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9.0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span></span></a></div></div></div></div><div class=mb-5></div></header><section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row"><div class="order-first sm:max-w-prose lg:ml-auto px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8"><div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky lg:top-10"><details open class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 hidden lg:block"><summary class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="min-w-[220px] py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#栗子>栗子：</a><ul><li><a href=#1-基本的匹配query查询>1. 基本的匹配（Query）查询</a></li><li><a href=#2-多字段multi-filed查询>2. 多字段（Multi-filed）查询</a></li><li><a href=#3-boosting>3. Boosting</a></li><li><a href=#4-bool-查询>4. Bool 查询</a></li><li><a href=#5-模糊fuzzy查询>5. 模糊（Fuzzy）查询</a></li><li><a href=#6-通配符wildcard查询>6. 通配符（Wildcard）查询</a></li><li><a href=#7-正则regexp查询>7. 正则（Regexp）查询</a></li><li><a href=#8-短语匹配match-phrase查询>8. 短语匹配(Match Phrase)查询</a></li><li><a href=#9-短语前缀match-phrase-prefix查询>9. 短语前缀（Match Phrase Prefix）查询</a></li><li><a href=#10-查询字符串query-string>10. 查询字符串（Query String）</a></li><li><a href=#11-简单查询字符串simple-query-string>11. 简单查询字符串（Simple Query String）</a></li><li><a href=#12-词条term多词条terms查询>12. 词条（Term）/多词条（Terms）查询</a></li><li><a href=#13-词条term查询---排序sorted>13. 词条（Term）查询 - 排序（Sorted）</a></li><li><a href=#14-范围查询>14. 范围查询</a></li><li><a href=#15-过滤filtered查询>15. 过滤(Filtered)查询</a></li><li><a href=#16-多重过滤multiple-filters>16. 多重过滤（Multiple Filters）</a></li><li><a href=#17-作用分值-域值field-value因子>17. 作用分值: 域值（Field Value）因子</a></li><li><a href=#18-作用分值-衰变decay函数>18. 作用分值: 衰变（Decay）函数</a></li><li><a href=#19-函数分值-脚本评分>19. 函数分值: 脚本评分</a></li></ul></li></ul></nav></div></details><details class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 lg:hidden"><summary class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#栗子>栗子：</a><ul><li><a href=#1-基本的匹配query查询>1. 基本的匹配（Query）查询</a></li><li><a href=#2-多字段multi-filed查询>2. 多字段（Multi-filed）查询</a></li><li><a href=#3-boosting>3. Boosting</a></li><li><a href=#4-bool-查询>4. Bool 查询</a></li><li><a href=#5-模糊fuzzy查询>5. 模糊（Fuzzy）查询</a></li><li><a href=#6-通配符wildcard查询>6. 通配符（Wildcard）查询</a></li><li><a href=#7-正则regexp查询>7. 正则（Regexp）查询</a></li><li><a href=#8-短语匹配match-phrase查询>8. 短语匹配(Match Phrase)查询</a></li><li><a href=#9-短语前缀match-phrase-prefix查询>9. 短语前缀（Match Phrase Prefix）查询</a></li><li><a href=#10-查询字符串query-string>10. 查询字符串（Query String）</a></li><li><a href=#11-简单查询字符串simple-query-string>11. 简单查询字符串（Simple Query String）</a></li><li><a href=#12-词条term多词条terms查询>12. 词条（Term）/多词条（Terms）查询</a></li><li><a href=#13-词条term查询---排序sorted>13. 词条（Term）查询 - 排序（Sorted）</a></li><li><a href=#14-范围查询>14. 范围查询</a></li><li><a href=#15-过滤filtered查询>15. 过滤(Filtered)查询</a></li><li><a href=#16-多重过滤multiple-filters>16. 多重过滤（Multiple Filters）</a></li><li><a href=#17-作用分值-域值field-value因子>17. 作用分值: 域值（Field Value）因子</a></li><li><a href=#18-作用分值-衰变decay函数>18. 作用分值: 衰变（Decay）函数</a></li><li><a href=#19-函数分值-脚本评分>19. 函数分值: 脚本评分</a></li></ul></li></ul></nav></div></details></div></div><div class="min-w-0 min-h-0 max-w-fit"><div class="max-w-prose mb-20"><p>为了演示不同类型的 <strong>ElasticSearch</strong> 的查询，我们将使用书文档信息的集合（有以下字段：<strong>title</strong>（标题）, <strong>authors</strong>（作者）, <strong>summary</strong>（摘要）, <strong>publish_date</strong>（发布日期）和 <strong>num_reviews</strong>（浏览数））。</p><p>在这之前，首先我们应该先创建一个新的索引（index），并批量导入一些文档：</p><p>创建索引：</p><pre><code>PUT /bookdb_index
+    { &quot;settings&quot;: { &quot;number_of_shards&quot;: 1 }} 
+</code></pre><p>批量上传文档：</p><pre><code>POST /bookdb_index/book/_bulk
+    { &quot;index&quot;: { &quot;_id&quot;: 1 }}
+    { &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;, &quot;authors&quot;: [&quot;clinton gormley&quot;, &quot;zachary tong&quot;], &quot;summary&quot; : &quot;A distibuted real-time search and analytics engine&quot;, &quot;publish_date&quot; : &quot;2015-02-07&quot;, &quot;num_reviews&quot;: 20, &quot;publisher&quot;: &quot;oreilly&quot; }
+    { &quot;index&quot;: { &quot;_id&quot;: 2 }}
+    { &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;, &quot;authors&quot;: [&quot;grant ingersoll&quot;, &quot;thomas morton&quot;, &quot;drew farris&quot;], &quot;summary&quot; : &quot;organize text using approaches such as full-text search, proper name recognition, clustering, tagging, information extraction, and summarization&quot;, &quot;publish_date&quot; : &quot;2013-01-24&quot;, &quot;num_reviews&quot;: 12, &quot;publisher&quot;: &quot;manning&quot; }
+    { &quot;index&quot;: { &quot;_id&quot;: 3 }}
+    { &quot;title&quot;: &quot;Elasticsearch in Action&quot;, &quot;authors&quot;: [&quot;radu gheorge&quot;, &quot;matthew lee hinman&quot;, &quot;roy russo&quot;], &quot;summary&quot; : &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;, &quot;publish_date&quot; : &quot;2015-12-03&quot;, &quot;num_reviews&quot;: 18, &quot;publisher&quot;: &quot;manning&quot; }
+    { &quot;index&quot;: { &quot;_id&quot;: 4 }}
+    { &quot;title&quot;: &quot;Solr in Action&quot;, &quot;authors&quot;: [&quot;trey grainger&quot;, &quot;timothy potter&quot;], &quot;summary&quot; : &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;, &quot;publish_date&quot; : &quot;2014-04-05&quot;, &quot;num_reviews&quot;: 23, &quot;publisher&quot;: &quot;manning&quot; }
+</code></pre><div id=栗子 class=anchor></div><h2 class="relative group">栗子：
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%a0%97%e5%ad%90 aria-label=锚点>#</a></span></h2><div id=1-基本的匹配query查询 class=anchor></div><h3 class="relative group">1. 基本的匹配（Query）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#1-%e5%9f%ba%e6%9c%ac%e7%9a%84%e5%8c%b9%e9%85%8dquery%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>有两种方式来执行一个全文匹配查询：</p><ul><li>使用 <strong>Search Lite API</strong>，它从 <code>url</code> 中读取所有的查询参数</li><li>使用完整 <strong>JSON</strong> 作为请求体，这样你可以使用完整的 <strong>Elasticsearch DSL</strong></li></ul><p>下面是一个基本的匹配查询，查询任一字段包含 Guide 的记录</p><pre><code>GET /bookdb_index/book/_search?q=guide
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.28168046,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;authors&quot;: [&quot;clinton gormley&quot;, &quot;zachary tong&quot;],
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.24144039,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;authors&quot;: [&quot;trey grainger&quot;, &quot;timothy potter&quot;],
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;,
+          &quot;num_reviews&quot;: 23,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      }
+    ]
+</code></pre><p>下面是完整 Body 版本的查询，生成相同的内容：</p><pre><code>{
+    &quot;query&quot;: {
+        &quot;multi_match&quot; : {
+            &quot;query&quot; : &quot;guide&quot;,
+            &quot;fields&quot; : [&quot;_all&quot;]
+        }
+    }
+}
+</code></pre><p><code>multi_match</code> 是 <code>match</code> 的作为在多个字段运行相同操作的一个速记法。<code>fields</code> 属性用来指定查询针对的字段，在这个例子中，我们想要对文档的所有字段进行匹配。两个 <strong>API</strong> 都允许你指定要查询的字段。例如，查询 <code>title</code> 字段中包含 <strong>in Action</strong> 的书：</p><pre><code>GET /bookdb_index/book/_search?q=title:in action
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.6259885,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;authors&quot;: [
+            &quot;trey grainger&quot;,
+            &quot;timothy potter&quot;
+          ],
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;,
+          &quot;num_reviews&quot;: 23,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.5975345,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;authors&quot;: [
+            &quot;radu gheorge&quot;,
+            &quot;matthew lee hinman&quot;,
+            &quot;roy russo&quot;
+          ],
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;,
+          &quot;num_reviews&quot;: 18,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      }
+    ]
+</code></pre><p>然而， 完整的 <strong>DSL</strong> 给予你灵活创建更复杂查询和指定返回结果的能力（后面，我们会一一阐述）。在下面例子中，我们指定 <code>size</code> 限定返回的结果条数，from 指定起始位子，<code>_source</code> 指定要返回的字段，以及语法高亮</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;match&quot; : {
+            &quot;title&quot; : &quot;in action&quot;
+        }
+    },
+    &quot;size&quot;: 2,
+    &quot;from&quot;: 0,
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot; ],
+    &quot;highlight&quot;: {
+        &quot;fields&quot; : {
+            &quot;title&quot; : {}
+        }
+    }
+}
+
+[Results]
+&quot;hits&quot;: {
+    &quot;total&quot;: 2,
+    &quot;max_score&quot;: 0.9105287,
+    &quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.9105287,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        },
+        &quot;highlight&quot;: {
+          &quot;title&quot;: [
+            &quot;Elasticsearch &lt;em&gt;in&lt;/em&gt; &lt;em&gt;Action&lt;/em&gt;&quot;
+          ]
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.9105287,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        },
+        &quot;highlight&quot;: {
+          &quot;title&quot;: [
+            &quot;Solr &lt;em&gt;in&lt;/em&gt; &lt;em&gt;Action&lt;/em&gt;&quot;
+          ]
+        }
+      }
+    ]
+  }
+</code></pre><p>注意：对于多个词查询，<code>match</code> 允许指定是否使用 <code>and</code> 操作符来取代默认的 <code>or</code> 操作符。你还可以指定 <code>mininum_should_match</code> 选项来调整返回结果的相关程度。具体看后面的例子。</p><div id=2-多字段multi-filed查询 class=anchor></div><h3 class="relative group">2. 多字段（Multi-filed）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#2-%e5%a4%9a%e5%ad%97%e6%ae%b5multi-filed%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>正如我们已经看到来的，为了根据多个字段检索（e.g. 在 <code>title</code> 和 <code>summary</code> 字段都是相同的查询字符串的结果），你可以使用 <code>multi_match</code> 语句</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;multi_match&quot; : {
+            &quot;query&quot; : &quot;elasticsearch guide&quot;,
+            &quot;fields&quot;: [&quot;title&quot;, &quot;summary&quot;]
+        }
+    }
+}
+
+[Results]
+&quot;hits&quot;: {
+    &quot;total&quot;: 3,
+    &quot;max_score&quot;: 0.9448582,
+    &quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.9448582,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;authors&quot;: [
+            &quot;clinton gormley&quot;,
+            &quot;zachary tong&quot;
+          ],
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.17312013,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;authors&quot;: [
+            &quot;radu gheorge&quot;,
+            &quot;matthew lee hinman&quot;,
+            &quot;roy russo&quot;
+          ],
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;,
+          &quot;num_reviews&quot;: 18,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.14965448,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;authors&quot;: [
+            &quot;trey grainger&quot;,
+            &quot;timothy potter&quot;
+          ],
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;,
+          &quot;num_reviews&quot;: 23,
+          &quot;publisher&quot;: &quot;manning&quot;
+        }
+      }
+    ]
+  }
+</code></pre><p><strong>注</strong>：第三条被匹配，因为 <code>guide</code> 在 <code>summary</code> 字段中被找到。</p><div id=3-boosting class=anchor></div><h3 class="relative group">3. Boosting
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#3-boosting aria-label=锚点>#</a></span></h3><p>由于我们是多个字段查询，我们可能需要提高某一个字段的分值。在下面的例子中，我们把 <code>summary</code> 字段的分数提高三倍，为了提升 <code>summary</code> 字段的重要度；因此，我们把文档 4 的相关度提高了。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;multi_match&quot; : {
+            &quot;query&quot; : &quot;elasticsearch guide&quot;,
+            &quot;fields&quot;: [&quot;title&quot;, &quot;summary^3&quot;]
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.31495273,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.14965448,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.13094766,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注</strong>：提升不是简简单单通过提升因子把计算分数加成。实际的 <code>boost</code> 值通过归一化和一些内部优化给出的。相关信息请见 <a href=https://www.elastic.co/guide/en/elasticsearch/guide/current/query-time-boosting.html target=_blank>Elasticsearch guide</a></p><div id=4-bool-查询 class=anchor></div><h3 class="relative group">4. Bool 查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#4-bool-%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>为了提供更相关或者特定的结果，<code>AND</code>/<code>OR</code>/<code>NOT</code> 操作符可以用来调整我们的查询。它是以 <strong>布尔查询</strong> 的方式来实现的。<strong>布尔查询</strong> 接受如下参数：</p><ul><li><code>must</code> 等同于 <code>AND</code></li><li><code>must_not</code> 等同于 <code>NOT</code></li><li><code>should</code> 等同于 <code>OR</code></li></ul><p>打比方，如果我想要查询这样类型的书：书名包含 <strong>ElasticSearch</strong> 或者（<code>OR</code>） <strong>Solr</strong>，并且（<code>AND</code>）它的作者是 <strong>Clinton Gormley</strong> 不是（<code>NOT</code>）<strong>Radu Gheorge</strong></p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;bool&quot;: {
+            &quot;must&quot;: {
+                &quot;bool&quot; : { &quot;should&quot;: [
+                      { &quot;match&quot;: { &quot;title&quot;: &quot;Elasticsearch&quot; }},
+                      { &quot;match&quot;: { &quot;title&quot;: &quot;Solr&quot; }} ] }
+            },
+            &quot;must&quot;: { &quot;match&quot;: { &quot;authors&quot;: &quot;clinton gormely&quot; }},
+            &quot;must_not&quot;: { &quot;match&quot;: {&quot;authors&quot;: &quot;radu gheorge&quot; }}
+        }
+    }
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.3672021,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;authors&quot;: [
+            &quot;clinton gormley&quot;,
+            &quot;zachary tong&quot;
+          ],
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;publisher&quot;: &quot;oreilly&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注</strong>：正如你所看到的，<strong>布尔查询</strong> 可以包装任何其他查询类型，包括其他布尔查询，以创建任意复杂或深度嵌套的查询。</p><div id=5-模糊fuzzy查询 class=anchor></div><h3 class="relative group">5. 模糊（Fuzzy）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#5-%e6%a8%a1%e7%b3%8afuzzy%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>在进行匹配和多项匹配时，可以启用模糊匹配来捕捉拼写错误，模糊度是基于原始单词的编辑距离来指定的。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;multi_match&quot; : {
+            &quot;query&quot; : &quot;comprihensiv guide&quot;,
+            &quot;fields&quot;: [&quot;title&quot;, &quot;summary&quot;],
+            &quot;fuzziness&quot;: &quot;AUTO&quot;
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot;],
+    &quot;size&quot;: 1
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.5961596,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      }
+]
+</code></pre><p><strong>注</strong>：当术语长度大于 5 个字符时，<code>AUTO</code> 的模糊值等同于指定值 “2”。但是，80％ 拼写错误的编辑距离为 1，所以，将模糊值设置为 <code>1</code> 可能会提高您的整体搜索性能。更多详细信息，请参阅<strong>Elasticsearch指南中的“排版和拼写错误”（Typos and Misspellings）</strong>。</p><div id=6-通配符wildcard查询 class=anchor></div><h3 class="relative group">6. 通配符（Wildcard）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#6-%e9%80%9a%e9%85%8d%e7%ac%a6wildcard%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p><strong>通配符查询</strong> 允许你指定匹配的模式，而不是整个术语。</p><ul><li><code>？</code> 匹配任何字符</li><li><code>*</code> 匹配零个或多个字符。</li></ul><p>例如，要查找名称以字母&rsquo;t&rsquo;开头的所有作者的记录：</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;wildcard&quot; : {
+            &quot;authors&quot; : &quot;t*&quot;
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;authors&quot;],
+    &quot;highlight&quot;: {
+        &quot;fields&quot; : {
+            &quot;authors&quot; : {}
+        }
+    }
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 1,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;authors&quot;: [
+            &quot;clinton gormley&quot;,
+            &quot;zachary tong&quot;
+          ]
+        },
+        &quot;highlight&quot;: {
+          &quot;authors&quot;: [
+            &quot;zachary &lt;em&gt;tong&lt;/em&gt;&quot;
+          ]
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: 1,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;authors&quot;: [
+            &quot;grant ingersoll&quot;,
+            &quot;thomas morton&quot;,
+            &quot;drew farris&quot;
+          ]
+        },
+        &quot;highlight&quot;: {
+          &quot;authors&quot;: [
+            &quot;&lt;em&gt;thomas&lt;/em&gt; morton&quot;
+          ]
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 1,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;authors&quot;: [
+            &quot;trey grainger&quot;,
+            &quot;timothy potter&quot;
+          ]
+        },
+        &quot;highlight&quot;: {
+          &quot;authors&quot;: [
+            &quot;&lt;em&gt;trey&lt;/em&gt; grainger&quot;,
+            &quot;&lt;em&gt;timothy&lt;/em&gt; potter&quot;
+          ]
+        }
+      }
+    ] 
+</code></pre><div id=7-正则regexp查询 class=anchor></div><h3 class="relative group">7. 正则（Regexp）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#7-%e6%ad%a3%e5%88%99regexp%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p><strong>正则查询</strong> 让你可以使用比 <strong>通配符查询</strong> 更复杂的模式进行查询：</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;regexp&quot; : {
+            &quot;authors&quot; : &quot;t[a-z]*y&quot;
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;authors&quot;],
+    &quot;highlight&quot;: {
+        &quot;fields&quot; : {
+            &quot;authors&quot; : {}
+        }
+    }
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 1,
+        &quot;_source&quot;: {
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;authors&quot;: [
+            &quot;trey grainger&quot;,
+            &quot;timothy potter&quot;
+          ]
+        },
+        &quot;highlight&quot;: {
+          &quot;authors&quot;: [
+            &quot;&lt;em&gt;trey&lt;/em&gt; grainger&quot;,
+            &quot;&lt;em&gt;timothy&lt;/em&gt; potter&quot;
+          ]
+        }
+      }
+    ]
+</code></pre><div id=8-短语匹配match-phrase查询 class=anchor></div><h3 class="relative group">8. 短语匹配(Match Phrase)查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#8-%e7%9f%ad%e8%af%ad%e5%8c%b9%e9%85%8dmatch-phrase%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p><strong>短语匹配查询</strong> 要求在请求字符串中的所有查询项必须都在文档中存在，文中顺序也得和请求字符串一致，且彼此相连。默认情况下，查询项之间必须紧密相连，但可以设置 <code>slop</code> 值来指定查询项之间可以分隔多远的距离，结果仍将被当作一次成功的匹配。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;multi_match&quot; : {
+            &quot;query&quot;: &quot;search engine&quot;,
+            &quot;fields&quot;: [&quot;title&quot;, &quot;summary&quot;],
+            &quot;type&quot;: &quot;phrase&quot;,
+            &quot;slop&quot;: 3
+        }
+    },
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot; ]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.22327082,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.16113183,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注</strong>：在上述例子中，对于非整句类型的查询，<code>_id</code> 为 1 的文档一般会比 <code>_id</code> 为 4 的文档得分高，结果位置也更靠前，因为它的字段长度较短，但是对于 <strong>短语匹配类型</strong> 查询，由于查询项之间的接近程度是一个计算因素，因此 <code>_id</code> 为 4 的文档得分更高。</p><div id=9-短语前缀match-phrase-prefix查询 class=anchor></div><h3 class="relative group">9. 短语前缀（Match Phrase Prefix）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#9-%e7%9f%ad%e8%af%ad%e5%89%8d%e7%bc%80match-phrase-prefix%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p><strong>短语前缀式查询</strong> 能够进行 <strong>即时搜索（search-as-you-type）</strong> 类型的匹配，或者说提供一个查询时的初级自动补全功能，无需以任何方式准备你的数据。和 <code>match_phrase</code> 查询类似，它接收<code>slop</code> 参数（用来调整单词顺序和不太严格的相对位置）和 <code>max_expansions</code> 参数（用来限制查询项的数量，降低对资源需求的强度）。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;match_phrase_prefix&quot; : {
+            &quot;summary&quot;: {
+                &quot;query&quot;: &quot;search en&quot;,
+                &quot;slop&quot;: 3,
+                &quot;max_expansions&quot;: 10
+            }
+        }
+    },
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot; ]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.5161346,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.37248808,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注</strong>：采用 <strong>查询时即时搜索</strong> 具有较大的性能成本。更好的解决方案是采用 <strong>索引时即时搜索</strong>。更多信息，请查看 <strong>自动补齐接口（Completion Suggester API）</strong> 或 <strong>边缘分词器（Edge-Ngram filters）的用法</strong>。</p><div id=10-查询字符串query-string class=anchor></div><h3 class="relative group">10. 查询字符串（Query String）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#10-%e6%9f%a5%e8%af%a2%e5%ad%97%e7%ac%a6%e4%b8%b2query-string aria-label=锚点>#</a></span></h3><p><strong>查询字符串</strong> 类型（<strong>query_string</strong>）的查询提供了一个方法，用简洁的简写语法来执行 <strong>多匹配查询</strong>、 <strong>布尔查询</strong> 、 <strong>提权查询</strong>、 <strong>模糊查询</strong>、 <strong>通配符查询</strong>、 <strong>正则查询</strong> 和<strong>范围查询</strong>。下面的例子中，我们在那些作者是 <strong>“grant ingersoll”</strong> 或 <strong>“tom morton”</strong> 的某本书当中，使用查询项 <strong>“search algorithm”</strong> 进行一次模糊查询，搜索全部字段，但给 <code>summary</code> 的权重提升 2 倍。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;query_string&quot; : {
+            &quot;query&quot;: &quot;(saerch~1 algorithm~1) AND (grant ingersoll)  OR (tom morton)&quot;,
+            &quot;fields&quot;: [&quot;_all&quot;, &quot;summary^2&quot;]
+        }
+    },
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;summary&quot;, &quot;authors&quot; ],
+    &quot;highlight&quot;: {
+        &quot;fields&quot; : {
+            &quot;summary&quot; : {}
+        }
+    }
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: 0.14558059,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;organize text using approaches such as full-text search, proper name recognition, clustering, tagging, information extraction, and summarization&quot;,
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;authors&quot;: [
+            &quot;grant ingersoll&quot;,
+            &quot;thomas morton&quot;,
+            &quot;drew farris&quot;
+          ]
+        },
+        &quot;highlight&quot;: {
+          &quot;summary&quot;: [
+            &quot;organize text using approaches such as full-text &lt;em&gt;search&lt;/em&gt;, proper name recognition, clustering, tagging, information extraction, and summarization&quot;
+          ]
+        }
+      }
+    ]
+</code></pre><div id=11-简单查询字符串simple-query-string class=anchor></div><h3 class="relative group">11. 简单查询字符串（Simple Query String）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#11-%e7%ae%80%e5%8d%95%e6%9f%a5%e8%af%a2%e5%ad%97%e7%ac%a6%e4%b8%b2simple-query-string aria-label=锚点>#</a></span></h3><p><strong>简单请求字符串</strong> 类型（<strong>simple_query_string</strong>）的查询是请求<strong>字符串类型</strong>（<strong>query_string</strong>）查询的一个版本，它更适合那种仅暴露给用户一个简单搜索框的场景；因为它用 <code>+/\|/-</code> 分别替换了 <code>AND/OR/NOT</code>，并且自动丢弃了请求中无效的部分，不会在用户出错时，抛出异常。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;simple_query_string&quot; : {
+            &quot;query&quot;: &quot;(saerch~1 algorithm~1) + (grant ingersoll)  | (tom morton)&quot;,
+            &quot;fields&quot;: [&quot;_all&quot;, &quot;summary^2&quot;]
+        }
+    },
+    &quot;_source&quot;: [ &quot;title&quot;, &quot;summary&quot;, &quot;authors&quot; ],
+    &quot;highlight&quot;: {
+        &quot;fields&quot; : {
+            &quot;summary&quot; : {}
+        }
+    }
+} 
+</code></pre><div id=12-词条term多词条terms查询 class=anchor></div><h3 class="relative group">12. 词条（Term）/多词条（Terms）查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#12-%e8%af%8d%e6%9d%a1term%e5%a4%9a%e8%af%8d%e6%9d%a1terms%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>以上例子均为 <code>full-text</code>(全文检索) 的示例。有时我们对结构化查询更感兴趣，希望得到更准确的匹配并返回结果，<strong>词条查询</strong> 和 <strong>多词条查询</strong> 可帮我们实现。在下面的例子中，我们要在索引中找到所有由 <strong>Manning</strong> 出版的图书。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;term&quot; : {
+            &quot;publisher&quot;: &quot;manning&quot;
+        }
+    },
+    &quot;_source&quot; : [&quot;title&quot;,&quot;publish_date&quot;,&quot;publisher&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: 1.2231436,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;publish_date&quot;: &quot;2013-01-24&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 1.2231436,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 1.2231436,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      }
+    ]
+</code></pre><p>可使用词条关键字来指定多个词条，将搜索项用数组传入。</p><pre><code>{
+    &quot;query&quot;: {
+        &quot;terms&quot; : {
+            &quot;publisher&quot;: [&quot;oreilly&quot;, &quot;packt&quot;]
+        }
+    }
+} 
+</code></pre><div id=13-词条term查询---排序sorted class=anchor></div><h3 class="relative group">13. 词条（Term）查询 - 排序（Sorted）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#13-%e8%af%8d%e6%9d%a1term%e6%9f%a5%e8%af%a2---%e6%8e%92%e5%ba%8fsorted aria-label=锚点>#</a></span></h3><p><strong>词条查询</strong> 的结果（和其他查询结果一样）可以被轻易排序，多级排序也被允许：</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;term&quot; : {
+            &quot;publisher&quot;: &quot;manning&quot;
+        }
+    },
+    &quot;_source&quot; : [&quot;title&quot;,&quot;publish_date&quot;,&quot;publisher&quot;],
+    &quot;sort&quot;: [
+        { &quot;publish_date&quot;: {&quot;order&quot;:&quot;desc&quot;}},
+        { &quot;title&quot;: { &quot;order&quot;: &quot;desc&quot; }}
+    ]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: null,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        },
+        &quot;sort&quot;: [
+          1449100800000,
+          &quot;in&quot;
+        ]
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: null,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        },
+        &quot;sort&quot;: [
+          1396656000000,
+          &quot;solr&quot;
+        ]
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: null,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;publish_date&quot;: &quot;2013-01-24&quot;
+        },
+        &quot;sort&quot;: [
+          1358985600000,
+          &quot;to&quot;
+        ]
+      }
+    ]
+</code></pre><div id=14-范围查询 class=anchor></div><h3 class="relative group">14. 范围查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#14-%e8%8c%83%e5%9b%b4%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>另一个结构化查询的例子是 <strong>范围查询</strong>。在这个例子中，我们要查找 2015 年出版的书。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;range&quot; : {
+            &quot;publish_date&quot;: {
+                &quot;gte&quot;: &quot;2015-01-01&quot;,
+                &quot;lte&quot;: &quot;2015-12-31&quot;
+            }
+        }
+    },
+    &quot;_source&quot; : [&quot;title&quot;,&quot;publish_date&quot;,&quot;publisher&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 1,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;oreilly&quot;,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 1,
+        &quot;_source&quot;: {
+          &quot;publisher&quot;: &quot;manning&quot;,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注</strong>：<strong>范围查询</strong> 用于日期、数字和字符串类型的字段。</p><div id=15-过滤filtered查询 class=anchor></div><h3 class="relative group">15. 过滤(Filtered)查询
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#15-%e8%bf%87%e6%bb%a4filtered%e6%9f%a5%e8%af%a2 aria-label=锚点>#</a></span></h3><p>过滤查询允许你可以过滤查询结果。对于我们的例子中，要在标题或摘要中检索一些书，查询项为 <strong>Elasticsearch</strong>，但我们又想筛出那些仅有 20 个以上评论的。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;filtered&quot;: {
+            &quot;query&quot; : {
+                &quot;multi_match&quot;: {
+                    &quot;query&quot;: &quot;elasticsearch&quot;,
+                    &quot;fields&quot;: [&quot;title&quot;,&quot;summary&quot;]
+                }
+            },
+            &quot;filter&quot;: {
+                &quot;range&quot; : {
+                    &quot;num_reviews&quot;: {
+                        &quot;gte&quot;: 20
+                    }
+                }
+            }
+        }
+    },
+    &quot;_source&quot; : [&quot;title&quot;,&quot;summary&quot;,&quot;publisher&quot;, &quot;num_reviews&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.5955761,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;publisher&quot;: &quot;oreilly&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注</strong>：<strong>过滤查询</strong> 并不强制它作用于其上的查询必须存在。如果未指定查询，<code>match_all</code> 基本上会返回索引内的全部文档。实际上，过滤只在第一次运行，以减少所需的查询面积，并且，在第一次使用后过滤会被缓存，大大提高了性能。</p><p><strong>更新</strong>：<strong>过滤查询</strong> 将在 <code>ElasticSearch 5</code> 中移除，使用 <strong>布尔查询</strong> 替代。 下面有个例子使用 <strong>布尔查询</strong> 重写上面的例子：</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;bool&quot;: {
+            &quot;must&quot; : {
+                &quot;multi_match&quot;: {
+                    &quot;query&quot;: &quot;elasticsearch&quot;,
+                    &quot;fields&quot;: [&quot;title&quot;,&quot;summary&quot;]
+                }
+            },
+            &quot;filter&quot;: {
+                &quot;range&quot; : {
+                    &quot;num_reviews&quot;: {
+                        &quot;gte&quot;: 20
+                    }
+                }
+            }
+        }
+    },
+    &quot;_source&quot; : [&quot;title&quot;,&quot;summary&quot;,&quot;publisher&quot;, &quot;num_reviews&quot;]
+}
+</code></pre><p>在后续的例子中，我们将会把它使用在 <strong>多重过滤</strong> 中。</p><div id=16-多重过滤multiple-filters class=anchor></div><h3 class="relative group">16. 多重过滤（Multiple Filters）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#16-%e5%a4%9a%e9%87%8d%e8%bf%87%e6%bb%a4multiple-filters aria-label=锚点>#</a></span></h3><p><strong>多重过滤</strong> 可以结合 <strong>布尔查询</strong> 使用，下一个例子中，过滤查询决定只返回那些包含至少20条评论，且必须在 2015 年前出版，且由 O&rsquo;Reilly 出版的结果。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;filtered&quot;: {
+            &quot;query&quot; : {
+                &quot;multi_match&quot;: {
+                    &quot;query&quot;: &quot;elasticsearch&quot;,
+                    &quot;fields&quot;: [&quot;title&quot;,&quot;summary&quot;]
+                }
+            },
+            &quot;filter&quot;: {
+                &quot;bool&quot;: {
+                    &quot;must&quot;: {
+                        &quot;range&quot; : { &quot;num_reviews&quot;: { &quot;gte&quot;: 20 } }
+                    },
+                    &quot;must_not&quot;: {
+                        &quot;range&quot; : { &quot;publish_date&quot;: { &quot;lte&quot;: &quot;2014-12-31&quot; } }
+                    },
+                    &quot;should&quot;: {
+                        &quot;term&quot;: { &quot;publisher&quot;: &quot;oreilly&quot; }
+                    }
+                }
+            }
+        }
+    },
+    &quot;_source&quot; : [&quot;title&quot;,&quot;summary&quot;,&quot;publisher&quot;, &quot;num_reviews&quot;, &quot;publish_date&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.5955761,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;publisher&quot;: &quot;oreilly&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      }
+    ] 
+</code></pre><div id=17-作用分值-域值field-value因子 class=anchor></div><h3 class="relative group">17. 作用分值: 域值（Field Value）因子
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#17-%e4%bd%9c%e7%94%a8%e5%88%86%e5%80%bc-%e5%9f%9f%e5%80%bcfield-value%e5%9b%a0%e5%ad%90 aria-label=锚点>#</a></span></h3><p>也许在某种情况下，你想把文档中的某个特定域作为计算相关性分值的一个因素，比较典型的场景是你想根据普及程度来提高一个文档的相关性。在我们的示例中，我们想把最受欢迎的书（基于评论数判断）的权重进行提高，可使用 <code>field_value_factor</code> 用以影响分值。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;function_score&quot;: {
+            &quot;query&quot;: {
+                &quot;multi_match&quot; : {
+                    &quot;query&quot; : &quot;search engine&quot;,
+                    &quot;fields&quot;: [&quot;title&quot;, &quot;summary&quot;]
+                }
+            },
+            &quot;field_value_factor&quot;: {
+                &quot;field&quot; : &quot;num_reviews&quot;,
+                &quot;modifier&quot;: &quot;log1p&quot;,
+                &quot;factor&quot; : 2
+            }
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot;, &quot;num_reviews&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.44831306,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.3718407,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;num_reviews&quot;: 23,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.046479136,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;num_reviews&quot;: 18,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: 0.041432835,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;organize text using approaches such as full-text search, proper name recognition, clustering, tagging, information extraction, and summarization&quot;,
+          &quot;num_reviews&quot;: 12,
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;publish_date&quot;: &quot;2013-01-24&quot;
+        }
+      }
+    ]
+</code></pre><p><strong>注1</strong>: 我们可能刚运行了一个常规的 <code>multi_match</code> (多匹配)查询，并对 <code>num_reviews</code> 域进行了排序，这让我们失去了评估相关性分值的好处。</p><p><strong>注2</strong>: 有大量的附加参数可用来调整提升原始相关性分值效果的程度，比如 <code>modifier</code>, <code>factor</code>, <code>boost_mode</code> 等等，至于细节可在 <strong>Elasticsearch</strong> 指南中探索。</p><div id=18-作用分值-衰变decay函数 class=anchor></div><h3 class="relative group">18. 作用分值: 衰变（Decay）函数
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#18-%e4%bd%9c%e7%94%a8%e5%88%86%e5%80%bc-%e8%a1%b0%e5%8f%98decay%e5%87%bd%e6%95%b0 aria-label=锚点>#</a></span></h3><p>假设不想使用域值做递增提升，而你有一个理想目标值，并希望用这个加权因子来对这个离你较远的目标值进行衰减。有个典型的用途是基于经纬度、价格或日期等数值域的提升。在如下的例子中，我们查找在2014年6月左右出版的，查询项是 <strong>search engines</strong> 的书。</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;function_score&quot;: {
+            &quot;query&quot;: {
+                &quot;multi_match&quot; : {
+                    &quot;query&quot; : &quot;search engine&quot;,
+                    &quot;fields&quot;: [&quot;title&quot;, &quot;summary&quot;]
+                }
+            },
+            &quot;functions&quot;: [
+                {
+                    &quot;exp&quot;: {
+                        &quot;publish_date&quot; : {
+                            &quot;origin&quot;: &quot;2014-06-15&quot;,
+                            &quot;offset&quot;: &quot;7d&quot;,
+                            &quot;scale&quot; : &quot;30d&quot;
+                        }
+                    }
+                }
+            ],
+            &quot;boost_mode&quot; : &quot;replace&quot;
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot;, &quot;num_reviews&quot;]
+}
+
+[Results]
+&quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.27420625,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;num_reviews&quot;: 23,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.005920768,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: 0.000011564,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;organize text using approaches such as full-text search, proper name recognition, clustering, tagging, information extraction, and summarization&quot;,
+          &quot;num_reviews&quot;: 12,
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;publish_date&quot;: &quot;2013-01-24&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.0000059171475,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;num_reviews&quot;: 18,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        }
+      }
+    ]
+</code></pre><div id=19-函数分值-脚本评分 class=anchor></div><h3 class="relative group">19. 函数分值: 脚本评分
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#19-%e5%87%bd%e6%95%b0%e5%88%86%e5%80%bc-%e8%84%9a%e6%9c%ac%e8%af%84%e5%88%86 aria-label=锚点>#</a></span></h3><p>当内置的评分函数无法满足你的需求时，还可以用 <strong>Groovy</strong> 脚本。在我们的例子中，想要指定一个脚本，能在决定把 <code>num_reviews</code> 的因子计算多少之前，先将 <code>publish_date</code> 考虑在内。因为很新的书也许不会有评论，分值不应该被惩罚。</p><p>评分脚本如下：</p><pre><code>publish_date = doc['publish_date'].value
+num_reviews = doc['num_reviews'].value
+
+if (publish_date &gt; Date.parse('yyyy-MM-dd', threshold).getTime()) {
+  my_score = Math.log(2.5 + num_reviews)
+} else {
+  my_score = Math.log(1 + num_reviews)
+}
+return my_score
+</code></pre><p>在 <code>script_score</code> 参数内动态调用评分脚本：</p><pre><code>POST /bookdb_index/book/_search
+{
+    &quot;query&quot;: {
+        &quot;function_score&quot;: {
+            &quot;query&quot;: {
+                &quot;multi_match&quot; : {
+                    &quot;query&quot; : &quot;search engine&quot;,
+                    &quot;fields&quot;: [&quot;title&quot;, &quot;summary&quot;]
+                }
+            },
+            &quot;functions&quot;: [
+                {
+                    &quot;script_score&quot;: {
+                        &quot;params&quot; : {
+                            &quot;threshold&quot;: &quot;2015-07-30&quot;
+                        },
+                        &quot;script&quot;: &quot;publish_date = doc['publish_date'].value; num_reviews = doc['num_reviews'].value; if (publish_date &gt; Date.parse('yyyy-MM-dd', threshold).getTime()) { return log(2.5 + num_reviews) }; return log(1 + num_reviews);&quot;
+                    }
+                }
+            ]
+        }
+    },
+    &quot;_source&quot;: [&quot;title&quot;, &quot;summary&quot;, &quot;publish_date&quot;, &quot;num_reviews&quot;]
+}
+
+[Results]
+&quot;hits&quot;: {
+    &quot;total&quot;: 4,
+    &quot;max_score&quot;: 0.8463001,
+    &quot;hits&quot;: [
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;1&quot;,
+        &quot;_score&quot;: 0.8463001,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;A distibuted real-time search and analytics engine&quot;,
+          &quot;num_reviews&quot;: 20,
+          &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+          &quot;publish_date&quot;: &quot;2015-02-07&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;4&quot;,
+        &quot;_score&quot;: 0.7067348,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;Comprehensive guide to implementing a scalable search engine using Apache Solr&quot;,
+          &quot;num_reviews&quot;: 23,
+          &quot;title&quot;: &quot;Solr in Action&quot;,
+          &quot;publish_date&quot;: &quot;2014-04-05&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;3&quot;,
+        &quot;_score&quot;: 0.08952084,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;build scalable search applications using Elasticsearch without having to do complex low-level programming or understand advanced data science algorithms&quot;,
+          &quot;num_reviews&quot;: 18,
+          &quot;title&quot;: &quot;Elasticsearch in Action&quot;,
+          &quot;publish_date&quot;: &quot;2015-12-03&quot;
+        }
+      },
+      {
+        &quot;_index&quot;: &quot;bookdb_index&quot;,
+        &quot;_type&quot;: &quot;book&quot;,
+        &quot;_id&quot;: &quot;2&quot;,
+        &quot;_score&quot;: 0.07602123,
+        &quot;_source&quot;: {
+          &quot;summary&quot;: &quot;organize text using approaches such as full-text search, proper name recognition, clustering, tagging, information extraction, and summarization&quot;,
+          &quot;num_reviews&quot;: 12,
+          &quot;title&quot;: &quot;Taming Text: How to Find, Organize, and Manipulate It&quot;,
+          &quot;publish_date&quot;: &quot;2013-01-24&quot;
+        }
+      }
+    ]
+  }
+</code></pre><p><strong>注1</strong>: 要在 <strong>Elasticsearch</strong> 实例中使用动态脚本，必须在 <em>config/elasticsearch.yaml</em> 文件中启用它；也可以使用存储在 <strong>Elasticsearch</strong> 服务器上的脚本。建议看看 <strong>Elasticsearch</strong> 指南文档获取更多信息。</p><p><strong>注2</strong>: 因 <strong>JSON</strong> 不能包含嵌入式换行符，请使用分号来分割语句。</p><blockquote><p>引用自：<a href=http://distributedbytes.timojo.com/2016/07/23-useful-elasticsearch-example-queries.html target=_blank>
+23 USEFUL ELASTICSEARCH EXAMPLE QUERIES</a></p></blockquote></div></div><script>var oid="views_posts/2017-07-05-elasticsearch---23-useful-query-example.md",oid_likes="likes_posts/2017-07-05-elasticsearch---23-useful-query-example.md"</script><script type=text/javascript src=/n3xtchen/js/page.min.0e49973b4ad0a382c7c6012d8bff8226316642daabc4f8a20477bd08674f3da6e2fa993bc20ad4f51e7c5bb68e6f913a207a7c4fe37ea0e7b806894afce0a64e.js integrity="sha512-DkmXO0rQo4LHxgEti/+CJjFmQtqrxPiiBHe9CGdPPabi+pk7wgrU9R58W7aOb5E6IHp8T+N+oOe4BolK/OCmTg=="></script></section><footer class="pt-8 max-w-prose print:hidden"><div class=pt-8><hr class="border-dotted border-neutral-300 dark:border-neutral-600"><div class="flex justify-between pt-3"><span><a class="flex group mr-3" href=/n3xtchen/2017/06/07/vim-80-ubuntu-1704/><span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&larr;</span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">vim 8.0 - ubuntu 17.04 踩坑记录</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2017-06-07 00:00:00 +0000 UTC">2017-06-07</time></span></span></a></span>
+<span><a class="flex text-right group ml-3" href=/n3xtchen/2017/07/14/skip-grep-use-awk/><span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">跳过 GREP，使用 AWK</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2017-07-14 00:00:00 +0000 UTC">2017-07-14</time></span></span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&larr;</span></a></span></div></div></footer></article><div id=top-scroller class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0 rtl:left-0"><a href=#the-top class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 backdrop-blur hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400" aria-label title>&uarr;</a></div></main><footer id=site-footer class="py-10 print:hidden"><div class="flex items-center justify-between"><p class="text-sm text-neutral-500 dark:text-neutral-400">&copy;
+2023
+n3xtchen</p><p class="text-xs text-neutral-500 dark:text-neutral-400">由 <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a> & <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://blowfish.page/ target=_blank rel="noopener noreferrer">Blowfish</a> 强力驱动</p></div><script>mediumZoom(document.querySelectorAll("img:not(.nozoom)"),{margin:24,background:"rgba(0,0,0,0.5)",scrollOffset:0})</script><script type=text/javascript src=/n3xtchen/js/process.min.35c1113bcc16c5a59bf031082f9e63822aa95280423881a7847a7ff33a16e6299ce6a840d9ef4e10d947e030a18f3f20359afb2ec0f35967484b9a9360ac3145.js integrity="sha512-NcERO8wWxaWb8DEIL55jgiqpUoBCOIGnhHp/8zoW5imc5qhA2e9OENlH4DChjz8gNZr7LsDzWWdIS5qTYKwxRQ=="></script></footer><div id=search-wrapper class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh]" data-url=https://n3xtchen.github.io/n3xtchen style=z-index:500><div id=search-modal class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800"><header class="relative z-10 flex items-center justify-between flex-none px-2"><form class="flex items-center flex-auto min-w-0"><div class="flex items-center justify-center w-8 h-8 text-neutral-400"><span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></div><input type=search id=search-query class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent" placeholder tabindex=0></form><button id=close-search-button class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></button></header><section class="flex-auto px-2 overflow-auto"><ul id=search-results></ul></section></div></div></div></body></html>

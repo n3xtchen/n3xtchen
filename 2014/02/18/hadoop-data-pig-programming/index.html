@@ -1,0 +1,354 @@
+<!doctype html><html lang=zh-cn dir=ltr class=scroll-smooth data-default-appearance=light data-auto-appearance=true><head><meta charset=utf-8><meta http-equiv=content-language content="zh-CN"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><title>Data Pig - Pig Latin 基础 &#183; N3xtChen 的博客</title><meta name=title content="Data Pig - Pig Latin 基础 &#183; N3xtChen 的博客"><meta name=keywords content="hadoop,pig,"><link rel=canonical href=https://n3xtchen.github.io/n3xtchen/2014/02/18/hadoop-data-pig-programming/><link type=text/css rel=stylesheet href=/n3xtchen/css/main.bundle.min.5775579083e26679417a451dd3d7c3e540c7be85426fba5a47019603552ac89b95e12dddb64138e0aa488d68bc318ec4b0820255a5859b4da3f1b45f140abf11.css integrity="sha512-V3VXkIPiZnlBekUd09fD5UDHvoVCb7paRwGWA1UqyJuV4S3dtkE44KpIjWi8MY7EsIICVaWFm02j8bRfFAq/EQ=="><script type=text/javascript src=/n3xtchen/js/appearance.min.516a16745bea5a9bd011138d254cc0fd3973cd55ce6e15f3dec763e7c7c2c7448f8fe7b54cca811cb821b0c7e12cd161caace1dd794ac3d34d40937cbcc9ee12.js integrity="sha512-UWoWdFvqWpvQERONJUzA/TlzzVXObhXz3sdj58fCx0SPj+e1TMqBHLghsMfhLNFhyqzh3XlKw9NNQJN8vMnuEg=="></script>
+<script defer type=text/javascript id=script-bundle src=/n3xtchen/js/main.bundle.min.41e474f5d66052b313c33b8f56008afac498015b7472d0f2ab78e22c187405fdff125b6735973309e4743b6924ca8c575db297f464c42da8e30ef9daed3b050c.js integrity="sha512-QeR09dZgUrMTwzuPVgCK+sSYAVt0ctDyq3jiLBh0Bf3/EltnNZczCeR0O2kkyoxXXbKX9GTELajjDvna7TsFDA==" data-copy data-copied></script>
+<script src=/n3xtchen/js/zoom.min.js></script>
+<link rel=icon href=/n3xtchen/favicon.png pe=image/png><meta property="og:title" content="Data Pig - Pig Latin 基础"><meta property="og:description" content="通过三个章节的铺垫，现在开始深入了解 Pig 专属语言的 Pig Latin； 再次强调下， Pig Latin 是一门数据流语言（dataflow language）。"><meta property="og:type" content="article"><meta property="og:url" content="https://n3xtchen.github.io/n3xtchen/2014/02/18/hadoop-data-pig-programming/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-02-18T00:00:00+00:00"><meta property="article:modified_time" content="2014-02-18T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Data Pig - Pig Latin 基础"><meta name=twitter:description content="通过三个章节的铺垫，现在开始深入了解 Pig 专属语言的 Pig Latin； 再次强调下， Pig Latin 是一门数据流语言（dataflow language）。"><script type=application/ld+json>[{"@context":"https://schema.org","@type":"Article","articleSection":"时间线","name":"Data Pig - Pig Latin 基础","headline":"Data Pig - Pig Latin 基础","abstract":"通过三个章节的铺垫，现在开始深入了解 Pig 专属语言的 Pig Latin； 再次强调下， Pig Latin 是一门数据流语言（dataflow language）。","inLanguage":"zh-CN","url":"https:\/\/n3xtchen.github.io\/n3xtchen\/2014\/02\/18\/hadoop-data-pig-programming\/","author":{"@type":"Person","name":"n3xtchen"},"copyrightYear":"2014","dateCreated":"2014-02-18T00:00:00\u002b00:00","datePublished":"2014-02-18T00:00:00\u002b00:00","dateModified":"2014-02-18T00:00:00\u002b00:00","keywords":["hadoop","pig"],"mainEntityOfPage":"true","wordCount":"1570"}]</script><meta name=author content="n3xtchen"><link href=https://twitter.com/mN3XT rel=me><link href=https://githhub.com/n3xtchen rel=me><script src=/n3xtchen/lib/jquery/jquery.slim.min.js integrity></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EMLJCHXBFD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EMLJCHXBFD")</script><meta name=theme-color><style>code.has-jax{-webkit-font-smoothing:antialiased;background:inherit!important;border:none!important;font-size:100%}</style><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:["script","noscript","style","textarea","pre"]}},window.addEventListener("load",e=>{document.querySelectorAll("mjx-container").forEach(function(e){e.parentElement.classList+="has-jax"})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></head><body class="flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32"><div id=the-top class="absolute flex self-center"><a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600" href=#main-content><span class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span></a></div><div style=padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start space-x-3"><div class="flex flex-1 items-center justify-between"><nav class="flex space-x-3"><a href=/n3xtchen class="text-base font-medium text-gray-500 hover:text-gray-900">N3xtChen 的博客</a></nav><nav class="hidden md:flex items-center space-x-5 md:ml-12 h-12"><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=分类页>分类</p></a><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=Tags>标签</p></a><button id=search-button aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400 h-12" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button><div class="ltr:mr-14 rtl:ml-14 cursor-pointer text-sm text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"><button id=appearance-switcher aria-label="Dark mode switcher" type=button><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></nav><div class="flex md:hidden items-center space-x-5 md:ml-12"><span></span>
+<button id=search-button-mobile aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button>
+<button id=appearance-switcher-mobile aria-label="Dark mode switcher" type=button style=margin-right:5px><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></div><div class="-my-2 -mr-2 md:hidden"><label id=menu-button for=menu-controller class=block><input type=checkbox id=menu-controller class=hidden><div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentcolor" d="M0 96C0 78.33 14.33 64 32 64H416c17.7.0 32 14.33 32 32 0 17.7-14.3 32-32 32H32C14.33 128 0 113.7.0 96zM0 256c0-17.7 14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32H32c-17.67.0-32-14.3-32-32zM416 448H32c-17.67.0-32-14.3-32-32s14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32z"/></svg></span></div><div id=menu-wrapper style=padding-top:5px class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50"><ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl"><li><span class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></span></li><li class=mt-1><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a></li><li class=mt-1><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=分类页>分类</p></a></li><li class=mt-1><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=Tags>标签</p></a></li></ul></div></label></div></div><div class="relative flex flex-col grow"><main id=main-content class=grow><article><header id=single_header class="mt-5 max-w-prose"><h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">Data Pig - Pig Latin 基础</h1><div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden"><div class="flex flex-row flex-wrap items-center"><time datetime="2014-02-18 00:00:00 +0000 UTC">2014-02-18</time><span class="px-2 text-primary-500">&#183;</span><span>1570 字</span><span class="px-2 text-primary-500">&#183;</span><span title=预计阅读>8 分钟</span></div><div class="flex flex-row flex-wrap items-center"><span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/categories/hadoop/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">Hadoop</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/hadoop/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">hadoop</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/pig/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">pig</span></span></span></div></div><div class=flex><img class="!mt-0 !mb-0 h-24 w-24 rounded-full ltr:mr-4 rtl:ml-4" width=96 height=96 alt=n3xtchen src=/n3xtchen/images/author.jpg><div class=place-self-center><div class="text-[0.6rem] uppercase leading-3 text-neutral-500 dark:text-neutral-400">作者</div><div class="font-semibold leading-6 text-neutral-800 dark:text-neutral-300">n3xtchen</div><div class="text-sm text-neutral-700 dark:text-neutral-400">Sharing Funny Tech With You</div><div class="text-2xl sm:text-lg"><div class="flex flex-wrap text-neutral-400 dark:text-neutral-500"><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://twitter.com/mN3XT target=_blank aria-label=Twitter rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645.0 138.72-105.583 298.558-298.558 298.558-59.452.0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055.0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421.0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391.0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04.0-57.828 46.782-104.934 104.934-104.934 30.213.0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></span></span></a><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://githhub.com/n3xtchen target=_blank aria-label=Github rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentcolor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6.0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6.0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3.0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1.0-6.2-.3-40.4-.3-61.4.0.0-70 15-84.7-29.8.0.0-11.4-29.1-27.8-36.6.0.0-22.9-15.7 1.6-15.4.0.0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5.0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9.0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4.0 33.7-.3 75.4-.3 83.6.0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6.0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9.0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span></span></a></div></div></div></div><div class=mb-5></div></header><section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row"><div class="order-first sm:max-w-prose lg:ml-auto px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8"><div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky lg:top-10"><details open class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 hidden lg:block"><summary class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="min-w-[220px] py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><ul><li><a href=#关系relation和字段field的命名>关系（relation）和字段（field）的命名</a></li><li><a href=#大小写敏感case-sensitivity>大小写敏感（Case Sensitivity）</a></li><li><a href=#注释comments>注释（Comments）</a></li><li><a href=#输入input和输出output>输入（input）和输出（output）</a><ul><li><a href=#载入load>载入（LOAD）</a></li><li><a href=#存储store>存储（STORE）</a></li><li><a href=#dump-输出>DUMP 输出</a></li></ul></li><li><a href=#关系操作relational-operations>关系操作（Relational Operations）</a></li><li><a href=#循环-foreach>循环 FOREACH</a><ul><li><a href=#foreach-中使用的表达式>FOREACH 中使用的表达式</a></li><li><a href=#foreach-中的用户自定义函数udf>FOREACH 中的用户自定义函数（UDF）</a></li><li><a href=#foreach-的字段命名>FOREACH 的字段命名</a></li></ul></li><li><a href=#筛选filter>筛选（Filter）</a></li><li><a href=#分组group>分组（Group）</a></li><li><a href=#排序order-by>排序（ORDER BY）</a></li><li><a href=#去重distinct>去重（DISTINCT）</a></li><li><a href=#联表join>联表（JOIN）</a></li><li><a href=#分页limit>分页（LIMIT）</a></li><li><a href=#样本sample>样本（SAMPLE）</a></li><li><a href=#并行parallel>并行（PARALLEL）</a></li><li><a href=#自定义函数udf>自定义函数（UDF）</a><ul><li><a href=#登记-udf>登记 UDF</a></li><li><a href=#定义define和-udf>定义（DEFINE）和 UDF</a></li></ul></li><li><a href=#enjoy-pig>Enjoy Pig!</a></li></ul></li></ul></nav></div></details><details class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 lg:hidden"><summary class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><ul><li><a href=#关系relation和字段field的命名>关系（relation）和字段（field）的命名</a></li><li><a href=#大小写敏感case-sensitivity>大小写敏感（Case Sensitivity）</a></li><li><a href=#注释comments>注释（Comments）</a></li><li><a href=#输入input和输出output>输入（input）和输出（output）</a><ul><li><a href=#载入load>载入（LOAD）</a></li><li><a href=#存储store>存储（STORE）</a></li><li><a href=#dump-输出>DUMP 输出</a></li></ul></li><li><a href=#关系操作relational-operations>关系操作（Relational Operations）</a></li><li><a href=#循环-foreach>循环 FOREACH</a><ul><li><a href=#foreach-中使用的表达式>FOREACH 中使用的表达式</a></li><li><a href=#foreach-中的用户自定义函数udf>FOREACH 中的用户自定义函数（UDF）</a></li><li><a href=#foreach-的字段命名>FOREACH 的字段命名</a></li></ul></li><li><a href=#筛选filter>筛选（Filter）</a></li><li><a href=#分组group>分组（Group）</a></li><li><a href=#排序order-by>排序（ORDER BY）</a></li><li><a href=#去重distinct>去重（DISTINCT）</a></li><li><a href=#联表join>联表（JOIN）</a></li><li><a href=#分页limit>分页（LIMIT）</a></li><li><a href=#样本sample>样本（SAMPLE）</a></li><li><a href=#并行parallel>并行（PARALLEL）</a></li><li><a href=#自定义函数udf>自定义函数（UDF）</a><ul><li><a href=#登记-udf>登记 UDF</a></li><li><a href=#定义define和-udf>定义（DEFINE）和 UDF</a></li></ul></li><li><a href=#enjoy-pig>Enjoy Pig!</a></li></ul></li></ul></nav></div></details></div></div><div class="min-w-0 min-h-0 max-w-fit"><div class="max-w-prose mb-20"><p>通过三个章节的铺垫，现在开始深入了解 Pig 专属语言的 Pig Latin；
+再次强调下， <em>Pig Latin 是一门数据流语言（dataflow language）</em>。</p><div id=关系relation和字段field的命名 class=anchor></div><h3 class="relative group">关系（relation）和字段（field）的命名
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%85%b3%e7%b3%bbrelation%e5%92%8c%e5%ad%97%e6%ae%b5field%e7%9a%84%e5%91%bd%e5%90%8d aria-label=锚点>#</a></span></h3><p>每一个操作步骤都会产生新的数据集，或者关系。举个例子，看下面的代码：</p><pre><code>input   = LOAD 'data';
+</code></pre><p><code>input</code> 是载入 data 数据的关系（relation）名。关系名看起来想一个变量；实际上，
+他们并不是。一旦创建，这个赋值是永久的。但是关系名只是一个别名（aliAS），它可以
+被重复赋值，会覆盖之前的关系，例如：</p><pre><code>input   = LOAD 'data' AS (id, amount);
+input   = FILTER input BY amount &gt; 0;
+</code></pre><p><em>关系（relation）名和字段（field）都必须字母打头，然后之后可以是数字，字母或
+者下划线的任意组合。所有名称的字符必须符合 ASCII 标准。</em></p><div id=大小写敏感case-sensitivity class=anchor></div><h3 class="relative group">大小写敏感（Case Sensitivity）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%a4%a7%e5%b0%8f%e5%86%99%e6%95%8f%e6%84%9fcase-sensitivity aria-label=锚点>#</a></span></h3><p>Pig Latin 中的的<em>保留字（keywords）<em>是</em>大小写不敏感</em>的，例如， <code>LOAD</code> 等同于 <code>LOAD</code>；</p><p>但是，<em>关系和字段名是大小写敏感的；用户自定义的函数（UDF）也是大小写敏感的；</em></p><div id=注释comments class=anchor></div><h3 class="relative group">注释（Comments）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%b3%a8%e9%87%8acomments aria-label=锚点>#</a></span></h3><ul><li><p>单行注释：<code>--</code>；</p></li><li><p>多行注释：</p><p>/*
+在这里注释
+*/</p></li></ul><div id=输入input和输出output class=anchor></div><h3 class="relative group">输入（input）和输出（output）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%be%93%e5%85%a5input%e5%92%8c%e8%be%93%e5%87%baoutput aria-label=锚点>#</a></span></h3><p>开搞前，你必须知道如何输出和输出数据。</p><div id=载入load class=anchor></div><h4 class="relative group">载入（LOAD）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%bd%bd%e5%85%a5load aria-label=锚点>#</a></span></h4><p>数据流的第一步就是指定你的输入。</p><pre><code>input   = LOAD '路径' [USING LoadFunction(args)];
+</code></pre><div id=路径 class=anchor></div><h5 class="relative group">路径
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%b7%af%e5%be%84 aria-label=锚点>#</a></span></h5><pre><code>input   = LOAD 'HDFS 中的绝对路径';
+input   = LOAD './相对路径'；
+</code></pre><p>Pig 默认是在你的 HDFS 的 Home 目录下，/users/youlogin，执行的；</p><pre><code>input   = LOAD '../pig_home/dataset';
+</code></pre><p>它将在你的 Home 目录的上一级目录的 pig_home 目录中的 datASet 文件中查找数据
+；当然让你改变你的目录位置，那所有的相对路径以那里作为基准。</p><p>Pig 还支持以 URL 路径来查找数据；</p><pre><code>input   = LOAD 'hdfs://nn.n3xt.com/data/examples/datASet'
+</code></pre><p>除了指定文件路径，你还可以传入<code>目录</code>，这样 Pig 就会载入该目录的所有文件。</p><div id=加载函数loading-function class=anchor></div><h5 class="relative group">加载函数（loading Function）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%8a%a0%e8%bd%bd%e5%87%bd%e6%95%b0loading-function aria-label=锚点>#</a></span></h5><p>默认情况下，<code>LOAD</code> 使用默认的加载函数 <code>PigStorage</code> 在 HDFS 中的制表符分隔
+（tab-delimited）的文件中寻找数据的；</p><p>实际上，你的大部分数据并不是以制表符分隔的，你也有可能载入 HDFS 之外的存储器
+中的数据。Pig 允许你是用 <code>USING</code> 语句来指定载入函数，例如</p><pre><code>log = LOAD '/path/to/log' USING PigStorage(',');   
+-- 以逗号分隔的方式载入数据
+log = LOAD '/path/to/log' USING HBaseStorage(); -- 使用 HBase
+</code></pre><p>Pig 有两个内建的加载函数，<code>PigStorage</code> 和 <code>TextLOADer</code>，来操作 HDFS 上的文件
+，并支持 glob（载入匹配模式的文件和目录）。使用 glob，你可以读取在不同目录下
+的多个文件，或者同一目录的部分文件。</p><p>Glob 匹配符：</p><ul><li>? ：任意单字符</li><li>* ：0到多个字符</li><li>[abc] ：匹配其中的一个字符</li><li>[a-z] ：匹配任意一个小写字母</li><li>[^abd] ：匹配任一不属于该字符集的字符</li><li>\ ：转移特殊富豪</li><li>{ab,cd} ：匹配字符串集中的任意一个</li></ul><div id=定义数据模式scheme class=anchor></div><h5 class="relative group">定义数据模式（Scheme）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%ae%9a%e4%b9%89%e6%95%b0%e6%8d%ae%e6%a8%a1%e5%bc%8fscheme aria-label=锚点>#</a></span></h5><p><code>LOAD</code> 可以使用 <code>AS</code> 来指定你的数据模式：</p><pre><code>log = LOAD &quot;path/to/log&quot; AS (u_id, login_time); -- data 是关系名
+</code></pre><blockquote><p>模式的定义详见：()[]</p></blockquote><div id=存储store class=anchor></div><h4 class="relative group">存储（STORE）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%ad%98%e5%82%a8store aria-label=锚点>#</a></span></h4><p><code>LOAD</code> 的反向工作，语法如下：</p><pre><code>STORE data INTO `/path/to/storage` [USING storageFunction()];
+</code></pre><p>几种用法的范例：</p><pre><code>-- 使用默认的 PigStorage 存储在 HDFS 上，并使用制表符分隔
+STORE processed INTO '/data/examples/processed';
+-- 使用 HBase 存储
+STORE processed INTO 'processed' USING HBaseStorage();
+-- 字段使用逗号分隔
+STORE processed INTO 'processed' USING PigStorage(',');
+</code></pre><p><em>Note</em>，上述的 processed 将会是一个文件夹，里面包含多个数据文件，而不是单个
+文件。数据文件的个数取决于并行计算工作及它的工作并行程度。</p><div id=dump-输出 class=anchor></div><h4 class="relative group">DUMP 输出
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#dump-%e8%be%93%e5%87%ba aria-label=锚点>#</a></span></h4><p>大部分情况，你是要把处理完的数据存储起来；但是有时你需要在屏幕看结果。这个在
+调试和构建模型的过程时非常有用；</p><pre><code>DUMP processed;
+</code></pre><blockquote><div id=关系操作relational-operations class=anchor></div><h3 class="relative group">关系操作（Relational Operations）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%85%b3%e7%b3%bb%e6%93%8d%e4%bd%9crelational-operations aria-label=锚点>#</a></span></h3><p>关系操作是 Pig 操作数据的主要工具。它允许你通过排序，分组，连表，映射以及i> 筛选来转换你的数据。</p></blockquote><div id=循环-foreach class=anchor></div><h3 class="relative group">循环 FOREACH
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%be%aa%e7%8e%af-foreach aria-label=锚点>#</a></span></h3><p><code>FOREACH</code> 可以使用表达式，并把它应用到数据管道中的每一条数据。从这个表达式中
+生成新的数据并传递给下一个操作器。</p><pre><code>A   = LOAD 'input' AS (user:chararray, id:long, phone:chararray);
+B   = FOREACH A GENERATE user, id;
+</code></pre><div id=foreach-中使用的表达式 class=anchor></div><h4 class="relative group">FOREACH 中使用的表达式
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#foreach-%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%a1%a8%e8%be%be%e5%bc%8f aria-label=锚点>#</a></span></h4><p>FOREACH 支持表达式数组；最简单的就是常量和字段索引。常量我们已经在之前数据类
+型中讨论过了。字段索引可以通过字段名或者位置。位置索引（Positional
+references）是使用 <code>$</code> 和从0开始的整数：</p><pre><code>prices = LOAD 'NYSE_daily' AS (exchange, symbol, date, open, 
+        high, low, close, volume, adj_close);
+gain = FOREACH prices GENERATE close - open; 
+gain2 = FOREACH prices GENERATE $6 - $3;
+</code></pre><p>gain 和 gain2 中存储的数据是一样的。位置风格的索引在某种情况下是非常有用的，
+例如不确定数据结构的情况下。</p><p>字段集的操作：</p><pre><code>prices = LOAD 'NYSE_daily' AS (exchange, symbol, date, open, 
+        high, low, close, volume, adj_close);
+
+-- 截取数据字段从开头到 open 字段位置，包括 open
+beginning = FOREACH prices GENERATE ..open; 
+-- produces exchange, symbol, date, open 
+
+-- 截取数据字段从 open 字段和 close 字段之间的字段，包括 open 和 close
+middle = FOREACH prices GENERATE open..close; 
+-- produces open, high, low, close 
+
+-- 截取数据字段从 volumn 字段开始到结尾的位置，包括 volumn
+end = FOREACH prices GENERATE volume..; 
+-- produces volume, adj_close
+</code></pre><p>另外，Pig 还支持标准的算数操作：</p><ul><li>+ 加</li><li>- 减</li><li>* 乘</li><li>/ 除</li><li>% 取模</li><li>?: 三元表达式，三元表达式应该使用括号包围起来</li></ul><p><em>Note:</em> 三元表达式的返回值的类型必须相同；如果条件返回空，结果也将是空：</p><pre><code>1 == 1 ? 1 : 'yo'   -- 这将会报错，
+NULL == 2 ? 2 : 4   -- 结果将会返回 NULL
+</code></pre><p>从复杂的数据结构中提取数据：</p><pre><code>-- Map 映射
+-- 如果在 Map 找不到相应的映射，则 NULL
+bball = LOAD 'bASeball' AS (name:chararray, team:chararray, 
+        position:bag{t:(p:chararray)}, bat:map[]);
+-- 在字段 bat 中寻找 batting_average 的值
+avg = FOREACH bball GENERATE bat#'batting_average';
+
+-- 元组映射
+A = LOAD 'input' AS (t:tuple(x:int, y:int)); 
+B = FOREACH A GENERATE t.x, t.$1;
+
+-- Bag 映射
+A = LOAD 'input' AS (b:bag{t:(x:int, y:int)}); 
+B = FOREACH A GENERATE b.x;
+C = FOREACH A GENERATE b.(x, y);
+-- &lt;=&gt; b.x, b.y
+</code></pre><p>元组和 Bag 是通过点号（.）来调用数据的，Map 则是使用井号（#）。</p><div id=foreach-中的用户自定义函数udf class=anchor></div><h4 class="relative group">FOREACH 中的用户自定义函数（UDF）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#foreach-%e4%b8%ad%e7%9a%84%e7%94%a8%e6%88%b7%e8%87%aa%e5%ae%9a%e4%b9%89%e5%87%bd%e6%95%b0udf aria-label=锚点>#</a></span></h4><p>UDFs 可以在 FOREACH 中定义。这里我们称之为求值函数（eval funcs）。因为他们是
+freach 语句的一部分，所以 UDFs 每次只能处理一条记录和产生一条输出。例如，如
+下的 UPPER 函数来处理每条记录：</p><pre><code>-- FOREACH_udf.pig
+divs    = LOAD 'data/names' AS (name);
+upper   = FOREACH divs GENERATE name, UPPER(name);
+DUMP upper;
+</code></pre><p>UDFs 可以接受 * 作为参数，表示传入的的一整条记录。</p><p>具体 UDF 用法和相关函数我们将在后面的专题介绍，这里一笔带过。</p><div id=foreach-的字段命名 class=anchor></div><h4 class="relative group">FOREACH 的字段命名
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#foreach-%e7%9a%84%e5%ad%97%e6%ae%b5%e5%91%bd%e5%90%8d aria-label=锚点>#</a></span></h4><p>Pig 可以对每个字段的类型进行推断，但是它不能对这些字段的名称进行推断。</p><p>如果只是对字段的简单映射（Projection），Pig 会保持之前的名称：</p><pre><code>divs    = 'data/names' AS (name);
+name    = FOREACH divs GENERATE name;
+DESCRIBE name;   
+
+-- 返回：name:{name: chararray}
+-- `DESCRIBE` 可以打印数据结构 
+</code></pre><p>但是使用任何表达式应用在普通的映射之上的话，Pig 就无法给这个字段命名了，如果
+你没有明确制定名称，这个字段将无名称，只能通过位置参数来访问（例如，$0）;
+你可以使用 AS 来命名该字段：</p><pre><code>divs    = LOAD 'data/names' AS (name);
+name    = FOREACH divs GENERATE name AS key, UPPER(name);
+DESCRIBE name;   
+
+-- 返回：name:{key: chararray, chararray}
+</code></pre><div id=筛选filter class=anchor></div><h3 class="relative group">筛选（Filter）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ad%9b%e9%80%89filter aria-label=锚点>#</a></span></h3><p><code>FILTER</code> 允许你从数据管道中选择你想要的记录；它包含一个断言，如果断言为真，
+则传入管道中，反之被抛弃。</p><p>断言（predicates）可以包含: ==、 !=、 >、 >=、 &lt; 以及 &lt;=。这些对比表达式可以
+用在任何基础数据类型中。== 和 != 还可以用在 map 和tuple 数据类型上。如果将
+他们用在两个 tuple 上，那这两个元组必须是模式相同或者无模式的。相等操作不可
+以用在 bag 类型上。</p><p>Pig Latin 也和大部分语言一样，操作符拥有优先等级，算术（arithnetic）操作符
+优先于相等运算符。因此，x+y == a+b &lt;=> (x+y) == (a+b).</p><pre><code>--  filter_basic.pig
+lang_age = LOAD 'data/progLang_age' AS (progLang:chararray, birthd  ay:int);
+
+ancient = FILTER lang_age BY birthday &lt; 1980;
+DUMP ancient;
+-- 筛选出开发起始时间在 1980 之前的程序语言
+
+对于字符串，你可以使用关键字 `matches` 和正则表达式来正则匹配：
+
+FILTER data_pineline BY [NOT] field_name MATCHES '正则写在这'；
+</code></pre><p>例子：</p><pre><code>-- filter_chararray.pig
+lang_age = LOAD 'data/progLang_age' AS (progLang:chararray, 
+        birthday:int);
+InitialP = FILTER lang_age BY progLang MATCHES 'P.*';
+DUMP InitialP;
+
+-- 筛选出语言名称以 P 打头的程序语言
+</code></pre><p><em>Note:</em> Pig 使用 Java 的正则表达式的格式。他是全匹配的，不想 perl 那样的部分
+匹配。例如，如果你想要查找字段包含 prog 的字符，表达式必须写成 <code>.*prog.*</code>，
+而不是 <code>prog</code>；后者只能匹配到 prog 这个字符串。</p><p>你还可以使用布尔操作符（AND、OR 和 NOT）来组合多个断言；另外这三个的优先级
+如下：
+NOT > AND > OR</p><p>它遵循短环布尔操作，就是如果表达式提前别断言为 false 它将不会继续执行下去
+，而是直接返回。</p><p><em>Note:</em> NULL 遵循 SQL 逻辑，空值代表非真和假，空值不会和任何正则表达式匹配成
+功。</p><div id=分组group class=anchor></div><h3 class="relative group">分组（Group）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%86%e7%bb%84group aria-label=锚点>#</a></span></h3><p><code>GROUP</code> 语句将拥有相同健的数据汇总在一块。如果你学习过 SQL，对这个概念再熟悉
+不过了，但是 Pig 的分组操作和 SQL 存在本质上的区别，这个是你必须注意的。在
+SQL 中，<code>GROUP BY</code> 语句创建分组，直接传递给一个或多个聚合（Aggregate）函数。
+在 Pig 中，分组和聚合没有必然的联系；它的分组更纯粹：它的工作就是将数据分组
+，并存储在 bag 中。如果你需要聚合，你可以这么操作：</p><pre><code>-- group_basic.pig
+rock_stars   = LOAD 'data/RockNRollHallOfFrame'
+    USING PigStorage(',')
+    AS (joined_year:int, band_name:chararray);
+
+grpd    = GROUP rock_stars BY joined_year;
+cnt = FOREACH grpd GENERATE group, COUNT(rock_stars);
+
+DUMP cnt;
+
+-- 每个摇滚名人堂年度被评上的乐队个数
+</code></pre><p>分组的数据在 Pig 中是如何呈现的呢？让我们 <code>DESCRIBE</code> 下吧！</p><pre><code>-- 这是上述 grpd 的结构
+grpd: {group: int,rock_stars: {(joined_year: int,band_name: chararray)}}
+-- group 存储的是键，这里是获奖年度，
+-- 后面是拥有该键的所有记录组成的元组
+</code></pre><p>你可以将分组的数据存储起来，以备后面处理：</p><pre><code>STORE grpd INTO 'data/by_year';
+</code></pre><p>用过 SQL 的都知道，有时候不仅仅只对一个键来分组：</p><pre><code>-- group_multi.pig
+artists = LOAD 'data/RockNRollHallOfFrameSidemen'
+    USING PigStorage(',')
+    AS (year:int, name:chararray, instrument:chararray);  5
+multi_grpd    = GROUP artists BY (year, instrument);
+
+DUMP multi_grpd;
+
+ -- 按照使用乐器和入选年限对摇滚默默奉献奖进行分组
+</code></pre><p><em>Note:</em> 组合键是使用元组来呈现。</p><p>你还可以有使用 <code>ALL</code> 将所有记录组合起来：</p><pre><code>-- group_all.pig
+artists = LOAD 'data/RockNRollHallOfFrameMultipleInductees'
+    USING PigStorage(',');
+
+grpd_all    = GROUP artists ALL;
+
+cnt = FOREACH grpd_all GENERATE COUNT(artists);
+
+DUMP cnt;
+-- 这就是 ALL 的其中一个用于，聚合计算出记录条数
+</code></pre><p>由于根据键来分组数据，你经常会得到不对称的结果。那是因为你无法决定每个键最终
+分配到数据的条数给相应 reducer。例如，你有一分网页链接索引，你需要对他们的
+域名分组。像 sohu.com 这样类型的门户网站的实际数量肯定要比大部分网站的多好几
+个 量级。这样，sohu.com 这个键的 reducer 获得的数据远比其他的要多很多。由于
+你的 MapReduce 工作需要你的所有的 reducer 都完成之后才能结束，这样数据分配不
+均大大地降低了处理效率。而且有时，一个 reducer 也不可能管理那么多的数据。</p><p>Pig 为了解决这样的不均衡提供很多种方式。Hadoop 的联结器（Combiner）就是其中
+一种方式，这里不具体阐述。虽然它并不能完全的均衡，总有限制它的边界就可以了。
+因为 Mapper 的数量可能成千上万，即使 reducer 得到不均衡的记录，如果每个
+reducer 的数据足够小,那它就能快速的处理它，就不会被阻塞。</p><p>不幸的是，并不是所有的计算都可以使用 combiner。线性相关的计算能很好的适应
+combiner。</p><p>Pig 的操作符和内置 UDF 都尽可能使用 combiner。由于 reduce 的不均衡，它在早期
+聚合时大量的减少了数据的传输以及读写，因此大大提高的性能。UDF 可以通过应用
+代数相关的接口（Algebraic Interface）来指定什么使用调用 combiner。后续将详细
+说明。</p><div id=排序order-by class=anchor></div><h3 class="relative group">排序（ORDER BY）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%8e%92%e5%ba%8forder-by aria-label=锚点>#</a></span></h3><p>ORDER 语句将会产生你输出的数据的总排序。总排序（Total Order）意味着不仅仅在
+各自的分区中排序，必须保证在第N个分区的所有记录都比第N-1个分区的顺序大。当
+你的数据存储在 HDFS 中，每个分区都是一个文件，这意味将会按顺序输出数据。</p><p>ORDER 的语法和 GROUP 类似，</p><pre><code>-- order_basic.pig
+rock_stars  = LOAD 'data/RockNRollHallOfFrameInductees'
+    USING PigStorage(',')
+    AS (joined_year:int, band_name:chararray);
+
+-- 按照入选年度正序（不指定，默认为 ASC）排列
+by_year = ORDER rock_stars BY joined_year;
+
+-- 数据结构
+DESCRIBE by_year;   
+-- 结果：by_year: {joined_year: int,band_name: chararray}
+
+DUMP by_year;
+</code></pre><p>和 GROUP 一样，它也支持多键排序：</p><pre><code>-- order_multi.pig
+artists = LOAD 'data/RockNRollHallOfFrameMultipleInductees'
+    USING PigStorage('|')
+    AS (name,
+        first_band:chararray, first_year:int,
+        sec_band:chararray, sec_year:int,
+        third_band:chararray, third_year:int
+    );
+
+-- 根据初次入选和第二次入选倒序排序
+by_first_year_second = ORDER artists BY first_year DESC, sec_year DESC;
+
+DUMP by_first_year_second;
+</code></pre><p>排序的方式是基于该字段的数据类型：数值类型以数字排序，字符串（chararray）和
+字节串（bytearray）是以字符排序。注意，不要对 Map，tuple 和 bag 进行排序，
+否则会报错。对于所有数据类型，null 比其他的任何可能值都要小。</p><div id=去重distinct class=anchor></div><h3 class="relative group">去重（DISTINCT）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%8e%bb%e9%87%8ddistinct aria-label=锚点>#</a></span></h3><p>DISTINCT 语句很简单，去除记录中的重复项目。</p><pre><code>--distinct.pig
+-- find a distinct list of ticker symbols for each exchange
+-- This load will truncate the records, picking up just the first two fields. daily = load 'NYSE_daily' as (exchange:chararray, symbol:chararray);
+uniq = distinct daily;
+</code></pre><p>由于它把所有的记录都手机其爱，DISTINCT 将操作强制进入 reduce 阶段。它也可以
+使用 combiner 去除重复，它在 Map 阶段将它删除。</p><div id=联表join class=anchor></div><h3 class="relative group">联表（JOIN）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%81%94%e8%a1%a8join aria-label=锚点>#</a></span></h3><p>联表是数据处理中最耗资源的工作之一。JOIN 从一个输入中选择数据整合另一个输入
+的数据中，通过指定键进行联表。和 GROUP，ORDER 一样，它也可以多键联表。</p><pre><code>--join_basic.pig
+today = LOAD 'data/stock-2014-02-17.csv'
+    USING PigStorage(',')
+    AS (exchange, symbol, name,
+            open, high, low, close, volumn);
+
+lastday = LOAD 'data/stock-2014-02-14.csv'
+    USING PigStorage(',')
+    AS (exchange, symbol, name,
+            open, high, low, close, volumn);
+
+jnd = JOIN today BY (exchange, symbol) ,
+    lastday BY (exchange, symbol);
+
+DESCRIBE jnd;
+</code></pre><p>输出的结构：</p><pre><code>jnd: {
+    today::exchange: bytearray, today::symbol: bytearray, today::name: 
+    bytearray,today::open: bytearray,today::high: 
+    bytearray,today::low: bytearray,today::close: 
+    bytearray,today::volumn: bytearray,
+    lastday::exchange: bytearray,lastday::symbol: bytearray,
+    lastday::name: bytearray,
+    lastday::open: bytearray,lastday::high: bytearray,lastday::low: 
+    bytearray,lastday::close: bytearray,lastday::volumn: bytearray
+}
+</code></pre><p>只有当字段名在记录中不再唯一的时候，会使用 :: 前缀。</p><p>Pig 同样支持外联（OUTER JOINS）。在外联接中，如果找不到匹配的一方会直接以
+null 值来补字段。外联接包括：LEFT，RIGHT 和 FULL。它们的概念和 SQL 相同，这
+里就不进行详细阐述：</p><pre><code>left_join = JOIN input1 BY (fld11) LEFT OUTER, input2 BY (fld21);
+right_join = JOIN input1 BY (fld11) RIGHT OUTER, input2 BY (fld21);
+full_join = JOIN input1 BY (fld11) FULL OUTER, input2 BY (fld21);
+</code></pre><p>注意，这里的 OUTER 是个干挠词，可以被忽略，它并不等同于 FULL OUTER，而且单独
+使用将会被报错。</p><p>Pig 只有在了解联表双方的 Schema 的情况下才支持外联接，否则它将不知道如何补
+null 字段。</p><p>Pig 和 SQL 一样支持多表联接：</p><pre><code>A = LOAD 'input1' AS (x, y);
+B = LOAD 'input2' AS (u, v);
+C = LOAD 'input3' AS (e, f);
+alpha = JOIN A BY x, B BY u, C BY e;
+</code></pre><p>Pig 自联接（Self Join）的实现是通过加载两次数据：</p><pre><code>--selfjoin.pig
+-- For each stock, find all dividends that increased between two dates
+divs1 = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+        date:chararray, dividends);
+divs2 = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+        date:chararray, dividends);
+jnd = JOIN divs1 BY symbol, divs2 BY symbol;
+increased = FILTER jnd BY divs1::date &lt; divs2::date AND divs1::dividends &lt; divs2::dividends;
+</code></pre><p>而下面的实现是错的，而且会执行失败：</p><pre><code>--selfjoin.pig
+-- For each stock, find all dividends that increased between two dates 
+divs1 = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+        date:chararray, dividends);
+jnd = JOIN divs1 BY symbol, divs1 BY symbol;
+increased = FILTER jnd BY divs1::date &lt; divs2::date AND divs1::dividends &lt; divs2::dividends;
+</code></pre><p>它看起来可以成功，因为 Pig 可以把数据分成两块，分别发送给 JOIN。但是，问题是
+联表之后会出现字段冲突，因此必须 load 两次。而且，对于 Pig 来说，虽然代码上
+载入了两次相同的数据，实际上它只载入的一次。</p><div id=分页limit class=anchor></div><h3 class="relative group">分页（LIMIT）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%86%e9%a1%b5limit aria-label=锚点>#</a></span></h3><p>有时，你可能只希望看到某个数量的数据：</p><pre><code>--limit.pig
+divs = LOAD 'NYSE_dividends'; 
+first10 = LIMIT divs 10;
+</code></pre><div id=样本sample class=anchor></div><h3 class="relative group">样本（SAMPLE）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%a0%b7%e6%9c%acsample aria-label=锚点>#</a></span></h3><p>SAMPLE 提供了一种从你的数据中获取一份样本。它读取所有的数据，然后返回某一个
+百分比的数据。这个值只能是 0 到 1 之间。</p><pre><code>--sample.pig
+divs = LOAD 'NYSE_dividends'; 
+some = SAMPLE divs 0.1; -- 获取10%的数据
+</code></pre><p>目前的样本算法非常简单，可以把它重写成：</p><pre><code>some = FILTER divs BY RANDOM()&lt;=0.1;
+</code></pre><div id=并行parallel class=anchor></div><h3 class="relative group">并行（PARALLEL）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%b9%b6%e8%a1%8cparallel aria-label=锚点>#</a></span></h3><p>Pig 的核心之一就是提供并行数据处理的语言。Pig 的核心价值观之一就是温驯的动物
+；因此，Pig 更愿意让你告诉它如何并行处理。为此，它提供了 PARALLEL 语句。</p><p>PARALLEL 语句可以和 Pig Latin 中任何关系操作一同使用。然而，它控制 reduce
+端的并行，因此它只能识别能强制 reduce 的操作；这些操作包括 GROUP, ORDRE,
+DISTINCT, LIMIT, COGROUP, 以及 CROSS。 PARALLEL 在本地模式的情况下被忽略，
+因为本地模式的数据处理都是序列的。</p><pre><code>--parallel.pig
+daily = LOAD 'NYSE_daily' AS (exchange, symbol, date, open, high, 
+        low, close, volume, adj_close);
+bysymbl = GROUP daily BY symbol PARALLEL 10;
+</code></pre><p>这个例子，PARALLEL 将被 PIG 把 MR 工作增加 10 个进程。它只能作用当前语句，
+而不会影响其他语句。但是，它也提供了一个简单的方式，让它在整个代码中奏效：</p><pre><code>--defaultparallel.pig
+SET DEFAULT_PARALLEL 10;    -- 在这个代码的所有操作都将有 10 个 reduce
+daily = LOAD 'NYSE_daily' AS (exchange, symbol, date, open, high, 
+        low, close, volume, adj_close); 
+bysymbl = GROUP daily BY symbol;
+average = FOREACH bysymbl GENERATE group, AVG(daily.close) AS avg; 
+sorted = ORDER average BY avg DESC;
+</code></pre><p>如果你不指定 PARALLEL 层级，Pig 0.8 之前的的默认是由你的集群的设置。</p><div id=自定义函数udf class=anchor></div><h3 class="relative group">自定义函数（UDF）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%87%bd%e6%95%b0udf aria-label=锚点>#</a></span></h3><p>Pig 的强大得益于它允许用用户通过 UDF 来定制他们的操作。0.7 之前，所有的 UDF
+只允许使用 JAVA 来编写。当前的版本是 0.12，它还支持 JYTHON，JAVASCRIPT，
+RUBY 以及 GROOVY 来编写 UDF，详情请参见<a href=http://pig.apache.org/docs/r0.12.0/udf.html target=_blank>
+User Defined Functions</a>。</p><p>还需要特别介绍的就是 Piggybank，用户贡献的 UDF 集，它和 Pig 一同打包和发行
+。但是它不包含在 pig.jar 中；因此，如果你要使用，需要登记它。</p><p>当然你也可以编写，或者使用别人开发的 UDF。</p><div id=登记-udf class=anchor></div><h4 class="relative group">登记 UDF
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%99%bb%e8%ae%b0-udf aria-label=锚点>#</a></span></h4><p>当你的 UDF 不包含在你的 Pig 中的时候，你需要告诉 Pig 从哪里寻找这些函数。</p><p>载入 JAVA 编写的 UDF：</p><pre><code>REGISTER 'your_path_to_piggybank/piggybank.jar';
+</code></pre><p>载入 JYTHON 编写的 UDF：</p><pre><code>REGISTER 'xx.py' USING jython as xx;
+</code></pre><div id=定义define和-udf class=anchor></div><h4 class="relative group">定义（DEFINE）和 UDF
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%ae%9a%e4%b9%89define%e5%92%8c-udf aria-label=锚点>#</a></span></h4><p>DEFINE 可以用来给你的 JAVA 包名建立别名来方便调用；它还可以提供流命令的定义
+，但是不是本章要涵盖的内容。下面是例子：</p><pre><code>REGISTER 'your_path_to_piggybank/piggybank.jar';
+DEFINE reverse org.apache.pig.piggybank.evaluation.string.Reverse();
+divs = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+        date:chararray, dividends:float); 
+backwards = FOREACH divs GENERATE reverse(symbol);
+</code></pre><p>求值或者筛选函数可能需要带多个参数。如果你用在 UDF，DEFINE 就是提供这些参数
+的地方。例如：</p><pre><code>--define_constructor_args.pig
+REGISTER 'acme.jar';
+DEFINE convert com.acme.financial.CurrencyConverter('dollar', 'euro');
+divs = LOAD 'NYSE_dividends' AS (exchange:chararray, symbol:chararray,
+        date:chararray, dividends:float); 
+backwards = FOREACH divs GENERATE convert(dividends);
+</code></pre><div id=enjoy-pig class=anchor></div><h3 class="relative group">Enjoy Pig!
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#enjoy-pig aria-label=锚点>#</a></span></h3></div></div><script>var oid="views_posts/2014-02-18-hadoop-data-pig-programming.md",oid_likes="likes_posts/2014-02-18-hadoop-data-pig-programming.md"</script><script type=text/javascript src=/n3xtchen/js/page.min.0e49973b4ad0a382c7c6012d8bff8226316642daabc4f8a20477bd08674f3da6e2fa993bc20ad4f51e7c5bb68e6f913a207a7c4fe37ea0e7b806894afce0a64e.js integrity="sha512-DkmXO0rQo4LHxgEti/+CJjFmQtqrxPiiBHe9CGdPPabi+pk7wgrU9R58W7aOb5E6IHp8T+N+oOe4BolK/OCmTg=="></script></section><footer class="pt-8 max-w-prose print:hidden"><div class=pt-8><hr class="border-dotted border-neutral-300 dark:border-neutral-600"><div class="flex justify-between pt-3"><span><a class="flex group mr-3" href=/n3xtchen/2014/02/17/hadoop-ecosystem---hcatalog/><span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&larr;</span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">Hadoop 生态系统 - HCatalog</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2014-02-17 00:00:00 +0000 UTC">2014-02-17</time></span></span></a></span>
+<span><a class="flex text-right group ml-3" href=/n3xtchen/2014/02/27/hadoop---data-pig---installation/><span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">Data Pig - 手动安装（Local 模式）</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2014-02-27 00:00:00 +0000 UTC">2014-02-27</time></span></span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&larr;</span></a></span></div></div></footer></article><div id=top-scroller class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0 rtl:left-0"><a href=#the-top class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 backdrop-blur hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400" aria-label title>&uarr;</a></div></main><footer id=site-footer class="py-10 print:hidden"><div class="flex items-center justify-between"><p class="text-sm text-neutral-500 dark:text-neutral-400">&copy;
+2023
+n3xtchen</p><p class="text-xs text-neutral-500 dark:text-neutral-400">由 <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a> & <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://blowfish.page/ target=_blank rel="noopener noreferrer">Blowfish</a> 强力驱动</p></div><script>mediumZoom(document.querySelectorAll("img:not(.nozoom)"),{margin:24,background:"rgba(0,0,0,0.5)",scrollOffset:0})</script><script type=text/javascript src=/n3xtchen/js/process.min.35c1113bcc16c5a59bf031082f9e63822aa95280423881a7847a7ff33a16e6299ce6a840d9ef4e10d947e030a18f3f20359afb2ec0f35967484b9a9360ac3145.js integrity="sha512-NcERO8wWxaWb8DEIL55jgiqpUoBCOIGnhHp/8zoW5imc5qhA2e9OENlH4DChjz8gNZr7LsDzWWdIS5qTYKwxRQ=="></script></footer><div id=search-wrapper class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh]" data-url=https://n3xtchen.github.io/n3xtchen style=z-index:500><div id=search-modal class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800"><header class="relative z-10 flex items-center justify-between flex-none px-2"><form class="flex items-center flex-auto min-w-0"><div class="flex items-center justify-center w-8 h-8 text-neutral-400"><span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></div><input type=search id=search-query class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent" placeholder tabindex=0></form><button id=close-search-button class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></button></header><section class="flex-auto px-2 overflow-auto"><ul id=search-results></ul></section></div></div></div></body></html>

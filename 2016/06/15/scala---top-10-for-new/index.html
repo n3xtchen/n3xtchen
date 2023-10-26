@@ -1,0 +1,301 @@
+<!doctype html><html lang=zh-cn dir=ltr class=scroll-smooth data-default-appearance=light data-auto-appearance=true><head><meta charset=utf-8><meta http-equiv=content-language content="zh-CN"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><title>Scala 新手眼中的十种有趣用法 &#183; N3xtChen 的博客</title><meta name=title content="Scala 新手眼中的十种有趣用法 &#183; N3xtChen 的博客"><meta name=keywords content="jvm,scala,"><link rel=canonical href=https://n3xtchen.github.io/n3xtchen/2016/06/15/scala---top-10-for-new/><link type=text/css rel=stylesheet href=/n3xtchen/css/main.bundle.min.5775579083e26679417a451dd3d7c3e540c7be85426fba5a47019603552ac89b95e12dddb64138e0aa488d68bc318ec4b0820255a5859b4da3f1b45f140abf11.css integrity="sha512-V3VXkIPiZnlBekUd09fD5UDHvoVCb7paRwGWA1UqyJuV4S3dtkE44KpIjWi8MY7EsIICVaWFm02j8bRfFAq/EQ=="><script type=text/javascript src=/n3xtchen/js/appearance.min.516a16745bea5a9bd011138d254cc0fd3973cd55ce6e15f3dec763e7c7c2c7448f8fe7b54cca811cb821b0c7e12cd161caace1dd794ac3d34d40937cbcc9ee12.js integrity="sha512-UWoWdFvqWpvQERONJUzA/TlzzVXObhXz3sdj58fCx0SPj+e1TMqBHLghsMfhLNFhyqzh3XlKw9NNQJN8vMnuEg=="></script>
+<script defer type=text/javascript id=script-bundle src=/n3xtchen/js/main.bundle.min.41e474f5d66052b313c33b8f56008afac498015b7472d0f2ab78e22c187405fdff125b6735973309e4743b6924ca8c575db297f464c42da8e30ef9daed3b050c.js integrity="sha512-QeR09dZgUrMTwzuPVgCK+sSYAVt0ctDyq3jiLBh0Bf3/EltnNZczCeR0O2kkyoxXXbKX9GTELajjDvna7TsFDA==" data-copy data-copied></script>
+<script src=/n3xtchen/js/zoom.min.js></script>
+<link rel=icon href=/n3xtchen/favicon.png pe=image/png><meta property="og:title" content="Scala 新手眼中的十种有趣用法"><meta property="og:description" content="TL;DR"><meta property="og:type" content="article"><meta property="og:url" content="https://n3xtchen.github.io/n3xtchen/2016/06/15/scala---top-10-for-new/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-06-15T00:00:00+00:00"><meta property="article:modified_time" content="2016-06-15T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Scala 新手眼中的十种有趣用法"><meta name=twitter:description content="TL;DR"><script type=application/ld+json>[{"@context":"https://schema.org","@type":"Article","articleSection":"时间线","name":"Scala 新手眼中的十种有趣用法","headline":"Scala 新手眼中的十种有趣用法","abstract":"TL;DR","inLanguage":"zh-CN","url":"https:\/\/n3xtchen.github.io\/n3xtchen\/2016\/06\/15\/scala---top-10-for-new\/","author":{"@type":"Person","name":"n3xtchen"},"copyrightYear":"2016","dateCreated":"2016-06-15T00:00:00\u002b00:00","datePublished":"2016-06-15T00:00:00\u002b00:00","dateModified":"2016-06-15T00:00:00\u002b00:00","keywords":["jvm","scala"],"mainEntityOfPage":"true","wordCount":"1224"}]</script><meta name=author content="n3xtchen"><link href=https://twitter.com/mN3XT rel=me><link href=https://githhub.com/n3xtchen rel=me><script src=/n3xtchen/lib/jquery/jquery.slim.min.js integrity></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EMLJCHXBFD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EMLJCHXBFD")</script><meta name=theme-color><style>code.has-jax{-webkit-font-smoothing:antialiased;background:inherit!important;border:none!important;font-size:100%}</style><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:["script","noscript","style","textarea","pre"]}},window.addEventListener("load",e=>{document.querySelectorAll("mjx-container").forEach(function(e){e.parentElement.classList+="has-jax"})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></head><body class="flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32"><div id=the-top class="absolute flex self-center"><a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600" href=#main-content><span class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span></a></div><div style=padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start space-x-3"><div class="flex flex-1 items-center justify-between"><nav class="flex space-x-3"><a href=/n3xtchen class="text-base font-medium text-gray-500 hover:text-gray-900">N3xtChen 的博客</a></nav><nav class="hidden md:flex items-center space-x-5 md:ml-12 h-12"><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=分类页>分类</p></a><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=Tags>标签</p></a><button id=search-button aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400 h-12" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button><div class="ltr:mr-14 rtl:ml-14 cursor-pointer text-sm text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"><button id=appearance-switcher aria-label="Dark mode switcher" type=button><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></nav><div class="flex md:hidden items-center space-x-5 md:ml-12"><span></span>
+<button id=search-button-mobile aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button>
+<button id=appearance-switcher-mobile aria-label="Dark mode switcher" type=button style=margin-right:5px><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></div><div class="-my-2 -mr-2 md:hidden"><label id=menu-button for=menu-controller class=block><input type=checkbox id=menu-controller class=hidden><div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentcolor" d="M0 96C0 78.33 14.33 64 32 64H416c17.7.0 32 14.33 32 32 0 17.7-14.3 32-32 32H32C14.33 128 0 113.7.0 96zM0 256c0-17.7 14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32H32c-17.67.0-32-14.3-32-32zM416 448H32c-17.67.0-32-14.3-32-32s14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32z"/></svg></span></div><div id=menu-wrapper style=padding-top:5px class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50"><ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl"><li><span class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></span></li><li class=mt-1><a href=/n3xtchen/posts/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a></li><li class=mt-1><a href=/n3xtchen/categories/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=分类页>分类</p></a></li><li class=mt-1><a href=/n3xtchen/tags/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=Tags>标签</p></a></li></ul></div></label></div></div><div class="relative flex flex-col grow"><main id=main-content class=grow><article><header id=single_header class="mt-5 max-w-prose"><h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">Scala 新手眼中的十种有趣用法</h1><div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden"><div class="flex flex-row flex-wrap items-center"><time datetime="2016-06-15 00:00:00 +0000 UTC">2016-06-15</time><span class="px-2 text-primary-500">&#183;</span><span>1224 字</span><span class="px-2 text-primary-500">&#183;</span><span title=预计阅读>6 分钟</span></div><div class="flex flex-row flex-wrap items-center"><span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/categories/scala/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">Scala</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/jvm/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">jvm</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/n3xtchen/tags/scala/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">scala</span></span></span></div></div><div class=flex><img class="!mt-0 !mb-0 h-24 w-24 rounded-full ltr:mr-4 rtl:ml-4" width=96 height=96 alt=n3xtchen src=/n3xtchen/images/author.jpg><div class=place-self-center><div class="text-[0.6rem] uppercase leading-3 text-neutral-500 dark:text-neutral-400">作者</div><div class="font-semibold leading-6 text-neutral-800 dark:text-neutral-300">n3xtchen</div><div class="text-sm text-neutral-700 dark:text-neutral-400">Sharing Funny Tech With You</div><div class="text-2xl sm:text-lg"><div class="flex flex-wrap text-neutral-400 dark:text-neutral-500"><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://twitter.com/mN3XT target=_blank aria-label=Twitter rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645.0 138.72-105.583 298.558-298.558 298.558-59.452.0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055.0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421.0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391.0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04.0-57.828 46.782-104.934 104.934-104.934 30.213.0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></span></span></a><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://githhub.com/n3xtchen target=_blank aria-label=Github rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentcolor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6.0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6.0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3.0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1.0-6.2-.3-40.4-.3-61.4.0.0-70 15-84.7-29.8.0.0-11.4-29.1-27.8-36.6.0.0-22.9-15.7 1.6-15.4.0.0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5.0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9.0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4.0 33.7-.3 75.4-.3 83.6.0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6.0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9.0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span></span></a></div></div></div></div><div class=mb-5></div></header><section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row"><div class="order-first sm:max-w-prose lg:ml-auto px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8"><div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky lg:top-10"><details open class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 hidden lg:block"><summary class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="min-w-[220px] py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#漂亮的操作系统调用方式>漂亮的操作系统调用方式</a></li><li><a href=#管道pipeline>管道（Pipeline）</a></li><li><a href=#使用--替代--的语法糖>使用 <code>{...}</code> 替代 <code>(...)</code> 的语法糖</a></li><li><a href=#创建自己的字符解释器>创建自己的字符解释器</a></li><li><a href=#在大部分情况下中缀infix标记和后缀postfix标记可省略>在大部分情况下，中缀(Infix)标记和后缀(Postfix)标记可省略</a></li><li><a href=#简便的类声明>简便的类声明：</a></li><li><a href=#密封类型sealed强制其子类只能定义在同一个文件中>密封类型（Sealed）强制其子类只能定义在同一个文件中</a></li><li><a href=#有趣的权限控制-private>有趣的权限控制 <code>private[]</code></a></li><li><a href=#类型擦除和-implicit>类型擦除和 <code>implicit</code></a></li><li><a href=#异常捕捉与-scalaz>异常捕捉与 <code>Scalaz</code></a><ul><li><a href=#scalaz-验证>Scalaz 验证</a></li></ul></li></ul></nav></div></details><details class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 lg:hidden"><summary class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#漂亮的操作系统调用方式>漂亮的操作系统调用方式</a></li><li><a href=#管道pipeline>管道（Pipeline）</a></li><li><a href=#使用--替代--的语法糖>使用 <code>{...}</code> 替代 <code>(...)</code> 的语法糖</a></li><li><a href=#创建自己的字符解释器>创建自己的字符解释器</a></li><li><a href=#在大部分情况下中缀infix标记和后缀postfix标记可省略>在大部分情况下，中缀(Infix)标记和后缀(Postfix)标记可省略</a></li><li><a href=#简便的类声明>简便的类声明：</a></li><li><a href=#密封类型sealed强制其子类只能定义在同一个文件中>密封类型（Sealed）强制其子类只能定义在同一个文件中</a></li><li><a href=#有趣的权限控制-private>有趣的权限控制 <code>private[]</code></a></li><li><a href=#类型擦除和-implicit>类型擦除和 <code>implicit</code></a></li><li><a href=#异常捕捉与-scalaz>异常捕捉与 <code>Scalaz</code></a><ul><li><a href=#scalaz-验证>Scalaz 验证</a></li></ul></li></ul></nav></div></details></div></div><div class="min-w-0 min-h-0 max-w-fit"><div class="max-w-prose mb-20"><p>TL;DR</p><p>作为一个初学者，经过一个月系统的系统学习，用惯了动态语言的我来说，<strong>Scala</strong> 编译器型语言的编程体验真的是太棒了。作为阶段性的总结，我将给出我对 <strong>Scala</strong> 最佳初体验的 Top 10：</p><div id=漂亮的操作系统调用方式 class=anchor></div><h2 class="relative group">漂亮的操作系统调用方式
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%bc%82%e4%ba%ae%e7%9a%84%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8%e6%96%b9%e5%bc%8f aria-label=锚点>#</a></span></h2><p><strong>Scala</strong> 2.9里也提供类似功能：新增加了package: <code>scala.sys</code> 及<code>scala.sys.process</code>, 这些代码最初由 <strong>SBT</strong> (a simple build tool for Scala)项目贡献，主要用于简化与操作系统进程的交互与调用。现在看看用法：</p><pre><code>scala&gt; import scala.language.postfixOps
+import scala.language.postfixOps
+
+scala&gt; import scala.sys.process._
+import scala.sys.process._
+
+scala&gt; &quot;java -version&quot; !
+java version &quot;1.7.0_80&quot;
+Java(TM) SE Runtime Environment (build 1.7.0_80-b15)
+Java HotSpot(TM) 64-Bit Server VM (build 24.80-b11, mixed mode)
+res2: Int = 0
+</code></pre><p>当你引入 <code>scala.sys.process</code> 后，<strong>scala</strong> 会为你给字符串或数组动态注入 <code>!</code> 方法来调用系统命令。</p><p>这是我见过调用 shell 最爽最优雅的方式之一，不是吗？现在看个复杂点的例子，爬取一个页面：</p><pre><code>scala&gt; import java.io.File
+import java.io.File
+
+scala&gt; import java.net.URL
+import java.net.URL
+
+scala&gt; new URL(&quot;http://www.scala-lang.org/&quot;) #&gt; new File(&quot;scala-lang.html&quot;) !
+res4: Int = 0
+</code></pre><p>这里我们又学到一个新的操作符 <code>#></code>，结果重定向。这条命令等价于如下 <strong>Bash</strong>：</p><pre><code>$ curl &quot;http://www.scala-lang.org/ &gt; scala-lang.html
+</code></pre><p>看看结果:</p><pre><code>scala&gt; &quot;ls&quot; !
+...
+scala-lang.html
+...
+res6: Int = 0
+</code></pre><blockquote><p>参考: <a href=http://www.scala-lang.org/api/rc2/scala/sys/process/package.html target=_blank>http://www.scala-lang.org/api/rc2/scala/sys/process/package.html</a></p></blockquote><div id=管道pipeline class=anchor></div><h2 class="relative group">管道（Pipeline）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ae%a1%e9%81%93pipeline aria-label=锚点>#</a></span></h2><pre><code>scala&gt; import scala.language.implicitConversions
+import scala.language.implicitConversions
+
+scala&gt; object Pipeline {
+     |   implicit class toPiped[V](value:V) {
+     |     def |&gt;[R] (f : V =&gt; R) = f(value)
+     |   }
+     | }
+defined module Pipeline
+
+scala&gt; import Pipeline._
+import Pipeline._
+
+scala&gt; 1 |&gt; ((i:Int)=&gt; i*10)
+res3: Int = 10
+</code></pre><p>这样就可以将，函数返回的值作为后面函数参数，一条链式调用看起来是那么的优雅（你觉得呢？）。</p><p>短短几行的代码，足以让你领教到 <strong>隐式转化</strong>（implicit）的威力吧！因为这个话题比较大，就不在这里作详细阐述了。</p><div id=使用--替代--的语法糖 class=anchor></div><h2 class="relative group">使用 <code>{...}</code> 替代 <code>(...)</code> 的语法糖
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e4%bd%bf%e7%94%a8--%e6%9b%bf%e4%bb%a3--%e7%9a%84%e8%af%ad%e6%b3%95%e7%b3%96 aria-label=锚点>#</a></span></h2><p>声明一个多参数表函数，如下</p><pre><code>scala&gt; def m[A](s: A)(f: A=&gt; String) = f(s)
+m: [A](s: A)(f: A =&gt; String)String
+</code></pre><p>你可以这样调用它：</p><pre><code>scala&gt; m(100)(i =&gt; s&quot;$i + $i&quot;)
+res2: String = 100 + 100
+</code></pre><p>你可以使用 <code>{...}</code> 替代 <code>(...)</code> 的语法糖，就可以把上面改写成下面的模式</p><pre><code>scala&gt; m(100){ i =&gt; s&quot;$i + $i&quot; }
+res3: String = 100 + 100
+</code></pre><p>竟然可以如此优雅优雅地调用函数，看起来就像标准的块代码（像 <code>if</code> 和 <code>for</code> 表达式）</p><div id=创建自己的字符解释器 class=anchor></div><h2 class="relative group">创建自己的字符解释器
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%9b%e5%bb%ba%e8%87%aa%e5%b7%b1%e7%9a%84%e5%ad%97%e7%ac%a6%e8%a7%a3%e9%87%8a%e5%99%a8 aria-label=锚点>#</a></span></h2><pre><code>import scala.util.parsing.json._
+
+object Interpolators {
+  implicit class jsonForStringContext(val sc: StringContext) {
+    def json(values: Any*): JSONObject = {
+		val keyRE = &quot;&quot;&quot;^[\s{,]*(\S+):\s*&quot;&quot;&quot;.r
+		val keys = sc.parts map {
+			case keyRE(key) =&gt; key
+			case str =&gt; str
+		}
+		val kvs = keys zip values
+		JSONObject(kvs.toMap)
+	}
+  }
+}
+
+import Interpolators._
+
+val name = &quot;Dean Wampler&quot;
+val book = &quot;Programming Scala, Second Edition&quot;
+
+val jsonobj = json&quot;{name: $name, book: $book}&quot; 
+println(jsonobj)
+</code></pre><p>哈哈，有意思吧！</p><div id=在大部分情况下中缀infix标记和后缀postfix标记可省略 class=anchor></div><h2 class="relative group">在大部分情况下，中缀(Infix)标记和后缀(Postfix)标记可省略
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%9c%a8%e5%a4%a7%e9%83%a8%e5%88%86%e6%83%85%e5%86%b5%e4%b8%8b%e4%b8%ad%e7%bc%80infix%e6%a0%87%e8%ae%b0%e5%92%8c%e5%90%8e%e7%bc%80postfix%e6%a0%87%e8%ae%b0%e5%8f%af%e7%9c%81%e7%95%a5 aria-label=锚点>#</a></span></h2><pre><code>1 + 2
+</code></pre><p>这段语句大家再熟悉不过了，但是在 <strong>Scala</strong> 中，所有的表达式都是方法，实际上完整的写法，如下：</p><pre><code>1.+(2)
+</code></pre><p>即，<code>+</code> 是整型对象（在 <strong>Scala</strong> 中，一切都是对象）的一个方法，如果了解到这里，会不会觉得能写成之前的样子很神奇。这里是 <strong>Scala</strong> 一个特性：</p><ul><li>如果一个对象有一个带有一个参数的方法， 它的中缀标记可以省略，在这里，点号和括号都可以省略。</li></ul><p>类似的，如果一个方法没有参数表，你调用它的时候，可以它的后缀标记（即括号）可以省略：</p><pre><code>scala&gt; 1 toString	// 1.toString()
+warning: there were 1 feature warning(s); re-run with -feature for details
+res2: String = 1
+</code></pre><p>因为忽略后缀，有时候会让人很迷惑，方法？属性？傻傻分不清楚！所以在版本 <strong>2.10</strong> 之后，如果没有明确告诉编译器的话，会给出一个警告：</p><pre><code>scala&gt; import scala.language.postfixOps
+scala&gt; 1 toString
+res2: String = 1
+</code></pre><p>警报解除，神奇吧？现在我们看一个复杂的例子：</p><pre><code>def isEven(n: Int) = (n % 2) == 0
+List(1, 2, 3, 4) filter isEven foreach println
+// 等同于 .filter(isEven).foreach(println)
+</code></pre><div id=简便的类声明 class=anchor></div><h2 class="relative group">简便的类声明：
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ae%80%e4%be%bf%e7%9a%84%e7%b1%bb%e5%a3%b0%e6%98%8e aria-label=锚点>#</a></span></h2><p><strong>Java</strong> 党可以看过来，不论是 IDE 和文本编辑器党，代码中到处充斥着大量的 <code>setter</code> 和 <code>getter</code>：</p><pre><code>// src/main/java/progscala2/basicoop/JPerson.java
+package progscala2.basicoop;
+
+public class JPerson {
+  private String name;
+  private int    age;
+
+  public JPerson(String name, int age) {
+    this.name = name;
+    this.age  = age;
+  }
+
+  public void   setName(String name) { this.name = name; }
+  public String getName()            { return this.name; }
+
+  public void setAge(int age) { this.age = age;  }
+  public int  getAge()        { return this.age; }
+}
+</code></pre><p>看看，<strong>Scala</strong> 可以这么写：</p><pre><code>class Person(var name: String, var age: Int)
+</code></pre><p>有没有像流泪的感觉，哈哈，That is it！如果想要覆盖某些 <code>setter</code> 和 <code>getter</code>，只要类声明中，覆盖相应方法即可。</p><p>有 <code>var</code>，自然有 <code>val</code>，如果你的对象属性都是不可变，那还可以使用如下声明：</p><pre><code>case class Person(name: String, age: Int)
+</code></pre><p>用 Java 的同学会不会很心动啊？^_^</p><div id=密封类型sealed强制其子类只能定义在同一个文件中 class=anchor></div><h2 class="relative group">密封类型（Sealed）强制其子类只能定义在同一个文件中
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%af%86%e5%b0%81%e7%b1%bb%e5%9e%8bsealed%e5%bc%ba%e5%88%b6%e5%85%b6%e5%ad%90%e7%b1%bb%e5%8f%aa%e8%83%bd%e5%ae%9a%e4%b9%89%e5%9c%a8%e5%90%8c%e4%b8%80%e4%b8%aa%e6%96%87%e4%bb%b6%e4%b8%ad aria-label=锚点>#</a></span></h2><p><code>seals</code> 关键字可以用在 <code>class</code> 和 <code>trait</code> 上。</p><p>第一个作用如题，举个栗子，<strong>Scala</strong> 源码中 <code>List</code> 的实现用到 <code>sealed</code> 关键字:</p><pre><code>scala&gt; class NewList extends List
+&lt;console&gt;:7: error: illegal inheritance from sealed class List
+       class NewList extends List
+</code></pre><p>这样子，妈妈再也不用担心我的类被人滥用。</p><p>如果就这么个功能，怎么能称得上 Top 10 呢？在看一个黑魔法：</p><pre><code>scala&gt; sealed abstract class Drawing
+defined class Drawing
+
+scala&gt; case class Point(x: Int, y: Int) extends Drawing
+defined class Point
+
+scala&gt; case class Circle(p: Point, r: Int) extends Drawing
+defined class Circle
+
+scala&gt; case class Cylinder(c: Circle, h: Int) extends Drawing
+defined class Cylinder
+</code></pre><p>如果你如之前，少写了其中一個案例：</p><pre><code>scala&gt; def what(d: Drawing) = d match {
+     |     case Point(_, _)    =&gt; &quot;点&quot;
+     |     case Cylinder(_, _) =&gt; &quot;柱&quot;
+     | }
+&lt;console&gt;:14: warning: match may not be exhaustive.
+It would fail on the following input: Circle(_, _)
+       def what(d: Drawing) = d match {
+                              ^
+what: (d: Drawing)String
+</code></pre><p>编译器在告訴你，有些模式的类型你沒有列在 <code>match</code> 運算式的案例串（Case sequence）之中。你应该每個都列出來才合理：</p><pre><code>scala&gt; def what(d: Drawing) = d match {
+     |     case Point(_, _)    =&gt; &quot;点&quot;
+     |     case Circle(_, _)   =&gt; &quot;圆&quot;
+     |     case Cylinder(_, _) =&gt; &quot;柱&quot;
+     | }
+what: (d: Drawing)String
+</code></pre><p>有時候，你使用別人密封過的案例类别，但也許你真的只想比对其中几個案例类型，如果不想要编译器饶人的警告，则可以在最后使用万用字元模式（<code>_</code>），例如：</p><pre><code>scala&gt; def what(d: Drawing) = d match {
+     |     case Point(_, _)    =&gt; &quot;點&quot;
+     |     case Cylinder(_, _) =&gt; &quot;柱&quot;
+     |     case _              =&gt; &quot;&quot; // 作你想作的事，或者丟出例外
+     | }
+what: (d: Drawing)String
+</code></pre><p>如果你真心不想要使用万用字元作额外处理，那么还可以可以使用 <code>@unchecked</code> 标注來告訴编译器住嘴：</p><pre><code>scala&gt; def what(d: Drawing) = (d: @unchecked) match {
+     |     case Point(_, _)    =&gt; &quot;點&quot;
+     |     case Cylinder(_, _) =&gt; &quot;柱&quot;
+     | }
+what: (d: Drawing)String
+</code></pre><blockquote><p>参考：http://openhome.cc/Gossip/Scala/SealedClass.html</p></blockquote><div id=有趣的权限控制-private class=anchor></div><h2 class="relative group">有趣的权限控制 <code>private[]</code>
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%9c%89%e8%b6%a3%e7%9a%84%e6%9d%83%e9%99%90%e6%8e%a7%e5%88%b6-private aria-label=锚点>#</a></span></h2><p><code>protected</code> 或 <code>private</code> 這表示权限限制到 <code>x</code> 的范围。</p><pre><code>class Some {
+    private val x = 10
+    def doSome(s: Some) = s.x + x
+}
+</code></pre><p>对于大多数语言，访问控制就严格无非就这两种。在 <strong>Scala</strong> 中，可以更加严格，让 <code>x</code> 完全无法透过实例存取，则可以使用 <code>private[this]</code>，這表示私有化至 <code>this</code> 实例本身才可以存取，也就是所謂物件私有（Object-private），例如以下就通不過编译了：</p><pre><code>class Some {
+    private[this] val x = 10
+    def doSome(s: Some) = s.x + x  // 编译错误
+}
+</code></pre><p>作为入门，就知道这里就可以了，可以跳到下一个话题了！</p><p>如果你看过 <strong>Spark</strong>（一个分布式计算框架）的源码，会发现这样的权限控制符到处都是，所以这个还是有必要搞清楚的。</p><p>如果能看懂下面这段代码，那你对 <code>Scala</code> 的域访问控制算是了解了：</p><pre><code>package scopeA {
+  class Class1 {
+    private[scopeA]   val scopeA_privateField = 1
+    protected[scopeA] val scopeA_protectedField = 2
+    private[Class1]   val class1_privateField = 3
+    protected[Class1] val class1_protectedField = 4
+    private[this]     val this_privateField = 5
+    protected[this]   val this_protectedField = 6
+  }
+
+  class Class2 extends Class1 {
+    val field1 = scopeA_privateField
+    val field2 = scopeA_protectedField
+    val field3 = class1_privateField     // ERROR
+    val field4 = class1_protectedField
+    val field5 = this_privateField       // ERROR
+    val field6 = this_protectedField
+  }
+}
+
+package scopeB {
+  class Class2B extends scopeA.Class1 {
+    val field1 = scopeA_privateField     // ERROR
+    val field2 = scopeA_protectedField
+    val field3 = class1_privateField     // ERROR
+    val field4 = class1_protectedField
+    val field5 = this_privateField       // ERROR
+    val field6 = this_protectedField
+  }
+}
+</code></pre><p>不懂也没关系，后面会花一个大篇幅来讲这块内容。</p><div id=类型擦除和-implicit class=anchor></div><h2 class="relative group">类型擦除和 <code>implicit</code>
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%b1%bb%e5%9e%8b%e6%93%a6%e9%99%a4%e5%92%8c-implicit aria-label=锚点>#</a></span></h2><pre><code>scala&gt; :paste
+object M {
+  def m(seq: Seq[Int]): Unit = println(s&quot;Seq[Int]: $seq&quot;)
+  def m(seq: Seq[String]): Unit = println(s&quot;Seq[String]: $seq&quot;)
+}
+&lt;ctrl-d&gt;
+&lt;console&gt;:8: error: double definition:
+method m:(seq: Seq[String])Unit and
+method m:(seq: Seq[Int])Unit at line 7
+have same type after erasure: (seq: Seq)Unit
+       def m(seq: Seq[String]): Unit = println(s&quot;Seq[String]: $seq&quot;)
+</code></pre><p>由于历史原因，<strong>JVM</strong> <code>忘记了</code> 参数化类型的参数类型。例如例子中的 <code>Seq[Int]</code> 和 <code>Seq[String]</code>，<strong>JVM</strong> 看到的只是 <code>Seq</code>，而附加的参数类型对于 JVM 来说是不可见，这就是传说中的<strong>类型擦除</strong>。于是乎，从 <strong>JVM</strong> 的视角来看，代码是这样子的：</p><pre><code>object M {
+  // 两者都是接受一个 Seq 参数，返回Unit
+  def m(seq: Seq): Unit = println(s&quot;Seq[Int]: $seq&quot;)
+  def m(seq: Seq): Unit = println(s&quot;Seq[String]: $seq&quot;)
+}
+</code></pre><p>这不就报错了吗？重复定义方法。那怎么办呢？（<strong>JAVA</strong> 语言的痛点之一）<code>Scala</code> 给你提供一种比较优雅的解决方案，使用隐式转换：</p><pre><code>scala&gt; :paste
+object M {
+	implicit object IntMarker 
+	implicit object StringMarker
+	
+	// 对于 JVM 来说是，接受 Seq 参数和 IntMarker.type 型 i 参数，
+	// 返回 Unit
+	def m(seq: Seq[Int])(implicit i: IntMarker.type): Unit =
+println(s&quot;Seq[Int]: $seq&quot;)
+
+	// 对于 JVM 来说是，接受 Seq 参数和 StringMarker.type 型 i 参数，
+	// 返回 Unit
+	// 
+	def m(seq: Seq[String])(implicit s: StringMarker.type): Unit =
+println(s&quot;Seq[String]: $seq&quot;)
+}
+&lt;ctrl-d&gt;
+scala&gt; import M._
+scala&gt; m(List(1,2,3))	// 在调用的时候，忽略隐式类型
+scala&gt; m(List(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;))
+</code></pre><div id=异常捕捉与-scalaz class=anchor></div><h2 class="relative group">异常捕捉与 <code>Scalaz</code>
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%bc%82%e5%b8%b8%e6%8d%95%e6%8d%89%e4%b8%8e-scalaz aria-label=锚点>#</a></span></h2><p>先来看看，异常捕捉语句：</p><pre><code>try {
+	source = Some(Source.fromFile(fileName))
+	val size = source.get.getLines.size
+	println(s&quot;file $fileName has $size lines&quot;)
+} catch {
+	case NonFatal(ex) =&gt; println(s&quot;Non fatal exception! $ex&quot;)
+} finally {
+  for (s &lt;- source) {
+    println(s&quot;Closing $fileName...&quot;)
+    s.close
+  }
+}
+</code></pre><p>这里是打开文件的操作，并且计算行数；<code>NonFatal</code> 非致命错误，如内存不足之类的非致命错误，将会被抛掉。<code>finnaly</code> 操作结束后，关闭文件。这是 <strong>Scala</strong> 模式匹配的又一大应用场景，你会发现倒是都是模式匹配：</p><pre><code>	 case NonFatal(ex) =&gt; ...
+</code></pre><p>如果每条异常的处理语句只是单条的话，<strong>Scala</strong> 写起来应该会挺爽的。</p><div id=scalaz-验证 class=anchor></div><h3 class="relative group">Scalaz 验证
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#scalaz-%e9%aa%8c%e8%af%81 aria-label=锚点>#</a></span></h3><p>在传统的异常处理，无法一次性汇总运行过程中的错误。如果我们在做表单验证的时候，我们就需要考虑到这个场景。而传统的做法就是通过一层层 <code>try ... catch ...</code>，把错误追加到一个列表中来实现，而 <code>scalaz</code> 中提供一个适用于这个场景的封装，直接看例子吧：</p><pre><code>import scalaz._, std.AllInstances._
+
+/* 验证用户名，非空和只包含字母 */
+def validName(key: String, name: String):
+    Validation[List[String], List[(String,Any)]] = {
+  val n = name.trim  // remove whitespace
+  if (n.length &gt; 0 &amp;&amp; n.matches(&quot;&quot;&quot;^\p{Alpha}$&quot;&quot;&quot;)) Success(List(key -&gt; n))
+  else Failure(List(s&quot;Invalid $key &lt;$n&gt;&quot;))
+} 
+
+/* 验证数字，并且大于0 */
+def positive(key: String, n: String):
+    Validation[List[String], List[(String,Any)]] = {
+  try {
+    val i = n.toInt
+    if (i &gt; 0) Success(List(key -&gt; i))
+    else Failure(List(s&quot;Invalid $key $i&quot;))
+  } catch {
+    case _: java.lang.NumberFormatException =&gt;
+      Failure(List(s&quot;$n is not an integer&quot;))
+  }
+}
+
+/* 验证表单 */
+def validateForm(firstName: String, lastName: String, age: String):
+    Validation[List[String], List[(String,Any)]] = {
+  validName(&quot;first-name&quot;, firstName) +++ validName(&quot;last-name&quot;, lastName) +++
+    positive(&quot;age&quot;, age)
+}
+
+validateForm(&quot;Dean&quot;, &quot;Wampler&quot;, &quot;29&quot;)
+validateForm(&quot;&quot;, &quot;Wampler&quot;, &quot;0&quot;)
+// Returns: Failure(List(Invalid first-name &lt;&gt;, Invalid age 0))
+//告知你名字和年龄填写有误
+validateForm(&quot;Dean&quot;, &quot;&quot;, &quot;0&quot;) 
+// Returns: Failure(List(Invalid last-name &lt;&gt;, Invalid age 0)) 
+// 告知你姓氏和年龄填写有误
+validateForm(&quot;D e a n&quot;, &quot;&quot;, &quot;29&quot;)
+// Returns: Failure(List(Invalid first-name &lt;D e a n&gt;, Invalid last-name &lt;&gt;)) 
+// 告知你名字和姓氏填写错误
+</code></pre><p>这方式还不错吧？</p><p>就到这里就结束了，写着写着，就写这么多了，赶紧收住。</p></div></div><script>var oid="views_posts/2016-06-15-scala---top-10-for-new.md",oid_likes="likes_posts/2016-06-15-scala---top-10-for-new.md"</script><script type=text/javascript src=/n3xtchen/js/page.min.0e49973b4ad0a382c7c6012d8bff8226316642daabc4f8a20477bd08674f3da6e2fa993bc20ad4f51e7c5bb68e6f913a207a7c4fe37ea0e7b806894afce0a64e.js integrity="sha512-DkmXO0rQo4LHxgEti/+CJjFmQtqrxPiiBHe9CGdPPabi+pk7wgrU9R58W7aOb5E6IHp8T+N+oOe4BolK/OCmTg=="></script></section><footer class="pt-8 max-w-prose print:hidden"><div class=pt-8><hr class="border-dotted border-neutral-300 dark:border-neutral-600"><div class="flex justify-between pt-3"><span><a class="flex group mr-3" href=/n3xtchen/2016/05/27/swift-world/><span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&larr;</span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">Swift World - 基础入门</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2016-05-27 00:00:00 +0000 UTC">2016-05-27</time></span></span></a></span>
+<span><a class="flex text-right group ml-3" href=/n3xtchen/2016/07/13/scalatra---installationconfig/><span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">Scalatra: 安装和端口配置</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2016-07-13 00:00:00 +0000 UTC">2016-07-13</time></span></span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&larr;</span></a></span></div></div></footer></article><div id=top-scroller class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0 rtl:left-0"><a href=#the-top class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 backdrop-blur hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400" aria-label title>&uarr;</a></div></main><footer id=site-footer class="py-10 print:hidden"><div class="flex items-center justify-between"><p class="text-sm text-neutral-500 dark:text-neutral-400">&copy;
+2023
+n3xtchen</p><p class="text-xs text-neutral-500 dark:text-neutral-400">由 <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a> & <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://blowfish.page/ target=_blank rel="noopener noreferrer">Blowfish</a> 强力驱动</p></div><script>mediumZoom(document.querySelectorAll("img:not(.nozoom)"),{margin:24,background:"rgba(0,0,0,0.5)",scrollOffset:0})</script><script type=text/javascript src=/n3xtchen/js/process.min.35c1113bcc16c5a59bf031082f9e63822aa95280423881a7847a7ff33a16e6299ce6a840d9ef4e10d947e030a18f3f20359afb2ec0f35967484b9a9360ac3145.js integrity="sha512-NcERO8wWxaWb8DEIL55jgiqpUoBCOIGnhHp/8zoW5imc5qhA2e9OENlH4DChjz8gNZr7LsDzWWdIS5qTYKwxRQ=="></script></footer><div id=search-wrapper class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh]" data-url=https://n3xtchen.github.io/n3xtchen style=z-index:500><div id=search-modal class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800"><header class="relative z-10 flex items-center justify-between flex-none px-2"><form class="flex items-center flex-auto min-w-0"><div class="flex items-center justify-center w-8 h-8 text-neutral-400"><span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></div><input type=search id=search-query class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent" placeholder tabindex=0></form><button id=close-search-button class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></button></header><section class="flex-auto px-2 overflow-auto"><ul id=search-results></ul></section></div></div></div></body></html>
