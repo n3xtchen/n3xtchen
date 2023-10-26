@@ -1,0 +1,352 @@
+<!doctype html><html lang=zh-cn dir=ltr class=scroll-smooth data-default-appearance=light data-auto-appearance=true><head><meta charset=utf-8><meta http-equiv=content-language content="zh-CN"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><title>探索 Yii2: 数据库迁移（Database Migration） &#183; N3xtChen 的博客</title><meta name=title content="探索 Yii2: 数据库迁移（Database Migration） &#183; N3xtChen 的博客"><meta name=keywords content="yii,"><link rel=canonical href=https://n3xtchen.github.io/2015/12/24/2015-12-24-into-yii-db-migration/><link type=text/css rel=stylesheet href=/css/main.bundle.min.5775579083e26679417a451dd3d7c3e540c7be85426fba5a47019603552ac89b95e12dddb64138e0aa488d68bc318ec4b0820255a5859b4da3f1b45f140abf11.css integrity="sha512-V3VXkIPiZnlBekUd09fD5UDHvoVCb7paRwGWA1UqyJuV4S3dtkE44KpIjWi8MY7EsIICVaWFm02j8bRfFAq/EQ=="><script type=text/javascript src=/js/appearance.min.516a16745bea5a9bd011138d254cc0fd3973cd55ce6e15f3dec763e7c7c2c7448f8fe7b54cca811cb821b0c7e12cd161caace1dd794ac3d34d40937cbcc9ee12.js integrity="sha512-UWoWdFvqWpvQERONJUzA/TlzzVXObhXz3sdj58fCx0SPj+e1TMqBHLghsMfhLNFhyqzh3XlKw9NNQJN8vMnuEg=="></script>
+<script defer type=text/javascript id=script-bundle src=/js/main.bundle.min.41e474f5d66052b313c33b8f56008afac498015b7472d0f2ab78e22c187405fdff125b6735973309e4743b6924ca8c575db297f464c42da8e30ef9daed3b050c.js integrity="sha512-QeR09dZgUrMTwzuPVgCK+sSYAVt0ctDyq3jiLBh0Bf3/EltnNZczCeR0O2kkyoxXXbKX9GTELajjDvna7TsFDA==" data-copy data-copied></script>
+<script src=/js/zoom.min.js></script>
+<link rel=icon href=/favicon.png pe=image/png><meta property="og:title" content="探索 Yii2: 数据库迁移（Database Migration）"><meta property="og:description" content="前提 # php >= 5."><meta property="og:type" content="article"><meta property="og:url" content="https://n3xtchen.github.io/2015/12/24/2015-12-24-into-yii-db-migration/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-12-24T00:00:00+00:00"><meta property="article:modified_time" content="2015-12-24T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="探索 Yii2: 数据库迁移（Database Migration）"><meta name=twitter:description content="前提 # php >= 5."><script type=application/ld+json>[{"@context":"https://schema.org","@type":"Article","articleSection":"时间线","name":"探索 Yii2: 数据库迁移（Database Migration）","headline":"探索 Yii2: 数据库迁移（Database Migration）","abstract":"前提 # php \u0026gt;= 5.","inLanguage":"zh-CN","url":"https:\/\/n3xtchen.github.io\/2015\/12\/24\/2015-12-24-into-yii-db-migration\/","author":{"@type":"Person","name":"n3xtchen"},"copyrightYear":"2015","dateCreated":"2015-12-24T00:00:00\u002b00:00","datePublished":"2015-12-24T00:00:00\u002b00:00","dateModified":"2015-12-24T00:00:00\u002b00:00","keywords":["yii"],"mainEntityOfPage":"true","wordCount":"1138"}]</script><meta name=author content="n3xtchen"><link href=https://twitter.com/mN3XT rel=me><link href=https://githhub.com/n3xtchen rel=me><script src=/lib/jquery/jquery.slim.min.js integrity></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EMLJCHXBFD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-EMLJCHXBFD")</script><meta name=theme-color><style>code.has-jax{-webkit-font-smoothing:antialiased;background:inherit!important;border:none!important;font-size:100%}</style><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:["script","noscript","style","textarea","pre"]}},window.addEventListener("load",e=>{document.querySelectorAll("mjx-container").forEach(function(e){e.parentElement.classList+="has-jax"})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></head><body class="flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32"><div id=the-top class="absolute flex self-center"><a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600" href=#main-content><span class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span></a></div><div style=padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start space-x-3"><div class="flex flex-1 items-center justify-between"><nav class="flex space-x-3"><a href=/ class="text-base font-medium text-gray-500 hover:text-gray-900">N3xtChen 的博客</a></nav><nav class="hidden md:flex items-center space-x-5 md:ml-12 h-12"><a href=/posts/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a><a href=/categories/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=分类页>分类</p></a><a href=/tags/ class="flex items-center"><p class="text-base font-medium text-gray-500 hover:text-gray-900" title=Tags>标签</p></a><button id=search-button aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400 h-12" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button><div class="ltr:mr-14 rtl:ml-14 cursor-pointer text-sm text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"><button id=appearance-switcher aria-label="Dark mode switcher" type=button><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></nav><div class="flex md:hidden items-center space-x-5 md:ml-12"><span></span>
+<button id=search-button-mobile aria-label=Search class="text-base hover:text-primary-600 dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></button>
+<button id=appearance-switcher-mobile aria-label="Dark mode switcher" type=button style=margin-right:5px><div class="flex items-center justify-center h-12 dark:hidden"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M32 256C32 132.2 132.3 32 255.8 32c11.36.0 29.7 1.668 40.9 3.746 9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3 9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480 132.1 480 32 379.6 32 256z"/></svg></span></div><div class="items-center justify-center hidden h-12 dark:flex"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M256 159.1c-53.02.0-95.1 42.98-95.1 95.1s41.2 96.9 95.1 96.9 95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347l-63.2-91.9 63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89 164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6 12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256 2.74 347.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7 19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109 109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69.0-127.1-57.31-127.1-127.1.0-70.69 57.31-127.1 127.1-127.1S383.1 186.2 383.1 256c0 70.7-56.4 127.1-127.1 127.1z"/></svg></span></div></button></div></div><div class="-my-2 -mr-2 md:hidden"><label id=menu-button for=menu-controller class=block><input type=checkbox id=menu-controller class=hidden><div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentcolor" d="M0 96C0 78.33 14.33 64 32 64H416c17.7.0 32 14.33 32 32 0 17.7-14.3 32-32 32H32C14.33 128 0 113.7.0 96zM0 256c0-17.7 14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32H32c-17.67.0-32-14.3-32-32zM416 448H32c-17.67.0-32-14.3-32-32s14.33-32 32-32H416c17.7.0 32 14.3 32 32s-14.3 32-32 32z"/></svg></span></div><div id=menu-wrapper style=padding-top:5px class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50"><ul class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl"><li><span class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></span></li><li class=mt-1><a href=/posts/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=时间线>时间线</p></a></li><li class=mt-1><a href=/categories/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=分类页>分类</p></a></li><li class=mt-1><a href=/tags/ class="flex items-center"><p class="text-bg font-bg text-gray-500 hover:text-gray-900" title=Tags>标签</p></a></li></ul></div></label></div></div><div class="relative flex flex-col grow"><main id=main-content class=grow><article><header id=single_header class="mt-5 max-w-prose"><h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">探索 Yii2: 数据库迁移（Database Migration）</h1><div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden"><div class="flex flex-row flex-wrap items-center"><time datetime="2015-12-24 00:00:00 +0000 UTC">2015-12-24</time><span class="px-2 text-primary-500">&#183;</span><span>1138 字</span><span class="px-2 text-primary-500">&#183;</span><span title=预计阅读>6 分钟</span></div><div class="flex flex-row flex-wrap items-center"><span style=margin-top:.5rem class=mr-2 onclick='window.open("/categories/php/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">PHP</span></span></span>
+<span style=margin-top:.5rem class=mr-2 onclick='window.open("/tags/yii/","_self")'><span class=flex><span class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">yii</span></span></span></div></div><div class=flex><img class="!mt-0 !mb-0 h-24 w-24 rounded-full ltr:mr-4 rtl:ml-4" width=96 height=96 alt=n3xtchen src=/images/author.jpg><div class=place-self-center><div class="text-[0.6rem] uppercase leading-3 text-neutral-500 dark:text-neutral-400">作者</div><div class="font-semibold leading-6 text-neutral-800 dark:text-neutral-300">n3xtchen</div><div class="text-sm text-neutral-700 dark:text-neutral-400">Sharing Funny Tech With You</div><div class="text-2xl sm:text-lg"><div class="flex flex-wrap text-neutral-400 dark:text-neutral-500"><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://twitter.com/mN3XT target=_blank aria-label=Twitter rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645.0 138.72-105.583 298.558-298.558 298.558-59.452.0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055.0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421.0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391.0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04.0-57.828 46.782-104.934 104.934-104.934 30.213.0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></span></span></a><a class="px-1 hover:text-primary-700 dark:hover:text-primary-400" href=https://githhub.com/n3xtchen target=_blank aria-label=Github rel="me noopener noreferrer"><span class="inline-block align-text-bottom"><span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentcolor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6.0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6.0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3.0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1.0-6.2-.3-40.4-.3-61.4.0.0-70 15-84.7-29.8.0.0-11.4-29.1-27.8-36.6.0.0-22.9-15.7 1.6-15.4.0.0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5.0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9.0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4.0 33.7-.3 75.4-.3 83.6.0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6.0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9.0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span></span></a></div></div></div></div><div class=mb-5></div></header><section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row"><div class="order-first sm:max-w-prose lg:ml-auto px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8"><div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky lg:top-10"><details open class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 hidden lg:block"><summary class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="min-w-[220px] py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#前提>前提</a></li><li><a href=#简单的入门>简单的入门</a><ul><li><a href=#先看命令说明>先看命令说明</a></li><li><a href=#创建迁移migration>创建迁移（Migration）</a></li><li><a href=#生成迁移脚本>生成迁移脚本</a><ul><li><a href=#创建表>创建表</a></li><li><a href=#删除表>删除表</a></li><li><a href=#添加字段>添加字段</a></li><li><a href=#删除字段>删除字段</a></li><li><a href=#生成交叉表>生成交叉表</a></li></ul></li><li><a href=#事务性transational迁移>事务性（Transational）迁移</a></li><li><a href=#数据库访问方法>数据库访问方法</a></li><li><a href=#执行迁移>执行迁移</a></li><li><a href=#迁移版本回滚>迁移版本回滚</a></li><li><a href=#重复redo迁移>重复（Redo）迁移</a></li><li><a href=#迁移版本历史>迁移版本历史</a></li><li><a href=#修改迁移历史>修改迁移历史</a></li><li><a href=#定制迁移>定制迁移</a><ul><li><a href=#使用命令行参数>使用命令行参数</a></li></ul></li><li><a href=#配置全局命令>配置全局命令</a></li><li><a href=#多数据库迁移策略>多数据库迁移策略</a></li></ul></li></ul></nav></div></details><details class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 lg:hidden"><summary class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden"></summary><div class="py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600"><nav id=TableOfContents><ul><li><a href=#前提>前提</a></li><li><a href=#简单的入门>简单的入门</a><ul><li><a href=#先看命令说明>先看命令说明</a></li><li><a href=#创建迁移migration>创建迁移（Migration）</a></li><li><a href=#生成迁移脚本>生成迁移脚本</a><ul><li><a href=#创建表>创建表</a></li><li><a href=#删除表>删除表</a></li><li><a href=#添加字段>添加字段</a></li><li><a href=#删除字段>删除字段</a></li><li><a href=#生成交叉表>生成交叉表</a></li></ul></li><li><a href=#事务性transational迁移>事务性（Transational）迁移</a></li><li><a href=#数据库访问方法>数据库访问方法</a></li><li><a href=#执行迁移>执行迁移</a></li><li><a href=#迁移版本回滚>迁移版本回滚</a></li><li><a href=#重复redo迁移>重复（Redo）迁移</a></li><li><a href=#迁移版本历史>迁移版本历史</a></li><li><a href=#修改迁移历史>修改迁移历史</a></li><li><a href=#定制迁移>定制迁移</a><ul><li><a href=#使用命令行参数>使用命令行参数</a></li></ul></li><li><a href=#配置全局命令>配置全局命令</a></li><li><a href=#多数据库迁移策略>多数据库迁移策略</a></li></ul></li></ul></nav></div></details></div></div><div class="min-w-0 min-h-0 max-w-fit"><div class="max-w-prose mb-20"><div id=前提 class=anchor></div><h2 class="relative group">前提
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%89%8d%e6%8f%90 aria-label=锚点>#</a></span></h2><ol><li><strong>php</strong> >= 5.4</li><li><strong>Yii</strong> >= 2.0.6: 这个版本才开始支持数据库模式生成器（Schema Builder）</li></ol><div id=简单的入门 class=anchor></div><h2 class="relative group">简单的入门
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%ae%80%e5%8d%95%e7%9a%84%e5%85%a5%e9%97%a8 aria-label=锚点>#</a></span></h2><div id=先看命令说明 class=anchor></div><h3 class="relative group">先看命令说明
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%85%88%e7%9c%8b%e5%91%bd%e4%bb%a4%e8%af%b4%e6%98%8e aria-label=锚点>#</a></span></h3><pre><code>$ ./yii help migrate
+。。。废话在此处省略。。。
+The migration history is stored in a database table named
+as [[migrationTable]]. The table will be automatically created the first time
+this command is executed, if it does not exist. You may also manually
+create it as follows:	
+
+# 我的翻译：迁移历史将被存储到数据库表 migration 中；如果他不存在这个表，触发迁移命令的时候就会被创建。你也许要手动创建他，语句如下
+
+CREATE TABLE migration (
+    version varchar(180) PRIMARY KEY,
+    apply_time integer
+)
+
+Below are some common usages of this command:
+
+# creates a new migration named 'create_user_table'
+# 我的翻译：生成迁移文件
+yii migrate/create create_user_table
+
+# applies ALL new migrations
+# 我的翻译：执行数据库迁移
+yii migrate
+
+# reverts the last applied migration
+# 我的翻译：回滚数据库迁移
+yii migrate/down
+
+
+SUB-COMMANDS
+
+- migrate/down          Downgrades the application by reverting old migrations.		# 回滚旧版本
+- migrate/history       Displays the migration history.								# 显示迁移历史
+- migrate/mark          Modifies the migration history to the specified version.	# 强制指定历史到特定的版本，只会修改 migrate 表中纪录
+- migrate/new           Displays the un-applied new migrations.						# 查看可更新的迁移
+- migrate/redo          Redoes the last few migrations.								# 重新最近一次的迁移
+- migrate/to            Upgrades or downgrades till the specified version.			# 更新／回滚到指定版本
+- migrate/up (default)  Upgrades the application by applying new migrations.		# 默认是执行迁移
+
+To see the detailed information about individual sub-commands, enter:
+
+  yii help &lt;sub-command&gt;
+</code></pre><div id=创建迁移migration class=anchor></div><h3 class="relative group">创建迁移（Migration）
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%9b%e5%bb%ba%e8%bf%81%e7%a7%bbmigration aria-label=锚点>#</a></span></h3><p>运行下面的命令：</p><pre><code>$ ./yii migrate/create &lt;name&gt;
+</code></pre><p><code>&lt;name></code> 指定了迁移的简要描述，必须传入。例如，在本次迁移，你要建立名为 <code>posts</code> 的迁移，使用一下命令：</p><pre><code>$ ./yii migrate/create create_posts_table
+</code></pre><blockquote><p>由于参数 <code>name</code> 将用来作为迁移生成的类名，因此他只能包含字母，数字以及下划线。</p></blockquote><p>上述的命令将会在项目根目录下 <em>migrations</em> 目录中生成一个 <strong>PHP</strong> 类文件.</p><pre><code>$ cat migrateions/m151229_025650_create_posts_table
+&lt;?php
+
+use yii\db\Migration;
+
+class m151229_025650_create_posts_table extends Migration
+{
+    public function up()
+    {
+
+    }
+
+    public function down()
+    {
+        echo &quot;m151229_025650_create_posts_table cannot be reverted.\n&quot;;
+
+        return false;
+    }
+
+    /*
+    // Use safeUp/safeDown to run migration code within a transaction
+    public function safeUp()
+    {
+    }
+
+    public function safeDown()
+    {
+    }
+    */
+}
+</code></pre><p>每一次数据库迁移都会被定义成 <strong>PHP</strong> 类（继承 <code>yii\db\migration</code>）。这个迁移类名将会自动生成为如下格式：</p><pre><code>m&lt;YYYMMDD_HHMMSS: 执行命令的系统时间&gt;_&lt;Name: 命令行传入&gt;
+</code></pre><p>在迁移类中，你需要编写 <code>up()</code> 方法来告诉 <code>yii</code> 如何操作数据库。你可能还需要编写 <code>down()</code> 方法来回滚由 <code>up()</code> 带来的变动。下面演示如何使用 <code>yii</code> 来创建一张 <code>news</code> 表：</p><pre><code>&lt;?php
+
+use yii\db\Schema;
+use yii\db\Migration;
+
+class m150101_185401_create_news_table extends Migration
+{
+    public function up()
+    {
+        $this-&gt;createTable('news', [
+            'id' =&gt; Schema::TYPE_PK,
+            'title' =&gt; Schema::TYPE_STRING . ' NOT NULL',
+            'content' =&gt; Schema::TYPE_TEXT,
+        ]);
+    }
+
+    public function down()
+    {
+        $this-&gt;dropTable('news');
+    }
+}
+</code></pre><blockquote><p>注意：不是所有的迁移都需要回滚。比如，如果 <code>up()</code> 操作是删除表的一行，你可能就不能通过 <code>down()</code> 来回滚这一条数据。有时，你只是太懒而不愿意实现 <code>down()</code> 方法，因为回滚也不是很普遍。这种情况，你应该在 <code>down()</code> 方法中返回 <code>false</code> 值来指明此处不可回滚。</p></blockquote><p>不应该使用数据库原生字段类型，而是使用 <code>yii</code> 提供的数据库抽象字段类型，这样就能让你的数据迁移便携独立于特定的数据库。在 <code>yii\db\Schema</code> 中定义了一系列常量来存放所支持的数据库抽象字段类型。这些常量的命名格式为 <code>TYPE_&lt;Name></code>。例如，<code>TYPE_PK</code> 代表自增主键类型；<code>TYPE_STRING</code> 代表字符型。当执行一次数据迁移时，数据库抽象类型将会被转换成相关数据库原生类型。以 <strong>MYSQL</strong> 为例，<code>TYPE_PK</code> 会转化成 <code>int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY</code>，而 <code>TYPE_STRING</code> 会变成 <code>varchar(255)</code>。</p><p>你还可以使用抽象类型追加额外的约束（constraints）。在上面例子中，<code>NOT NULL</code> 追加到 <code>SCHEMA::TYPE_STRING</code> 的后面来指明这个字段不可为空。</p><blockquote><p>注意：数据库抽象类型和原生类型的映射都被指定在 <code>QueryBuilder</code> 类中的 <code>$typeMap</code> 属性中。</p></blockquote><p>从 2.0.6 开始，你可以使用新引入的模式（Schema）生成器，它提供更多方便的方法定义表结构。因此，上述的迁移可以改成如下：</p><pre><code>&lt;?php
+
+use yii\db\Migration;
+
+class m150101_185401_create_news_table extends Migration
+{
+    public function up()
+    {
+        $this-&gt;createTable('news', [
+            'id' =&gt; $this-&gt;primaryKey(),
+            'title' =&gt; $this-&gt;string()-&gt;notNull(),
+            'content' =&gt; $this-&gt;text(),
+        ]);
+    }
+
+    public function down()
+    {
+        $this-&gt;dropTable('news');
+    }
+}
+</code></pre><p>所有可用定义字段类型的方法可以在 <code>yii\db\SchemaBuilderTrait</code> 的 API 文档中查找。</p><div id=生成迁移脚本 class=anchor></div><h3 class="relative group">生成迁移脚本
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%94%9f%e6%88%90%e8%bf%81%e7%a7%bb%e8%84%9a%e6%9c%ac aria-label=锚点>#</a></span></h3><p>从 2.0.7 版本开始，命令行模式下支持一种便利的方法来创建迁移脚本。</p><p>如果迁移名称指定成一种特殊的形式，如 <code>create_xxx</code> 或者 <code>drop_xxx</code>（不仅仅限于这两种），迁移类文件将自动生成一些额外的代码。</p><div id=创建表 class=anchor></div><h4 class="relative group">创建表
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%9b%e5%bb%ba%e8%a1%a8 aria-label=锚点>#</a></span></h4><pre><code>$ yii migrate/create create_post
+</code></pre><p>生成</p><pre><code>class m150811_220037_create_post extends Migration
+{
+    public function up()
+    {
+        $this-&gt;createTable('post', [
+            'id' =&gt; $this-&gt;primaryKey()
+        ]);
+    }
+
+    public function down()
+    {
+        $this-&gt;dropTable('post');
+    }
+}
+</code></pre><p>你可以通过 <code>--fields</code> 参数来创建相应的字段。</p><pre><code>$ yii migrate/create create_post --fields=title:string,body:text
+</code></pre><p>生成</p><pre><code>class m150811_220037_create_post extends Migration
+{
+    public function up()
+    {
+        $this-&gt;createTable('post', [
+            'id' =&gt; $this-&gt;primaryKey(),
+            'title' =&gt; $this-&gt;string(),
+            'body' =&gt; $this-&gt;text()
+        ]);
+    }
+
+    public function down()
+    {
+        $this-&gt;dropTable('post');
+    }
+}
+</code></pre><p>还可以指定更多字段定义</p><pre><code>$ yii migrate/create create_post --fields=title:string(12):notNull:unique,body:text
+</code></pre><p>生成</p><pre><code>class m150811_220037_create_post extends Migration
+{
+    public function up()
+    {
+        $this-&gt;createTable('post', [
+            'id' =&gt; $this-&gt;primaryKey(),
+            'title' =&gt; $this-&gt;string(12)-&gt;notNull()-&gt;unique(),
+            'body' =&gt; $this-&gt;text()
+        ]);
+    }
+
+    public function down()
+    {
+        $this-&gt;dropTable('post');
+    }
+}
+</code></pre><blockquote><p>注意：主键会自动添加，默认的主键名称是 <code>id</code>；如果你想要使用其他名称，你可以通过 <code>--fields=name:primaryKey</code> 明确指定它。</p></blockquote><div id=删除表 class=anchor></div><h4 class="relative group">删除表
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%a0%e9%99%a4%e8%a1%a8 aria-label=锚点>#</a></span></h4><pre><code>$ yii migrate/create drop_post --fields=title:string(12):notNull:unique,body:text
+</code></pre><p>生成</p><pre><code>class m150811_220037_drop_post extends Migration
+{
+    public function up()
+    {
+        $this-&gt;dropTable('post');
+    }
+
+    public function down()
+    {
+        $this-&gt;createTable('post', [
+            'id' =&gt; $this-&gt;primaryKey(),
+            'title' =&gt; $this-&gt;string(12)-&gt;notNull()-&gt;unique(),
+            'body' =&gt; $this-&gt;text()
+        ]);
+    }
+}
+</code></pre><div id=添加字段 class=anchor></div><h4 class="relative group">添加字段
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%b7%bb%e5%8a%a0%e5%ad%97%e6%ae%b5 aria-label=锚点>#</a></span></h4><p>如果迁移名称是 <code>add_xxx_to_yyy</code> 的形式，生成文件则会包含 <code>addColumn</code> 和 <code>dropColumn</code> 语句。</p><p>为了添加字段：</p><pre><code>$ yii migrate/create add_position_to_post --fields=position:integer
+</code></pre><p>生成</p><pre><code>class m150811_220037_add_position_to_post extends Migration
+{
+    public function up()
+    {
+        $this-&gt;addColumn('post', 'position', $this-&gt;integer());
+    }
+
+    public function down()
+    {
+        $this-&gt;dropColumn('post', 'position');
+    }
+}
+</code></pre><div id=删除字段 class=anchor></div><h4 class="relative group">删除字段
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%88%a0%e9%99%a4%e5%ad%97%e6%ae%b5 aria-label=锚点>#</a></span></h4><p>如果迁移名称是 <code>drop_xxx_to_yyy</code> 的形式，生成文件也会包含 <code>addColumn</code> 和 <code>dropColumn</code> 语句。</p><pre><code>$ yii migrate/create drop_position_from_post --fields=position:integer
+</code></pre><p>生成</p><pre><code>class m150811_220037_drop_position_from_post extends Migration
+{
+    public function up()
+    {
+        $this-&gt;dropColumn('post', 'position');
+    }
+
+    public function down()
+    {
+        $this-&gt;addColumn('post', 'position', $this-&gt;integer());
+    }
+}
+</code></pre><div id=生成交叉表 class=anchor></div><h4 class="relative group">生成交叉表
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e7%94%9f%e6%88%90%e4%ba%a4%e5%8f%89%e8%a1%a8 aria-label=锚点>#</a></span></h4><p>如果迁移名称是 <code>create_junction_xxx_and_yyy</code> 的形式，生成文件也会包含创建交叉表的语句。</p><pre><code>$ yii create/migration create_junction_post_and_tag
+</code></pre><p>生成</p><pre><code>class m150811_220037_create_junction_post_and_tag extends Migration
+{
+    public function up()
+    {
+        $this-&gt;createTable('post_tag', [
+            'post_id' =&gt; $this-&gt;integer(),
+            'tag_id' =&gt; $this-&gt;integer(),
+            'PRIMARY KEY(post_id, tag_id)'
+        ]);
+
+        $this-&gt;createIndex('idx-post_tag-post_id', 'post_tag', 'post_id');
+        $this-&gt;createIndex('idx-post_tag-tag_id', 'post_tag', 'tag_id');
+
+        $this-&gt;addForeignKey('fk-post_tag-post_id', 'post_tag', 'post_id', 'post', 'id', 'CASCADE');
+        $this-&gt;addForeignKey('fk-post_tag-tag_id', 'post_tag', 'tag_id', 'tag', 'id', 'CASCADE');
+    }
+
+    public function down()
+    {
+        $this-&gt;dropTable('post_tag');
+    }
+}
+</code></pre><div id=事务性transational迁移 class=anchor></div><h3 class="relative group">事务性（Transational）迁移
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e4%ba%8b%e5%8a%a1%e6%80%a7transational%e8%bf%81%e7%a7%bb aria-label=锚点>#</a></span></h3><p>在进行复杂的数据库迁移的同时，必须保证每一次迁移整体成功或者失败，这对保持数据库的完整性和一致性是至关重要的。为了达到这个效果，我建议你把每次迁移执行的数据库操作放到事务中。</p><p>最简单实现事务性迁移的方法就是把迁移脚本放到 <code>safeUp()</code> 和 <code>safeDown()</code> 方法中。它们和 <code>up()</code> 和 <code>down()</code> 的不同在于它们明确指定事务性操作。导致的结果是，只要在方法内的任何一个操作失败，所有在这之前的操作都会自动回滚。</p><p>在接下来的例子中，包括建表和插入操作：</p><pre><code>&lt;?php
+
+use yii\db\Migration;
+
+class m150101_185401_create_news_table extends Migration
+{
+    public function safeUp()
+    {
+        $this-&gt;createTable('news', [
+            'id' =&gt; $this-&gt;primaryKey(),
+            'title' =&gt; $this-&gt;string()-&gt;notNull(),
+            'content' =&gt; $this-&gt;text(),
+        ]);
+
+        $this-&gt;insert('news', [
+            'title' =&gt; 'test 1',
+            'content' =&gt; 'content 1',
+        ]);
+    }
+
+    public function safeDown()
+    {
+        $this-&gt;delete('news', ['id' =&gt; 1]);
+        $this-&gt;dropTable('news');
+    }
+}
+</code></pre><p>需要的注意的是，当你在 <code>safeUp()</code> 中进行多个数据库操作，那你就应该在 <code>safeDown</code> 中进行逆向操作。在上述操作中，我门在 <code>safeUp()</code> 中先建表然后插入数据；而在 <code>safeDown()</code> 中就应该先删除数据，然后删除表。</p><blockquote><p><strong>注意</strong>: 不是所有的数据库都支持事务，并且有一些数据库操作不能放在事务中。具体例子请参见 <a href=http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html target=_blank>implicit commit </a>。如果在这个情况下，你应该在 <code>up()</code> 和 <code>down()</code> 中实现。</p></blockquote><div id=数据库访问方法 class=anchor></div><h3 class="relative group">数据库访问方法
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%95%b0%e6%8d%ae%e5%ba%93%e8%ae%bf%e9%97%ae%e6%96%b9%e6%b3%95 aria-label=锚点>#</a></span></h3><p>迁移基类 <code>yii\db\Migration</code> 提供了一系列方法来访问和操纵数据库。你可能发现这些方法的命名非常类似 <strong>Dao</strong> 方法（由 <code>yii\db\Command</code> 提供）。例如， <code>yii\db\Migration::createTable()</code> 方法允许你创建一个新表，就像 <code>yii\db\Command::createTable()</code> 一样。</p><p>使用由 <code>yii\db\Migration</code> 提供方法的好处就是你不需要明确实例化 <code>yii\db\Command</code> 类，以及执行每一个方法都会自动显示有用的信息，来告诉你完成哪些数据库操作和花了多长时间。</p><p>下面是所有的数据库方法方法：</p><ul><li><code>execute()</code>： 执行语句</li><li><code>insert()</code>：插入一行</li><li><code>batchInsert()</code>：批量插入</li><li><code>update()</code>：更新</li><li><code>delete()</code>：删除</li><li><code>createTable()</code>：创建表</li><li><code>renameTable()</code>：重命名表</li><li><code>dropTable()</code>：删除表</li><li><code>truncateTable()</code>：清空表中的数据</li><li><code>addColumn()</code>：添加字段</li><li><code>renameColumn()</code>：重命名字段</li><li><code>dropColumn()</code>：删除字段</li><li><code>alterColumn()</code>：变更字段</li><li><code>addPrimarykey()</code>：添加主键</li><li><code>dropPrimarykey()</code>：删除主键</li><li><code>addForeignKey()</code>：添加外键</li><li><code>dropForeignKey()</code>：删除外键</li><li><code>createIndex()</code>：创建索引</li><li><code>dropIndex()</code>：删除索引</li></ul><blockquote><p>信息：<code>yii\db\Migration</code> 不提供数据库查询方法，是因为你一般不需要关心从数据库中获取数据的多余信息。它也因为你可以使用强大的 <strong>Query Builder</strong> 来构建和运行复杂的查询。</p></blockquote><blockquote><p>注意：当你在迁移中操作数据时，你可能会发现使用 <strong>Active Record</strong> 类会很有用，因为逻辑中一些已经在其中实现了。无论如何都要记住，和迁移类中的代码（他天生需要被永久固化）相比，应用的逻辑需要被变更。基于这种原因，迁移代码应该和其它应用逻辑保持独立，比如 <strong>Active Record</strong> 类。</p></blockquote><div id=执行迁移 class=anchor></div><h3 class="relative group">执行迁移
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e6%89%a7%e8%a1%8c%e8%bf%81%e7%a7%bb aria-label=锚点>#</a></span></h3><p>你可以使用下述命令来执行所有可用的迁移</p><pre><code>$ yii migrate
+</code></pre><p>这个命令会显示所有还未执行的迁移。如果你确认你想要执行，他将会按它们的时间戳顺序执行每一个新类中的 <code>up()</code> 和 <code>safeUp()</code> 方法。如果其中任何一个迁移失败了，命令将直接退出，不在执行后续的迁移。</p><p>为了识别已经成功执行的迁移，每进行一次成功的迁移，命令都会像数据库中 <code>migration</code> 表中插入一条数据来保存更新的状态。它将帮助迁移工具识别已执行和未执行的迁移。</p><blockquote><p>信息：这个迁移工具会自动在指定的数据库中创建 <code>migration</code> 表。默认，所使用的数据库会使用配置表（配置的默认路径：<em>config/db.php</em>）中已定义好的 <strong>DB</strong> 组件。</p></blockquote><p>如果你想一次性进行多个迁移，那你可以指定迁移个数。例如，你想要执行接下来的三个迁移：</p><pre><code>$ yii migrate 3
+</code></pre><p>你还可以通过使用 <code>migrate/to</code> 命令更新到指定的迁移版本</p><pre><code>$ yii migrate/to 150101_185401 # 使用时间
+$ yii migrate/to &quot;2015-01-01 18:54:01&quot; # 使用时间字符串
+$ yii migrate/to m150101_185401_create_news_table # 使用名称 
+$ yii migrate/to 1392853618 # 使用时间戳
+</code></pre><p>在这个版本之前的迁移，都会被执行。在这个版本之后的迁移，都会被回滚。</p><div id=迁移版本回滚 class=anchor></div><h3 class="relative group">迁移版本回滚
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%bf%81%e7%a7%bb%e7%89%88%e6%9c%ac%e5%9b%9e%e6%bb%9a aria-label=锚点>#</a></span></h3><p>回滚一个或多个历史已执行的迁移版本，你可以使用如下命令：</p><pre><code>$ yii migrate/down     # 回滚到最近的一次版本
+$ yii migrate/down 3   # 回滚最近三次的版本	
+</code></pre><blockquote><p>注意：不是所有的迁移都可以回滚。如果尝试回滚不可回滚的迁移，将会导致一个错误，然后终止后续的所有回滚。</p></blockquote><div id=重复redo迁移 class=anchor></div><h3 class="relative group">重复（Redo）迁移
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e9%87%8d%e5%a4%8dredo%e8%bf%81%e7%a7%bb aria-label=锚点>#</a></span></h3><p>重复迁移意味着上一次回滚的版本会再次被执行：</p><pre><code>$ yii migrate/redo        # 重复上一个撤销迁移的版本
+$ yii migrate/redo 3      # 重复上三个撤销迁移的版本
+</code></pre><blockquote><p>注意：如果迁移不可回滚，你将无法重复它。</p></blockquote><div id=迁移版本历史 class=anchor></div><h3 class="relative group">迁移版本历史
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e8%bf%81%e7%a7%bb%e7%89%88%e6%9c%ac%e5%8e%86%e5%8f%b2 aria-label=锚点>#</a></span></h3><p>为了显示迁移类执行与否，你可以使用如下命令：</p><pre><code>$ yii migrate/history     # 显示最近十个被执行的迁移
+$ yii migrate/history 5   # 显示最近五个被执行的迁移
+$ yii migrate/history all # 显示所有被执行的迁移	$ yii migrate/new         # 显示头十个新迁移
+$ yii migrate/new 5       # 显示头五个新迁移
+$ yii migrate/new all     # 显示头五个新迁移
+</code></pre><div id=修改迁移历史 class=anchor></div><h3 class="relative group">修改迁移历史
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e4%bf%ae%e6%94%b9%e8%bf%81%e7%a7%bb%e5%8e%86%e5%8f%b2 aria-label=锚点>#</a></span></h3><p>与实际执行和回滚迁移历史不同，有时你只想简单把你的数据库版本标记到指定版本。当你手动变更数据库到指定状态的时候，你不想为了哪些变更重新执行迁移时，你就可以使用这个命令：</p><pre><code>$ yii migrate/mark 150101_185401                      # 使用时间
+$ yii migrate/mark &quot;2015-01-01 18:54:01&quot;              # 使用时间串
+$ yii migrate/mark m150101_185401_create_news_table   # 使用迁移类名
+$ yii migrate/mark 1392853618                         # 使用时间戳
+</code></pre><p>这个命令将修改 <code>migration</code> 这张表，修改到指定迁移版本。这个操作不会进行实质性的执行或者回滚操作。</p><div id=定制迁移 class=anchor></div><h3 class="relative group">定制迁移
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%ae%9a%e5%88%b6%e8%bf%81%e7%a7%bb aria-label=锚点>#</a></span></h3><p>有以下几种方式定制迁移命令：</p><div id=使用命令行参数 class=anchor></div><h4 class="relative group">使用命令行参数
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4%e8%a1%8c%e5%8f%82%e6%95%b0 aria-label=锚点>#</a></span></h4><p>可以通过命令行参数来对迁移进行定制化：</p><ul><li><p><code>interactive</code>: 布尔型（默认是 <code>true</code>），指定是否进入交互模式。如果是 <code>true</code>，用户将会实时输出执行特定的迁移动作。如果你想要他在后台执行，那就要把它设置成 <code>false</code>。</p></li><li><p><code>migrationPath</code>：字符型（默认是 <code>@app/migration</code>），指定迁移脚本的存储路径。这个可以是目录路径或者路径别名。注意，必须保证目录存在，否则命令将会报错。</p></li><li><p><code>migrationTable</code>：字符型（默认是 <code>migration</code>），指定存储迁移历史信息的数据库表名。如果不存在，这个表将会自动被创建。你也可以手动创建它（表结构：<code>version varchar(255) primary key, apply_time integer</code>）。</p></li><li><p><code>db</code>：字符型（默认是 <code>db</code>），指定数据库应用组件的 ID。它表示数据库将被这个命令迁移。</p></li><li><p><code>templateFile</code>：字符型（默认是 <code>@yii/views/migration.php</code>），指定模版文件（它将帮助用户生成迁移脚本骨架）的路径。这个可以是目录路径或者路径别名。这个模版文件是一个 <strong>PHP</strong> 脚本，这个文件预定义了一个 <code>$className</code> 变量用来替换生成后的迁移类的类名。</p></li><li><p><code>generatorTemplateFiles</code>：数组型（默认是：</p><pre><code>  [
+    'create_table'    =&gt; '@yii/views/createTableMigration.php',
+    'drop_table'      =&gt; '@yii/views/dropTableMigration.php',
+    'add_column'      =&gt; '@yii/views/addColumnMigration.php',
+    'drop_column'     =&gt; '@yii/views/dropColumnMigration.php',
+    'create_junction' =&gt; '@yii/views/createJunctionMigration.php'
+  ]
+</code></pre><p>），指定用于生成迁移代码的模版文件。具体看 <a href=http://www.yiiframework.com/doc-2.0/guide-db-migrations.html#generating-migrations target=_blank>生成迁移</a>。</p></li><li><p><code>fields</code>：用于定义创建迁移类中的字段定义数组。默认是 <code>[]</code>。每个字段定义的格式是 <code>COLUMN_NAME:COLUMN_TYPE:COLUMN_DECORATOR</code>。例如，<code>--fields=name:string(12):notNull</code> 生成一个长度为 12 的不为空的字段。</p></li></ul><p>下面的例子展示了使用这些参数的方法。</p><p>例如，如果我门想要迁移个 <code>forum</code> 模块，迁移文件在这个模块所在目录的 <code>migrations</code> 目录，我们可以使用如下命令：</p><pre><code># migrate the migrations in a forum module non-interactively
+$ yii migrate --migrationPath=@app/modules/forum/migrations --interactive=0
+</code></pre><div id=配置全局命令 class=anchor></div><h3 class="relative group">配置全局命令
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e9%85%8d%e7%bd%ae%e5%85%a8%e5%b1%80%e5%91%bd%e4%bb%a4 aria-label=锚点>#</a></span></h3><p>与其每次执行迁移命令的时候都要重复配置参数，你可以一次配置供后续使用：</p><pre><code>return [
+    'controllerMap' =&gt; [
+        'migrate' =&gt; [
+            'class' =&gt; 'yii\console\controllers\MigrateController',
+            'migrationTable' =&gt; 'backend_migration',
+        ],
+    ],
+];
+</code></pre><p>使用上述配置，每一次你执行迁移命令，<code>backend_migration</code> 表将用于记录迁移纪录。你不需要在每次执行迁移都要指定这个参数了。</p><div id=多数据库迁移策略 class=anchor></div><h3 class="relative group">多数据库迁移策略
+<span class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100"><a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700" style=text-decoration-line:none!important href=#%e5%a4%9a%e6%95%b0%e6%8d%ae%e5%ba%93%e8%bf%81%e7%a7%bb%e7%ad%96%e7%95%a5 aria-label=锚点>#</a></span></h3><p>默认，数据迁移都只会在一个数据库（默认是 <code>db</code> 组件指定的数据库）中执行。如果你想它们应用在不同数据库中，你可以指定 <code>db</code> 命令参数：</p><pre><code>$ yii migrate --db=db2
+</code></pre><p>上述命令你可以把迁移应用到 <code>db2</code> 数据库中。</p><p>有时你想要把其中一些迁移应用在一个数据中，而其他的在另一个数据库中。为了达到这个目标，当你实现迁移类是，你应该明确指定 DB 组件 ID：</p><pre><code>&lt;?php
+
+use yii\db\Migration;
+
+class m150101_185401_create_news_table extends Migration
+{
+    public function init()
+    {
+        $this-&gt;db = 'db2';
+        parent::init();
+    }
+}
+</code></pre><p>上述迁移将应用 <code>db2</code> 表中，即使你通过命令行参数指定成其他数据库。注意，迁移历史仍然记录在有命令行参数指定的数据库中。</p><p>如果你有多个使用同一个数据的迁移，建议你创建一个迁移基类（如上述的 <code>init()</code> 代码）。每一个迁移类都拓展这个基类。</p><blockquote><p>提示：除了设置 <code>db</code> 属性之外，你还可以在你的迁移类中创建新的数据库连接。你可以使用 <code>DAO 方法</code> 来操作不同的数据库。</p></blockquote><p>迁移多个数据的另外一个策略就是为不同数据库迁移放在不同的路径中。然后你可以分别来执行迁移：</p><pre><code>$ yii migrate --migrationPath=@app/migrations/db1 --db=db1
+$ yii migrate --migrationPath=@app/migrations/db2 --db=db2
+...
+</code></pre><p>第一个命令执行 <code>db1</code> 数据库的迁移，第二个是 <code>db2</code>，一次类推。</p><blockquote><p>译自 <a href=http://www.yiiframework.com/doc-2.0/guide-db-migrations.html target=_blank>http://www.yiiframework.com/doc-2.0/guide-db-migrations.html</a></p></blockquote></div></div><script>var oid="views_posts/2015-12-24-into-yii-db-migration.md",oid_likes="likes_posts/2015-12-24-into-yii-db-migration.md"</script><script type=text/javascript src=/js/page.min.0e49973b4ad0a382c7c6012d8bff8226316642daabc4f8a20477bd08674f3da6e2fa993bc20ad4f51e7c5bb68e6f913a207a7c4fe37ea0e7b806894afce0a64e.js integrity="sha512-DkmXO0rQo4LHxgEti/+CJjFmQtqrxPiiBHe9CGdPPabi+pk7wgrU9R58W7aOb5E6IHp8T+N+oOe4BolK/OCmTg=="></script></section><footer class="pt-8 max-w-prose print:hidden"><div class=pt-8><hr class="border-dotted border-neutral-300 dark:border-neutral-600"><div class="flex justify-between pt-3"><span><a class="flex group mr-3" href=/2015/10/12/2015-10-12-using-spring-boot-to-build-a-restful-web-server/><span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&larr;</span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">使用 Spring Boot: 构建 Restful 服务</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2015-10-12 00:00:00 +0000 UTC">2015-10-12</time></span></span></a></span>
+<span><a class="flex text-right group ml-3" href=/2016/01/24/2016-01-24-react-with-webpack/><span class="flex flex-col"><span class="mt-[0.1rem] leading-6 group-hover:underline group-hover:decoration-primary-500">ReactJS：使用 webpack 部署</span>
+<span class="mt-[0.1rem] text-xs text-neutral-500 dark:text-neutral-400"><time datetime="2016-01-24 00:00:00 +0000 UTC">2016-01-24</time></span></span>
+<span class="ml-3 text-neutral-700 group-hover:text-primary-600 ltr:inline rtl:hidden dark:text-neutral dark:group-hover:text-primary-400">&rarr;</span>
+<span class="mr-3 text-neutral-700 group-hover:text-primary-600 ltr:hidden rtl:inline dark:text-neutral dark:group-hover:text-primary-400">&larr;</span></a></span></div></div></footer></article><div id=top-scroller class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0 rtl:left-0"><a href=#the-top class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 backdrop-blur hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400" aria-label title>&uarr;</a></div></main><footer id=site-footer class="py-10 print:hidden"><div class="flex items-center justify-between"><p class="text-sm text-neutral-500 dark:text-neutral-400">&copy;
+2023
+n3xtchen</p><p class="text-xs text-neutral-500 dark:text-neutral-400">由 <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a> & <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500" href=https://blowfish.page/ target=_blank rel="noopener noreferrer">Blowfish</a> 强力驱动</p></div><script>mediumZoom(document.querySelectorAll("img:not(.nozoom)"),{margin:24,background:"rgba(0,0,0,0.5)",scrollOffset:0})</script><script type=text/javascript src=/js/process.min.35c1113bcc16c5a59bf031082f9e63822aa95280423881a7847a7ff33a16e6299ce6a840d9ef4e10d947e030a18f3f20359afb2ec0f35967484b9a9360ac3145.js integrity="sha512-NcERO8wWxaWb8DEIL55jgiqpUoBCOIGnhHp/8zoW5imc5qhA2e9OENlH4DChjz8gNZr7LsDzWWdIS5qTYKwxRQ=="></script></footer><div id=search-wrapper class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh]" data-url=https://n3xtchen.github.io style=z-index:500><div id=search-modal class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800"><header class="relative z-10 flex items-center justify-between flex-none px-2"><form class="flex items-center flex-auto min-w-0"><div class="flex items-center justify-center w-8 h-8 text-neutral-400"><span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentcolor" d="M505 442.7 405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9.0 208 0S0 93.1.0 208s93.1 208 208 208c48.3.0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9.0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7.0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7.0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg></span></div><input type=search id=search-query class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent" placeholder tabindex=0></form><button id=close-search-button class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400" title>
+<span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentcolor" d="M310.6 361.4c12.5 12.5 12.5 32.75.0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3 54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75.0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75.0-45.25s32.75-12.5 45.25.0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25.0s12.5 32.75.0 45.25l-105.4 105.4L310.6 361.4z"/></svg></span></button></header><section class="flex-auto px-2 overflow-auto"><ul id=search-results></ul></section></div></div></div></body></html>

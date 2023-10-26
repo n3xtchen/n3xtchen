@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://n3xtchen.github.io/sitemap.xml
