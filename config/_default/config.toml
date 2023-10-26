@@ -2,8 +2,8 @@
 # Refer to the theme docs for more details about each of these parameters.
 # https://blowfish.page/docs/getting-started/
 
-# theme = "blowfish"
-baseURL = "https://n3xtchen.github.io"
+theme = "github.com/nunocoracao/blowfish/v2"
+baseURL = "https://n3xtchen.github.io/n3xtchen"
 defaultContentLanguage = "zh-CN"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
@@ -68,4 +68,4 @@ googleAnalytics = "G-EMLJCHXBFD"
   date = [':filename', ':default']
 
 [permalinks]
-  posts = '/:year/:month/:day/:filename/'
+  posts = '/:year/:month/:day/:slug/'
