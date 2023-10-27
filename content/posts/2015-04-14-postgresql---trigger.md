@@ -6,6 +6,7 @@ description: ""
 tags:
 - database
 title: PostgreSQL 触发器（Trigger）- 创建安全的自增主键
+url: "/postgresql/2015/04/14/postgresql-trigger"
 ---
 
 通常情况，常规的 **SQL** 事件（Event） 应该在普通行为的之前或之后被触发。这个行为可以是对插入的值的类型检查，可以是在插入前的格式化，或者是变更和删除数据之后对相关的表的数据修改。传统的处理方式是通过连接数据库的应用的编码层来做，而不是数据库软件本身。
@@ -161,6 +162,3 @@ title: PostgreSQL 触发器（Trigger）- 创建安全的自增主键
 
 **Trigger** 是对 **PostgreSQL** 约束（**Contraints**）的补充，可以配合 **PL** 语法进行输入值的复杂验证，或者屏蔽某些用户的误操作（如上述例子中，自增主键的实现）。另外，很多人从 **PostgreSQL** 转到 **MySQL**，都很怀恋 Replace 语法的简便；**PostgreSQL** 虽然不直接支持，但是可以通过 **Trigger** 和 **PL/pgSQL** 实现，后续的涉及 PL 语法的时候，将详细阐述该实现。
 
-
-         
-         

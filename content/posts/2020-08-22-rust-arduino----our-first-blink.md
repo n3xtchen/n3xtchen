@@ -6,6 +6,7 @@ description: ""
 tags:
 - IOT
 title: 如何在 Arduino Uno 中运行 Rust：让你的 LED 灯闪起来
+url: "/rust/2020/08/22/rust-arduino-our-first-blink"
 ---
 
 已经有一段时间没碰板子了，怎么想写一篇关于 **Arduino** 的文章呢？这要追溯到一个月前， `rust-avr` 分支合并到 upstream 了，可以通过 nightly 版来直接使用它来开发 **Arduino** 程序；一直以来都是用 C 来写，Rust 的诱惑力，你懂得！你现在只要完成以下两步就可以为 **AVR** 微控面板编译 Rust 程序了：

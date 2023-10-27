@@ -7,6 +7,7 @@ tags:
 - database
 - nosql
 title: PostgreSQL - 数组(Array)
+url: "/postgresql/2015/04/05/postgresql-array"
 ---
 
 **PostgreSQL** 可以通过一种数据结构在独立字段中存储非原子的值。这个数据结构就是我们今天要谈的数组（Array），它本身不是一种数据类型，而是任何数据类型的一种拓展。

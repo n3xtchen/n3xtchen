@@ -6,6 +6,7 @@ description: ""
 tags:
 - python
 title: Python 优雅的使用参数 - 可变参数（*args & **kwargs)
+url: "/python/2014/08/08/python-args-and-kwargs"
 ---
 
 ### 写在前面的话

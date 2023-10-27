@@ -5,6 +5,7 @@ date: "2016-12-05T00:00:00Z"
 description: ""
 tags: []
 title: Git - 拉取（Git Clone）代码太慢了
+url: "/git/2016/12/05/git-clone-so-slow"
 ---
 
 有时候，我需要从 **Github** 上克隆一个超级大的代码项目，我发现获取的数据超级慢（Kb/s）。

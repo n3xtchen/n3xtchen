@@ -6,6 +6,7 @@ description: ""
 tags:
 - elasticsearch
 title: 19 个很有用的 ElasticSearch 查询语句
+url: "/elasticsearch/2017/07/05/elasticsearch-23-useful-query-example"
 ---
 
 为了演示不同类型的 **ElasticSearch** 的查询，我们将使用书文档信息的集合（有以下字段：**title**（标题）, **authors**（作者）, **summary**（摘要）, **publish_date**（发布日期）和 **num_reviews**（浏览数））。
@@ -1243,29 +1244,3 @@ title: 19 个很有用的 ElasticSearch 查询语句
 **注2**: 因 **JSON** 不能包含嵌入式换行符，请使用分号来分割语句。
 
 > 引用自：[23 USEFUL ELASTICSEARCH EXAMPLE QUERIES](http://distributedbytes.timojo.com/2016/07/23-useful-elasticsearch-example-queries.html)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 

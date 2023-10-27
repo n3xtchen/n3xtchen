@@ -7,6 +7,7 @@ tags:
 - database
 - extension
 title: PostgreSQL - 使用 PGXN 安装 Mysql-fdw
+url: "/postgresql/2015/06/17/postgresql-use-pgxn-install-mysql-fdw"
 ---
 
 

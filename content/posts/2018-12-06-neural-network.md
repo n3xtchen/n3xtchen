@@ -6,6 +6,7 @@ tags:
 - NN
 title: '入门: 神经网络（Neural Network）及 Python 实现'
 use_math: true
+url: "/algorithm/2018/12/06/neural-network"
 ---
 
 
