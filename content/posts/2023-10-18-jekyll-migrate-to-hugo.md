@@ -174,14 +174,14 @@ $ sed -i 's/\(defaultContentLanguage =\).*/\1 "zh-CN"/g' config/_default/config.
 
 首页增加 Banner
 
-```
+```text
 $ hugo new content _index.md
 Content "/Users/nextchen/Dev/project_pig/n3xtchen/content/_index.md" created
 $ tee -a content/_index.md <<END
 
-{{< alert icon="rss" >}}
+{{</* alert icon="rss" */>}}
 在这里，一同享受技术为我们带来无限乐趣！
-{{< /alert >}}
+{{</* /alert */>}}
 END
 ```
 #### 3. 定制主页
