@@ -25,6 +25,9 @@ jobs:
       - name: Build
         run: hugo --minify
 
+      - name: "== to mark"
+        run: find public -name '*.html' | xargs -I {} sed -Ei  's/(^|[^=])==([^\=]+)==([^=]|$)/\1<mark>\2<\/mark>\3/g' {}
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/master' }}
