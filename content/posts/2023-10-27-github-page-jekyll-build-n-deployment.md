@@ -289,6 +289,10 @@ To use retry middleware with Faraday v2.0+, install `faraday-retry` gem
     Server address: http://127.0.0.1:4000/
   Server running... press ctrl-c to stop.
 ```
+
+> 问题：`Deprecation Warning: Using / for division outside of calc() is deprecated and will be removed in Dart Sass 2.0.0.` 
+> 解决方法：`bundle add "jekyll-sass-converter" -v "~> 2.0"; bundle install;` 重新启动服务即可。
+
 ## 三、编写博客
 #### 1. 博客文件名 
 - 博客文件：`yyyy-mm-dd-{文件名}.markdown`
